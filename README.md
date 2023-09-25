@@ -15,5 +15,8 @@ https://doc.freeradius.org/globals.html
 Flask Tutorial
 https://code.visualstudio.com/docs/python/tutorial-flask
 
+Flask Restful
+https://flask-restful.readthedocs.io/en/latest/
+
 GitHub That might be helpful
 https://github.com/enckse/freeradius
