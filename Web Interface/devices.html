@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Dashboard - SB Admin</title>
+        <title>Devices - Archtop Fiber</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -102,15 +102,6 @@
                                     </div>
                                 </nav>
                             </div>
-                            <div class="sb-sidenav-menu-heading">Addons</div>
-                            <a class="nav-link" href="charts.html">
-                                <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                                Charts
-                            </a>
-                            <a class="nav-link" href="tables.html">
-                                <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                                Tables
-                            </a>
                         </div>
                     </div>
                     <div class="sb-sidenav-footer">
@@ -126,64 +117,6 @@
                         <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item active">Devices</li>
                         </ol>
-                        <!--<div class="row"> 
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-primary text-white mb-4">
-                                    <div class="card-body">10,053 Total Devices</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-success text-white mb-4">
-                                    <div class="card-body">7,094 Reachable</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-warning text-white mb-4">
-                                    <div class="card-body">8,873 Static IPs</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-danger text-white mb-4">
-                                    <div class="card-body">30 IPs Unreachable</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xl-6">
-                                <div class="card mb-4">
-                                    <div class="card-header">
-                                        <i class="fas fa-chart-area me-1"></i>
-                                        Area Chart Example
-                                    </div>
-                                    <div class="card-body"><canvas id="myAreaChart" width="100%" height="40"></canvas></div>
-                                </div>
-                            </div>
-                            <div class="col-xl-6">
-                                <div class="card mb-4">
-                                    <div class="card-header">
-                                        <i class="fas fa-chart-bar me-1"></i>
-                                        Bar Chart Example
-                                    </div>
-                                    <div class="card-body"><canvas id="myBarChart" width="100%" height="40"></canvas></div>
-                                </div>
-                            </div>
-                        </div> -->
                         <head>
                             <meta charset="UTF-8">
                             <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -218,6 +151,36 @@
                                             <th>Status</th>
                                         </tr>
                                     </tfoot>
+                                    <tbody>
+                                        <tr>
+                                            <td>Rio Stevens - 84962</td>
+                                            <td>23:2B:D6:79:B8:3F</td>
+                                            <td>66.135.192.42</td>
+                                            <td>862e:0acf:b196:b2dd:e824:7dc8:a6f1:d687</td>
+                                            <td>Alive</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Dynamic</td>
+                                            <td>23:2B:D6:79:B8:3F</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td>Alive</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Dynamic</td>
+                                            <td>23:2B:D6:79:B8:3F</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td>Stop</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Kimberly Boone - 98925</td>
+                                            <td>23:2B:D6:79:B8:3F</td>
+                                            <td>154.132.251.195</td>
+                                            <td>dda0:314c:1871:a1e9:3c70:6d14:c2bd:9a7b</td>
+                                            <td>Alive</td>
+                                        </tr>
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -226,7 +189,7 @@
                 <footer class="py-4 bg-dark mt-auto">
                     <div class="container-fluid px-4">
                         <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; Your Website 2023</div>
+                            <div class="text-muted">Copyright &copy; Archtop Fiber 2023</div>
                             <div>
                                 <a href="#">Privacy Policy</a>
                                 &middot;
