@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Dashboard - Archtop Fiber</title>
+        <title>Devices - Archtop Fiber</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -32,7 +32,7 @@
                         <li><a class="dropdown-item" href="#!">Settings</a></li>
                         <li><a class="dropdown-item" href="#!">Activity Log</a></li>
                         <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" href="#!">Logout</a></li>
+                        <li><a class="dropdown-item" href="login.html">Logout</a></li>
                     </ul>
                 </li>
             </ul>
@@ -47,35 +47,18 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Dashboard
                             </a>
-                            <a class="nav-link" href="devices.html">
+                            <a class="nav-link" href="index.html">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Devices
                             </a>
-                            <a class="nav-link" href="logs.html">
+                            <a class="nav-link" href="index.html">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Logs
                             </a>
-                            <a class="nav-link" href="users.html">
+                            <a class="nav-link" href="index.html">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Users
                             </a>
-                            <!-- <div class="sb-sidenav-menu-heading">Interface</div>
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
-                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                                Layouts
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="layout-static.html">Static Navigation</a>
-                                    <a class="nav-link" href="layout-sidenav-light.html">Light Sidenav</a>
-                                </nav>
-                            </div>
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
-                                <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                                Pages
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a> -->
                             <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
                                     <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
@@ -115,72 +98,95 @@
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Welcome, Admin</h1>
                         <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Dashboard</li>
+                            <li class="breadcrumb-item active">Add Devices</li>
                         </ol>
-                        <div class="row"> 
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-primary text-white mb-4">
-                                    <div class="card-body">10,053 Total Devices</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="devices.html">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
+                        <div class="field-group my-5">
+                            <div class="row mb-2">
+                              <h5 class="offset-sm-3">Device</h5>
                             </div>
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-success text-white mb-4">
-                                    <div class="card-body">7,094 Reachable</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-warning text-white mb-4">
-                                    <div class="card-body">8,873 Static IPs</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-danger text-white mb-4">
-                                    <div class="card-body">30 IPs Unreachable</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xl-6">
-                                <div class="card mb-4">
-                                    <div class="card-header">
-                                        <i class="fas fa-chart-area me-1"></i>
-                                        Requests
-                                    </div>
-                                    <div class="card-body"><canvas id="myAreaChart" width="100%" height="40"></canvas></div>
-                                </div>
-                            </div>
-                            <div class="col-xl-6">
-                                <div class="card mb-4">
-                                    <div class="card-header">
-                                        <i class="fas fa-chart-bar me-1"></i>
-                                        Grants
-                                    </div>
-                                    <div class="card-body"><canvas id="myBarChart" width="100%" height="40"></canvas></div>
+                          <div class="row mb-3">
+                              <label for="id_name" class="col-sm-3 col-form-label text-lg-end">
+                                  Customer
+                              </label>
+                              <div class="col">
+                                  <input type="text" name="name" maxlength="64" class="form-control" placeholder="Customer" id="id_name">
+                                  <div class="invalid-feedback">
+                                  </div>
+                              </div>
+                          </div>                  
+                          </div>
+                          <div class="row mb-3">
+                              <label for="id_manufacturer" class="col-sm-3 col-form-label text-lg-end">
+                                  Type of IP
+                              </label>
+                              <div class="col">
+                                  <select name="manufacturer" class="netbox-api-select" data-empty-option="" data-url="/api/dcim/manufacturers/" id="id_manufacturer">
+                        <option value="" selected>---------</option>
+                        <option value="" selected>Static</option>
+                        <option value="" selected>Dynamic</option>
+                      </select>
+                                  <div class="invalid-feedback">
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="row mb-3">
+                              <label for="id_serial" class="col-sm-3 col-form-label text-lg-end">
+                                  MAC Address
+                              </label>
+                              <div class="col">
+                                  <input type="text" name="serial" maxlength="50" class="form-control" placeholder="MAC Address" id="id_serial">
+                                      <span class="form-text">MAC Address of Device</span>
+                                  <div class="invalid-feedback">
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="row mb-3">
+                            <label for="id_asset_tag" class="col-sm-3 col-form-label text-lg-end">
+                                IPv4
+                            </label>
+                            <div class="col">
+                                <input type="text" name="asset_tag" maxlength="50" class="form-control" placeholder="IPv4" id="id_asset_tag">
+                                    <span class="form-text">Add the IPv4 Address of this Device</span>
+                                <div class="invalid-feedback">
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </main>
+                        <div class="row mb-3">
+                            <label for="id_asset_tag" class="col-sm-3 col-form-label text-lg-end">
+                                IPv6
+                            </label>
+                            <div class="col">
+                                <input type="text" name="asset_tag" maxlength="50" class="form-control" placeholder="IPv6" id="id_asset_tag">
+                                    <span class="form-text">Add the IPv4 Address of this Device</span>
+                                <div class="invalid-feedback">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="id_asset_tag" class="col-sm-3 col-form-label text-lg-end">
+                                Tags
+                            </label>
+                            <div class="col">
+                                <input type="text" name="asset_tag" maxlength="50" class="form-control" placeholder="Asset tag" id="id_asset_tag">
+                                    <span class="form-text">A unique tag used to identify this device</span>
+                                <div class="invalid-feedback">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-end my-3">
+                            <a class="btn btn-outline-danger" href="devices.html">Cancel</a>
+                              <button type="submit" name="_addanother" class="btn btn-outline-primary">
+                                Create & Add Another
+                              </button>
+                              <button type="submit" name="_create" class="btn btn-primary">
+                                Create
+                              </button>
+                        </div>                
+                </main>            
                 <footer class="py-4 bg-dark mt-auto">
                     <div class="container-fluid px-4">
                         <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; Archtop Fiber</div>
+                            <div class="text-muted">Copyright &copy; Archtop Fiber 2023</div>
                             <div>
                                 <a href="#">Privacy Policy</a>
                                 &middot;
