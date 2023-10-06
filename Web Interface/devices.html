@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Dashboard - Archtop Fiber</title>
+        <title>Devices - Archtop Fiber</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -32,7 +32,7 @@
                         <li><a class="dropdown-item" href="#!">Settings</a></li>
                         <li><a class="dropdown-item" href="#!">Activity Log</a></li>
                         <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" href="#!">Logout</a></li>
+                        <li><a class="dropdown-item" href="login.html">Logout</a></li>
                     </ul>
                 </li>
             </ul>
@@ -115,64 +115,73 @@
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Welcome, Admin</h1>
                         <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Dashboard</li>
+                            <li class="breadcrumb-item active">Devices</li>
                         </ol>
-                        <div class="row"> 
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-primary text-white mb-4">
-                                    <div class="card-body">10,053 Total Devices</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="devices.html">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
+                        <head>
+                            <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                            <title>Add Device</title>
+                            <link rel="stylesheet" href="styles.css">
+                        </head>
+                        <form action="addDevice.html">
+                            <button class="small-button" type="submit">Add Device</button>
+                        </form>
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-table me-1"></i>
+                                Devices
                             </div>
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-success text-white mb-4">
-                                    <div class="card-body">7,094 Reachable</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-warning text-white mb-4">
-                                    <div class="card-body">8,873 Static IPs</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-danger text-white mb-4">
-                                    <div class="card-body">30 IPs Unreachable</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xl-6">
-                                <div class="card mb-4">
-                                    <div class="card-header">
-                                        <i class="fas fa-chart-area me-1"></i>
-                                        Requests
-                                    </div>
-                                    <div class="card-body"><canvas id="myAreaChart" width="100%" height="40"></canvas></div>
-                                </div>
-                            </div>
-                            <div class="col-xl-6">
-                                <div class="card mb-4">
-                                    <div class="card-header">
-                                        <i class="fas fa-chart-bar me-1"></i>
-                                        Grants
-                                    </div>
-                                    <div class="card-body"><canvas id="myBarChart" width="100%" height="40"></canvas></div>
-                                </div>
+                            <div class="card-body">
+                                <table id="datatablesSimple">
+                                    <thead>
+                                        <tr>
+                                            <th>Customer</th>
+                                            <th>MAC Address</th>
+                                            <th>IPv4</th>
+                                            <th>IPv6</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th>Customer</th>
+                                            <th>MAC Address</th>
+                                            <th>IPv4</th>
+                                            <th>IPv6</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                        <tr>
+                                            <td>Rio Stevens - 84962</td>
+                                            <td>23:2B:D6:79:B8:3F</td>
+                                            <td>66.135.192.42</td>
+                                            <td>862e:0acf:b196:b2dd:e824:7dc8:a6f1:d687</td>
+                                            <td>Alive</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Dynamic</td>
+                                            <td>23:2B:D6:79:B8:3F</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td>Alive</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Dynamic</td>
+                                            <td>23:2B:D6:79:B8:3F</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td>Stop</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Kimberly Boone - 98925</td>
+                                            <td>23:2B:D6:79:B8:3F</td>
+                                            <td>154.132.251.195</td>
+                                            <td>dda0:314c:1871:a1e9:3c70:6d14:c2bd:9a7b</td>
+                                            <td>Alive</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -180,7 +189,7 @@
                 <footer class="py-4 bg-dark mt-auto">
                     <div class="container-fluid px-4">
                         <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; Archtop Fiber</div>
+                            <div class="text-muted">Copyright &copy; Archtop Fiber 2023</div>
                             <div>
                                 <a href="#">Privacy Policy</a>
                                 &middot;
