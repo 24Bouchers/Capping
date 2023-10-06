@@ -20,3 +20,9 @@ https://flask-restful.readthedocs.io/en/latest/
 
 GitHub That might be helpful
 https://github.com/enckse/freeradius
+
+JSON for Python
+https://pypi.org/project/jsonlib/
+
+MariaDB Python Connetor 
+https://mariadb-corporation.github.io/mariadb-connector-python/index.html
