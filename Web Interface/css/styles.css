@@ -79,6 +79,19 @@
   --bs-highlight-bg: #fff3cd;
 }
 
+.info-header {
+  display: block;
+  font-size: 14px; 
+  font-weight: 600; 
+  margin-bottom: 8px;
+}
+
+.info-data {
+  font-size: 24px; 
+  font-weight: 700; 
+}
+
+
 *,
 *::before,
 *::after {
@@ -316,7 +329,7 @@ table {
 caption {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
-  color: #6c757d;
+  color: #6c7d72;
   text-align: left;
 }
 
