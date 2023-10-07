@@ -79,6 +79,11 @@
   --bs-highlight-bg: #fff3cd;
 }
 
+#systemStatus {
+  
+}
+
+
 .info-header {
   display: block;
   font-size: 14px; 
