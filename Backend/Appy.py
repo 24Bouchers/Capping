@@ -18,10 +18,9 @@ import sys
 app = Flask(__name__)
 try:
     conn = mariadb.connect(
-            host='Localhost',
-            port= 3306,
+            host='10.10.9.43',
             user='root',
-            password='ArchFiber23',
+            password='',
             
     )
 except mariadb.Error as e:
