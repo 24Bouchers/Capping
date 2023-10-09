@@ -89,22 +89,23 @@ def DELETE(MAC):
 ##########################
 
 #Add 10 Rows Test Data to the DB
-ADD("E4-CB-9E-F2-8A-B3","226.157.169.197", "::ffff:e29d:a9c5", "Static", "Up") #1
-ADD("D4-DD-66-FA-AC-D0","176.70.83.195", "::ffff:b046:53c3", "Static", "WIP") #2
+ADD("E4-CB-9E-F2-8A-B3","226.157.169.197", "::ffff:e29d:a9c5", "Static", "Temp") #1
+ADD("D4-DD-66-FA-AC-D0","176.70.83.195", "::ffff:b046:53c3", "Static", "") #2
 ADD("ED-A1-6D-DF-53-FC", "78.85.7.67", "::ffff:4e55:743", "Default", "") #3
 ADD("90-CC-66-F7-AD-C7", "230.42.103.155", "::ffff:e62a:679b", "Static", "") #4"
-ADD("4E-BB-99-8B-80-9A", "38.85.172.17", "::ffff:2655:ac11", "Default", "WIP") #5
-ADD("EB-A9-C8-AE-4B-A4", "112.35.95.27", "::ffff:7023:5f1b", "Default", "Up") #6
+ADD("4E-BB-99-8B-80-9A", "38.85.172.17", "::ffff:2655:ac11", "Default", "") #5
+ADD("EB-A9-C8-AE-4B-A4", "112.35.95.27", "::ffff:7023:5f1b", "Default", "") #6
 ADD("E0-A6-E6-63-E7-C5", "85.2.105.239", "::ffff:5502:69ef", "Static", "" ) #7
-ADD("FD-CF-D2-DD-BE-10", "62.105.227.15", "::ffff:3e69:e30f", "Static", "Down") #8
+ADD("FD-CF-D2-DD-BE-10", "62.105.227.15", "::ffff:3e69:e30f", "Static", "Test") #8
 ADD("FD-5A-DD-13-F7-30", "80.60.112.68", "::ffff:503c:7044", "Static", "WIP") #9
 ADD("DB-BB-9F-28-F3-9E", "198.136.19.231", "::ffff:c688:13e7", "Default", "") #10
 
 #Remove Row 10
-#DELETE("DB-BB-9F-28-F3-9E")
+DELETE("DB-BB-9F-28-F3-9E")
 
-
-#Run Flask
+#######
+#Flask#
+#######
 @app.route("/index")
 def index():
     return "Connected to database"
