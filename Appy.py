@@ -21,7 +21,6 @@ try:
         host='10.10.9.43',
         user='root',
         password='',
-
     )
 except mariadb.Error as e:
     print(f"Error connecting to MariaDB Platform: {e}")
@@ -33,7 +32,10 @@ cur = conn.cursor()
 ###################
 
 # For Current Testing Purposes I am Droping the Database on Start to Flush any errors out
-# Recreate the the Database ArcvhFiber
+# UNCOMMENT THIS IF YOU  WANT TO DELETE THE DB
+# cur.execute("DROP DATABASE ArchFiber")
+
+# Recreate the the Database ArchFiber
 cur.execute("CREATE DATABASE ArchFiber")
 # Select the ArchFiber Database so we can start making tables
 cur.execute("USE ArchFiber")
@@ -43,7 +45,7 @@ cur.execute("USE ArchFiber")
 #################
 
 # Create Data Table
-cur.execute("CREATE TABLE DATA (Customer VarChar(20), MAC CHAR(17), GROUP VARCHAR(7), IPV4 VARCHAR(15), IPv6(39), TAG TEXT)")
+cur.execute("CREATE TABLE DATA ( Customer VARCHAR(30), MAC CHAR(17), GROUP_NAME VARCHAR(1), IPV4 VARCHAR(15), IPV6 VARCHAR(39), TAG TEXT);")
 
 
 # Commented out Old Table Version. Cull or rewrite after netxt Gtel Meeting
@@ -100,28 +102,32 @@ def DELETE(MAC):
 
 
 def ADD(Customer, MAC, GROUP, IPv4, IPv6, Tag):
-    cur.execute("INSERT INTO DATA(Customer, MAC, GROUP, IPv4, IPv6, TAGS) VALUES ('" + Customer +
+    cur.execute("INSERT INTO DATA(Customer, MAC, GROUP_NAME, IPv4, IPv6, TAG) VALUES ('" + Customer +
                 "', '" + MAC + " ', '" + GROUP + "', '" + IPv4 + " ', '" + IPv6 + "', '" + Tag + "')  ;")
     conn.commit()
 
 
 def DELETE(MAC):
-    cur.execute("DELETE FROM RADIUSUSERGROUP WHERE Username= %s", (MAC,))
+    cur.execute("DELETE FROM DATA WHERE MAC= %s", (MAC,))
     conn.commit()
+
 
 ############################
 # DEMO/TEST DATA/FUNCTIONS #
 ############################
 
 
-ADD("Steve Boucher", "E4-CB-9E-F2-8A-B3",
-    "226.157.169.197", "::ffff:e29d:a9c5", "S", "Temp")
-ADD("Nick V", "D4-DD-66-FA-AC-D0", "176.70.83.195", "::ffff:b046:53c3", "D", "")
-ADD("Easton Eberwein", "ED-A1-6D-DF-53-FC", "78.85.7.67", "::ffff:4e55:743", "D", "")
-ADD("Liam Haggerty","90-CC-66-F7-AD-C7", "230.42.103.155",
-    "::ffff:e62a:679b", "S", "" )
-ADD("Archeops", "4E-BB-99-8B-80-9A", "38.85.172.17", "::ffff:2655:ac11", "D", "" )
-ADD("Christian", "EB-A9-C8-AE-4B-A4", "112.35.95.27", "::ffff:7023:5f1b", "D", "" )
+ADD("Steve Boucher", "E4-CB-9E-F2-8A-B3", "S",
+    "226.157.169.197", "::ffff:e29d:a9c5", "Temp")
+ADD("Nick V", "D4-DD-66-FA-AC-D0", "D", "176.70.83.195", "::ffff:b046:53c3", "")
+ADD("Easton Eberwein", "ED-A1-6D-DF-53-FC", "D",
+    "78.85.7.67", "::ffff:4e55:743", "")
+ADD("Liam Haggerty", "90-CC-66-F7-AD-C7", "S", "230.42.103.155",
+    "::ffff:e62a:679b", "")
+ADD("Archeops", "4E-BB-99-8B-80-9A", "S",
+    "38.85.172.17", "::ffff:2655:ac11", "")
+ADD("Christian", "EB-A9-C8-AE-4B-A4", "D",
+    "112.35.95.27", "::ffff:7023:5f1b", "")
 
 DELETE("4E-BB-99-8B-80-9A")
 
