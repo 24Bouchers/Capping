@@ -6,9 +6,9 @@ from flask import Flask
 import mariadb
 import sys
 
-####################
-# CONNECT TO MARIADB#
-####################
+######################
+# CONNECT TO MARIADB #
+######################
 
 # Attempt to connect with current credentials
 # currently set to localhost
@@ -28,21 +28,26 @@ except mariadb.Error as e:
     sys.exit(1)
 cur = conn.cursor()
 
-#################
-# CREATE DATABASE#
-#################
+###################
+# CREATE DATABASE #
+###################
 
 # For Current Testing Purposes I am Droping the Database on Start to Flush any errors out
-cur.execute("DROP DATABASE ArchFiber")
 # Recreate the the Database ArcvhFiber
 cur.execute("CREATE DATABASE ArchFiber")
 # Select the ArchFiber Database so we can start making tables
 cur.execute("USE ArchFiber")
 
-###############
-# CREATE TABLES#
-###############
+#################
+# CREATE TABLES #
+#################
 
+# Create Data Table
+cur.execute("CREATE TABLE DATA (Customer VarChar(20), MAC CHAR(17), GROUP VARCHAR(7), IPV4 VARCHAR(15), IPv6(39), TAG TEXT)")
+
+
+# Commented out Old Table Version. Cull or rewrite after netxt Gtel Meeting
+"""
 # User Table
 cur.execute("CREATE TABLE RADCHECK (Username CHAR(17) PRIMARY KEY)")
 # Group Table
@@ -51,24 +56,27 @@ cur.execute("CREATE TABLE RADREPLYGROUP (Attribute VARCHAR(7) PRIMARY KEY)")
 cur.execute("CREATE TABLE RADIUSUSERGROUP (Username CHAR(17), Attribute VARCHAR(7), FOREIGN KEY (Username) REFERENCES RADCHECK(Username), FOREIGN KEY (Attribute) REFERENCES RADREPLYGROUP(Attribute))")
 # Used Text data type for Tags (Subject to change depending on how long tags might be or if we want to limit it)
 cur.execute("CREATE TABLE RADREPLY ( Username CHAR(17) , IPv4 VARCHAR(15), IPv6 VARCHAR(39), Tags TEXT, FOREIGN KEY (Username) REFERENCES RADCHECK(Username))")
+"""
 
-######################
-# INSERT CONSTANT DATA#
-######################
+########################
+# INSERT CONSTANT DATA #
+########################
 
+# Commented out Old Table Version. Cull or Rewrite after netxt Gtel Meeting
+"""
 # Inserting the two Groups Into RADREPLYGROUPS (Default = Dynamic IP)
 cur.execute("INSERT INTO RADREPLYGROUP(Attribute) VALUES ('Default') ;")
 conn.commit()
 cur.execute("INSERT INTO RADREPLYGROUP(Attribute) VALUES ('Static') ; ")
 conn.commit()
+"""
+###############################
+# DATA MANIPULATION FUNCTIONS #
+###############################
 
-#############################
-# DATA MANIPULATION FUNCTIONS#
-#############################
-
+# Commented out Old Table Version. Cull or rewrite after netxt Gtel Meeting
 # Add IP Address
-
-
+"""
 def ADD(MAC, IPv4, IPv6, Group, Tags):
     cur.execute("INSERT INTO RADCHECK(Username) VALUES ('" + MAC + "') ;")
     conn.commit()
@@ -88,12 +96,37 @@ def DELETE(MAC):
     conn.commit()
     cur.execute("DELETE FROM RADCHECK WHERE Username = %s;", (MAC,))
     conn.commit()
-
-##########################
-# DEMO/TEST DATA/FUNCTIONS#
-##########################
+"""
 
 
+def ADD(Customer, MAC, GROUP, IPv4, IPv6, Tag):
+    cur.execute("INSERT INTO DATA(Customer, MAC, GROUP, IPv4, IPv6, TAGS) VALUES ('" + Customer +
+                "', '" + MAC + " ', '" + GROUP + "', '" + IPv4 + " ', '" + IPv6 + "', '" + Tag + "')  ;")
+    conn.commit()
+
+
+def DELETE(MAC):
+    cur.execute("DELETE FROM RADIUSUSERGROUP WHERE Username= %s", (MAC,))
+    conn.commit()
+
+############################
+# DEMO/TEST DATA/FUNCTIONS #
+############################
+
+
+ADD("Steve Boucher", "E4-CB-9E-F2-8A-B3",
+    "226.157.169.197", "::ffff:e29d:a9c5", "S", "Temp")
+ADD("Nick V", "D4-DD-66-FA-AC-D0", "176.70.83.195", "::ffff:b046:53c3", "D", "")
+ADD("Easton Eberwein", "ED-A1-6D-DF-53-FC", "78.85.7.67", "::ffff:4e55:743", "D", "")
+ADD("Liam Haggerty","90-CC-66-F7-AD-C7", "230.42.103.155",
+    "::ffff:e62a:679b", "S", "" )
+ADD("Archeops", "4E-BB-99-8B-80-9A", "38.85.172.17", "::ffff:2655:ac11", "D", "" )
+ADD("Christian", "EB-A9-C8-AE-4B-A4", "112.35.95.27", "::ffff:7023:5f1b", "D", "" )
+
+DELETE("4E-BB-99-8B-80-9A")
+
+# Commented out Old Table Version. Cull or rewrite after netxt Gtel Meeting
+"""
 # Add 10 Rows Test Data to the DB
 ADD("E4-CB-9E-F2-8A-B3", "226.157.169.197",
     "::ffff:e29d:a9c5", "Static", "Temp")  # 1
@@ -113,10 +146,10 @@ ADD("DB-BB-9F-28-F3-9E", "198.136.19.231",
 
 # Remove Row 10
 DELETE("DB-BB-9F-28-F3-9E")
-
-#######
-# Flask#
-#######
+"""
+#########
+# Flask #
+#########
 
 
 @app.route("/index")
