@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from flask import Flask, app, flash, redirect, render_template, request
 import mariadb
 
@@ -52,12 +53,31 @@ def devices():
 
     query = request.form.get('query') if request.method == 'POST' else None
 
+=======
+from flask import Flask, app, render_template, request
+import mariadb
+
+app = Flask(__name__)
+
+@app.route('/', methods=['GET', 'POST'])
+def display_data():
+    conn = mariadb.connect(host='10.10.9.43', user='root', password='', db='ArchFiber')
+    cursor = conn.cursor(mariadb.cursors.DictCursor)
+    
+    query = request.form.get('query') if request.method == 'POST' else None
+    
+>>>>>>> 4aedf9e (Steve b (#5))
     if query:
         # Query is searching from database based on name, mac address, ipv4 or ipv6 address
         # It is NOT case sensitive
         # Used Parameterized quieries to protect from SQL injections
+<<<<<<< HEAD
         cursor.execute('''SELECT * FROM customers 
                        WHERE name LIKE %s or mac_address LIKE %s or ipv4_address LIKE %s or ipv6_address LIKE %s;''',
+=======
+        cursor.execute('''SELECT * FROM Data 
+                       WHERE name LIKE %s or mac_address LIKE %s or ipv4_address LIKE %s or ipv6_address LIKE %s;''', 
+>>>>>>> 4aedf9e (Steve b (#5))
                        ('%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%'))
     else:
         cursor.execute('SELECT * FROM customers;')
@@ -66,8 +86,12 @@ def devices():
     cursor.close()
     conn.close()
 
+<<<<<<< HEAD
     return render_template('devices.html', rows=rows)
 
+=======
+    return render_template('table_display.html', rows=rows)
+>>>>>>> 4aedf9e (Steve b (#5))
 
 if __name__ == '__main__':
     app.run(debug=True)
