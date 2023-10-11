@@ -5,9 +5,9 @@ app = Flask(__name__)
 
 @app.route('/')
 def display_data():
-    conn = mariadb.connect(host='10.10.9.43', user='root', password='', db='ArchFiber')
+    conn = mariadb.connect(host='10.10.9.43', user='root', password='', db='customer_data')
     cursor = conn.cursor(mariadb.cursors.DictCursor)
-    cursor.execute('SELECT * FROM Data;')
+    cursor.execute('SELECT * FROM customers;')
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
