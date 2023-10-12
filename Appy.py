@@ -34,7 +34,7 @@ cur = conn.cursor()
 
 # For Current Testing Purposes I am Droping the Database on Start to Flush any errors out
 # Recreate the the Database ArcvhFiber
-cur.execute("CREATE DATABASE ArchFiber")
+#cur.execute("CREATE DATABASE ArchFiber")
 # Select the ArchFiber Database so we can start making tables
 cur.execute("USE ArchFiber")
 
@@ -43,7 +43,7 @@ cur.execute("USE ArchFiber")
 #################
 
 # Create Data Table
-cur.execute("CREATE TABLE DATA (Customer VarChar(20), MAC CHAR(17), GROUP VARCHAR(7), IPV4 VARCHAR(15), IPv6(39), TAG TEXT)")
+cur.execute("CREATE TABLE DATA (Customer VARCHAR(20), MAC CHAR(17), GROUP VARCHAR(7), IPV4 VARCHAR(15), IPv6 VARCHAR(39), TAG TEXT)")
 
 
 # Commented out Old Table Version. Cull or rewrite after netxt Gtel Meeting
@@ -108,6 +108,13 @@ def ADD(Customer, MAC, GROUP, IPv4, IPv6, Tag):
 def DELETE(MAC):
     cur.execute("DELETE FROM RADIUSUSERGROUP WHERE Username= %s", (MAC,))
     conn.commit()
+
+
+def UPDATE(Customer, MAC, GROUP, IPv4, IPv6, Tag):
+    cur.execute("UPDATE DATA SET Customer = '"+ Customer + "', MAC = '" + MAC + "', GROUP = '" + GROUP + 
+                "', IPv4 = '" + IPv4 + "', IPv6 = '" + IPv6 + "', TAGS = '" + Tag + "' WHERE MAC = '" + MAC + "';")
+    conn.commit()
+
 
 ############################
 # DEMO/TEST DATA/FUNCTIONS #

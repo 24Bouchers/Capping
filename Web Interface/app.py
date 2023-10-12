@@ -6,7 +6,7 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def display_data():
     conn = mariadb.connect(host='10.10.9.43', user='root', password='', db='ArchFiber')
-    cursor = conn.cursor(mariadb.cursors.DictCursor)
+    cursor = conn.cursor(dictionary = True)
     
     query = request.form.get('query') if request.method == 'POST' else None
     
