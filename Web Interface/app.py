@@ -14,7 +14,7 @@ def ping_ipv4():
     # Retrieve IP addresses from MariaDB
     conn = pymysql.connect(host='localhost', user='root', password='ArchFiber23', db='customer_data')
     cursor = conn.cursor()
-    cursor.execute('SELECT ipv4_address FROM radaact;')
+    cursor.execute('SELECT ipv4_address FROM radacct;')
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
