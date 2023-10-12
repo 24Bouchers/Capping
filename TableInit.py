@@ -36,10 +36,10 @@ cur = conn.cursor()
 
 #Drop Database for testing purposes 
 cur.execute("DROP DATABASE IF EXISTS ArchFiber")
-
+cur.execute("DROP DATABASE IF EXISTS customer_data")
 #Create and Select Database, Create Table
-cur.execute("CREATE DATABASE ArchFiber ; ")
-cur.execute("USE ArchFiber ;")
+cur.execute("CREATE DATABASE customer_data; ")
+cur.execute("USE customer_data;")
 ################
 # CREATE TABLE #
 ################
@@ -104,14 +104,25 @@ conn.commit()
 cur.execute("/*!40000 ALTER TABLE `radacct` ENABLE KEYS */;")
 cur.execute("UNLOCK TABLES;")
 
-#I'll Update Documentation on what each of these does tomorrow 
+# This statement is used to restore the MySQL session's time zone to the value it had before the script or tool made any changes. 
+# It sets the TIME_ZONE session variable back to its previous value.
 cur.execute("/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;")
+# It restores the SQL mode of the session to the value it had before any modifications. 
+# The SQL_MODE variable controls various aspects of MySQL's SQL behavior.
 cur.execute("/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;")
+# It sets the FOREIGN_KEY_CHECKS session variable back to its previous value. 
+# This variable controls whether foreign key constraints are checked when making changes to the database.
 cur.execute("/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;")
+# Similar to the previous statement, this restores the UNIQUE_CHECKS variable to its previous value, 
+# controlling how unique constraints are enforced.
 cur.execute("/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;")
+# Restores the character set used by the client connection to its previous setting. It affects how text data is sent and received.
 cur.execute("/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;")
+# This statement reverts the CHARACTER_SET_RESULTS variable, which specifies the character set in which query results are returned.
 cur.execute("/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;")
+# Restores the COLLATION_CONNECTION variable to its previous setting. It specifies the collation for the connection.
 cur.execute("/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;")
+# Restores the SQL_NOTES variable to its previous value. This variable controls the behavior of MySQL regarding comments in SQL statements.
 cur.execute("/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;")
 
 
