@@ -43,7 +43,7 @@ cur.execute("USE ArchFiber")
 #################
 
 # Create Data Table
-cur.execute("CREATE TABLE DATA (Customer VARCHAR(20), MAC CHAR(17), GROUP VARCHAR(7), IPV4 VARCHAR(15), IPv6 VARCHAR(39), TAG TEXT)")
+#cur.execute("CREATE TABLE DATA (Customer VARCHAR(20), MAC CHAR(17), USERGROUP VARCHAR(7), IPV4 VARCHAR(15), IPv6 VARCHAR(39), TAG TEXT)")
 
 
 # Commented out Old Table Version. Cull or rewrite after netxt Gtel Meeting
@@ -100,7 +100,7 @@ def DELETE(MAC):
 
 
 def ADD(Customer, MAC, GROUP, IPv4, IPv6, Tag):
-    cur.execute("INSERT INTO DATA(Customer, MAC, GROUP, IPv4, IPv6, TAGS) VALUES ('" + Customer +
+    cur.execute("INSERT INTO DATA(Customer, MAC, USERGROUP, IPv4, IPv6, TAGS) VALUES ('" + Customer +
                 "', '" + MAC + " ', '" + GROUP + "', '" + IPv4 + " ', '" + IPv6 + "', '" + Tag + "')  ;")
     conn.commit()
 
