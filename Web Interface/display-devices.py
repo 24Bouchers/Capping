@@ -7,7 +7,7 @@ app = Flask(__name__)
 def display_data():
     conn = pymysql.connect(host='localhost', user='root', password='ArchFiber23', db='customer_data')
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute('SELECT * FROM radacct;')
+    cursor.execute('SELECT  username, callingstationid, framedipaddress, framedipv6address FROM radacct;')
     rows = cursor.fetchall()
     cursor.close()
     conn.close()

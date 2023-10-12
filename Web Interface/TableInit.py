@@ -40,6 +40,7 @@ cur.execute("DROP DATABASE IF EXISTS customer_data")
 #Create and Select Database, Create Table
 cur.execute("CREATE DATABASE customer_data; ")
 cur.execute("USE customer_data;")
+
 ################
 # CREATE TABLE #
 ################
@@ -88,11 +89,6 @@ cur.execute("LOCK TABLES `radacct` WRITE;")
 cur.execute("/*!40000 ALTER TABLE `radacct` DISABLE KEYS */;")
 
 
-# OLD 
-# Create Data Table
-#cur.execute("CREATE TABLE DATA (Customer VarChar(20), MAC CHAR(17), GROUP VARCHAR(7), IPV4 VARCHAR(15), IPv6(39), TAG TEXT)")
-
-
 ########################
 # INSERT CONSTANT DATA #
 ########################
@@ -125,51 +121,9 @@ cur.execute("/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;")
 # Restores the SQL_NOTES variable to its previous value. This variable controls the behavior of MySQL regarding comments in SQL statements.
 cur.execute("/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;")
 
-
-###############################
-# DATA MANIPULATION FUNCTIONS #
-###############################
-
-
-#OLD Reference Functions
-'''
-def ADD(Customer, MAC, GROUP, IPv4, IPv6, Tag):
-    cur.execute("INSERT INTO DATA(Customer, MAC, GROUP, IPv4, IPv6, TAGS) VALUES ('" + Customer +
-                "', '" + MAC + " ', '" + GROUP + "', '" + IPv4 + " ', '" + IPv6 + "', '" + Tag + "')  ;")
-    conn.commit()
-
-
-def DELETE(MAC):
-    cur.execute("DELETE FROM RADIUSUSERGROUP WHERE Username= %s", (MAC,))
-    conn.commit()
-'''
-
-############################
-# DEMO/TEST DATA/FUNCTIONS #
-############################
-
-
-
-
-
-#OLD - Will Base future Stuff off this probably
-'''
-ADD("Steve Boucher", "E4-CB-9E-F2-8A-B3",
-    "226.157.169.197", "::ffff:e29d:a9c5", "S", "Temp")
-ADD("Nick V", "D4-DD-66-FA-AC-D0", "176.70.83.195", "::ffff:b046:53c3", "D", "")
-ADD("Easton Eberwein", "ED-A1-6D-DF-53-FC", "78.85.7.67", "::ffff:4e55:743", "D", "")
-ADD("Liam Haggerty","90-CC-66-F7-AD-C7", "230.42.103.155",
-    "::ffff:e62a:679b", "S", "" )
-ADD("Archeops", "4E-BB-99-8B-80-9A", "38.85.172.17", "::ffff:2655:ac11", "D", "" )
-ADD("Christian", "EB-A9-C8-AE-4B-A4", "112.35.95.27", "::ffff:7023:5f1b", "D", "" )
-
-DELETE("4E-BB-99-8B-80-9A")
-'''
-
 #########
 # Flask #
 #########
-
 
 @app.route("/index")
 def index():

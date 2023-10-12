@@ -14,7 +14,7 @@ def ping_ipv4():
     # Retrieve IP addresses from MariaDB
     conn = pymysql.connect(host='localhost', user='root', password='ArchFiber23', db='customer_data')
     cursor = conn.cursor()
-    cursor.execute('SELECT ipv4_address FROM radacct;')
+    cursor.execute('SELECT ipv4_address FROM radaact;')
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
@@ -39,17 +39,17 @@ def ping_ipv4():
 def addDevice():
     if request.method == 'POST':
         # Get data from the form
-        name = request.form['customer']
+        name = request.form['radaact']
         mac_address = request.form['mac_address']
         ipv4_address = request.form['ipv4_address']
         ipv6_address = request.form['ipv6_address']
 
         # Connect to MariaDB
-        conn = pymysql.connect(host='localhost', user='root', password='ArchFiber23', db='radacct')
+        conn = pymysql.connect(host='localhost', user='root', password='ArchFiber23', db='customer_data')
         cursor = conn.cursor()
 
         # Insert the device data into the database
-        sql = '''INSERT INTO customers (name, mac_address, ipv4_address, ipv6_address) 
+        sql = '''INSERT INTO radaact (name, mac_address, ipv4_address, ipv6_address) 
                  VALUES (%s, %s, %s, %s)'''
         cursor.execute(sql, (name, mac_address, ipv4_address, ipv6_address))
         conn.commit()
@@ -64,7 +64,7 @@ def addDevice():
 
 @app.route('/devices.html', methods=['GET', 'POST'])
 def devices():
-    conn = pymysql.connect(host='localhost', user='root', password='ArchFiber23', db='radacct')
+    conn = pymysql.connect(host='localhost', user='root', password='ArchFiber23', db='customer_data')
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     
     query = request.form.get('query') if request.method == 'POST' else None
@@ -73,11 +73,11 @@ def devices():
         # Query is searching from database based on name, mac address, ipv4 or ipv6 address
         # It is NOT case sensitive
         # Used Parameterized quieries to protect from SQL injections
-        cursor.execute('''SELECT * FROM customers 
+        cursor.execute('''SELECT * FROM radaact 
                        WHERE name LIKE %s or mac_address LIKE %s or ipv4_address LIKE %s or ipv6_address LIKE %s;''', 
                        ('%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%'))
     else:
-        cursor.execute('SELECT * FROM customers;')
+        cursor.execute('SELECT * FROM radaact;')
 
     rows = cursor.fetchall()
     cursor.close()
