@@ -39,7 +39,7 @@ def ping_ipv4():
 def addDevice():
     if request.method == 'POST':
         # Get data from the form
-        name = request.form['radaact']
+        name = request.form['radacct']
         mac_address = request.form['mac_address']
         ipv4_address = request.form['ipv4_address']
         ipv6_address = request.form['ipv6_address']
@@ -49,7 +49,7 @@ def addDevice():
         cursor = conn.cursor()
 
         # Insert the device data into the database
-        sql = '''INSERT INTO radaact (name, mac_address, ipv4_address, ipv6_address) 
+        sql = '''INSERT INTO radacct (name, mac_address, ipv4_address, ipv6_address) 
                  VALUES (%s, %s, %s, %s)'''
         cursor.execute(sql, (name, mac_address, ipv4_address, ipv6_address))
         conn.commit()
@@ -73,11 +73,11 @@ def devices():
         # Query is searching from database based on name, mac address, ipv4 or ipv6 address
         # It is NOT case sensitive
         # Used Parameterized quieries to protect from SQL injections
-        cursor.execute('''SELECT * FROM radaact 
+        cursor.execute('''SELECT * FROM radacct 
                        WHERE name LIKE %s or mac_address LIKE %s or ipv4_address LIKE %s or ipv6_address LIKE %s;''', 
                        ('%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%'))
     else:
-        cursor.execute('SELECT * FROM radaact;')
+        cursor.execute('SELECT * FROM radacct;')
 
     rows = cursor.fetchall()
     cursor.close()
