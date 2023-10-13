@@ -136,9 +136,9 @@
                                     <thead>
                                         <tr>
                                             <th>Customer</th>
-                                            <th>MAC Address</th>
+                                            <th style="padding: 5px 10px;">MAC Address</th>
                                             <th>IPv4</th>
-                                            <th>IPv6</th>
+                                            <th style="padding: 5px 10px;">IPv6</th>
                                             <!-- <th>Status</th> -->
                                         </tr>
                                     </thead>
@@ -146,9 +146,9 @@
                                         {% for row in rows %}
                                         <tr>
                                             <td>{{ row['username'] }}</td>
-                                            <td>{{ row['mac'] }}</td>
+                                            <td style="padding: 2px 12px;">{{ row['callingstationid'] }}</td>
                                             <td>{{ row['framedipaddress'] }}</td>
-                                            <td>{{ row['framedipv6address'] }}</td>
+                                            <td style="padding: 2px 12px;">{{ row['framedipv6prefix'] }}</td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>
