@@ -7,6 +7,9 @@ app.secret_key = 'ArchFiber23'
 
 @app.route('/')
 @app.route('/index.html')
+@app.route('/logs.html')
+@app.route('/users.html')
+
 def main():
     return render_template('index.html')
 
@@ -64,7 +67,7 @@ def addDevice():
 
 @app.route('/devices.html', methods=['GET', 'POST'])
 def devices():
-    conn = pymysql.connect(host='localhost', user='root', password='ArchFiber23', db='customer_data')
+    conn = pymysql.connect(host='localhost', user='root', password='Que98214', db='customer_data')
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     
     query = request.form.get('query') if request.method == 'POST' else None
@@ -73,11 +76,11 @@ def devices():
         # Query is searching from database based on name, mac address, ipv4 or ipv6 address
         # It is NOT case sensitive
         # Used Parameterized quieries to protect from SQL injections
-        cursor.execute('''SELECT * FROM radaact 
+        cursor.execute('''SELECT * FROM radacct 
                        WHERE name LIKE %s or mac_address LIKE %s or ipv4_address LIKE %s or ipv6_address LIKE %s;''', 
                        ('%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%'))
     else:
-        cursor.execute('SELECT * FROM radaact;')
+        cursor.execute('SELECT * FROM radacct;')
 
     rows = cursor.fetchall()
     cursor.close()
