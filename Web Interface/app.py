@@ -40,9 +40,9 @@ def addDevice():
     if request.method == 'POST':
         # Get data from the form
         name = request.form['radacct']
-        mac_address = request.form['mac_address']
-        ipv4_address = request.form['ipv4_address']
-        ipv6_address = request.form['ipv6_address']
+        mac_address = request.form['callingstationid']
+        ipv4_address = request.form['framedipaddress']
+        ipv6_address = request.form['framedipv6address']
 
         # Connect to MariaDB
         conn = pymysql.connect(host='localhost', user='root', password='ArchFiber23', db='customer_data')
@@ -74,7 +74,7 @@ def devices():
         # It is NOT case sensitive
         # Used Parameterized quieries to protect from SQL injections
         cursor.execute('''SELECT * FROM radacct 
-                       WHERE name LIKE %s or mac_address LIKE %s or ipv4_address LIKE %s or ipv6_address LIKE %s;''', 
+                       WHERE name LIKE %s or callingstationid LIKE %s or framedipaddress LIKE %s or framedipv6address LIKE %s;''', 
                        ('%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%'))
     else:
         cursor.execute('SELECT * FROM radacct;')
