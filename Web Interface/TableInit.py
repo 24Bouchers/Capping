@@ -20,10 +20,10 @@ import sys
 app = Flask(__name__)
 try:
     conn = pymysql.connect(
-        host='localhost',
+        host='10.10.9.43',
         user='root',
-        password='ArchFiber23',
-
+        password='',
+        database='customer_data'
     )
 except pymysql.Error as e:
     print(f"Error connecting to MariaDB Platform: {e}")

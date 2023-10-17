@@ -59,23 +59,6 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Users
                             </a>
-                            <!-- <div class="sb-sidenav-menu-heading">Interface</div>
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
-                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                                Layouts
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="layout-static.html">Static Navigation</a>
-                                    <a class="nav-link" href="layout-sidenav-light.html">Light Sidenav</a>
-                                </nav>
-                            </div>
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
-                                <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                                Pages
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a> -->
                             <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
                                     <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
@@ -126,20 +109,23 @@
                         <form action="addDevice.html">
                             <button class="small-button" type="submit">Add Device</button>
                         </form>
+                        <form action="/" method="post">
+                            <input type="text" name="query" placeholder="Search...">
+                            <input type="submit" value="Search">
+                        </form>
                         <div class="card mb-4">
                             <div class="card-header">
                                 <i class="fas fa-table me-1"></i>
                                 Devices
                             </div>
                             <div class="card-body">
-                                <table id="datatablesSimple">
+                                <table style="width:100%", id="datatablesSimple">
                                     <thead>
                                         <tr>
-                                            <th>Customer</th>
+                                            <th>Customer Name</th>
                                             <th>MAC Address</th>
-                                            <th>IPv4</th>
-                                            <th>IPv6</th>
-                                            <!-- <th>Status</th> -->
+                                            <th>IPv4 Address</th>
+                                            <th>IPv6 Address</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -152,7 +138,7 @@
                                         </tr>
                                         {% endfor %}
                                     </tbody>
-                                </table>
+                                </table>                                
                             </div>
                         </div>
                     </div>
@@ -180,3 +166,24 @@
         <script src="js/datatables-simple-demo.js"></script>
     </body>
 </html>
+
+
+<!-- <table border="1">
+    <thead>
+        <tr>
+            Assuming your table has columns 'column1', 'column2'. Adjust as needed
+            <th>Column1</th>
+            <th>Column2</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+        <tr>
+            <td>{{ row['name'] }}</td>
+            <td>{{ row['mac_address'] }}</td>
+            <td>{{ row['ipv4_address'] }}</td>
+            <td>{{ row['ipv6_address'] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table> -->
