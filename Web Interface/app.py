@@ -12,6 +12,7 @@ def main():
 @app.route('/addDevice.html', methods=['GET', 'POST'])
 def addDevice():
     if request.method == 'POST':
+      
         # Get data from the form with default values
         name = request.form.get('name', default=None)
         mac_address = request.form.get('mac_address', default=None)
@@ -23,6 +24,7 @@ def addDevice():
         cursor = conn.cursor()
 
         # Insert the device data into the database
+ 
         sql = '''INSERT INTO radacct (username, callingstationid, framedipaddress, framedipv6address) 
                  VALUES (%s, %s, %s, %s)'''
         cursor.execute(sql, (name, mac_address, ipv4_address, ipv6_address))
@@ -61,4 +63,3 @@ def devices():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
