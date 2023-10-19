@@ -14,10 +14,10 @@ def addDevice():
     if request.method == 'POST':
       
         # Get data from the form with default values
-        name = request.form.get('name', default=None)
-        mac_address = request.form.get('mac_address', default=None)
-        ipv4_address = request.form.get('ipv4_address', default=None)
-        ipv6_address = request.form.get('ipv6_address', default=None)
+        name = request.form.get('username', default=None)
+        mac_address = request.form.get('callingstationid', default=None)
+        ipv4_address = request.form.get('framedipaddress', default=None)
+        ipv6_address = request.form.get('framedipv6address', default=None)
 
         # Connect to MariaDB
         conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='customer_data')
