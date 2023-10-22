@@ -2,16 +2,28 @@ import subprocess
 from flask import Flask, app, flash, redirect, render_template, request
 import pymysql
 
+
 app = Flask(__name__)
 app.secret_key = 'ArchFiber23'
 
 @app.route('/')
 @app.route('/index.html')
-@app.route('/logs.html')
-@app.route('/users.html')
-
 def main():
-    return render_template('index.html')
+    # the bottom labels of the line graph
+    labels = [
+        "2000",
+        "2001",
+        "2002",
+        "2003",
+        "2004",
+        "2005",
+        "2006",
+        "2007",    
+    ]
+    # the value that each data point represents
+    values = [100,200,300,400,502,557,604,700]
+
+    return render_template('index.html', labels=labels, values=values)
 
 def ping_ipv4():
     # Retrieve IP addresses from MariaDB
@@ -37,6 +49,13 @@ def ping_ipv4():
     
     # 3. Display results
     return render_template('index.html', successful_pings=successful_pings, failed_pings=failed_pings)
+
+@app.route('/logs.html')
+def logs():
+    return render_template("../logs.html")
+@app.route('/users.html')
+def users():
+    return render_template('users.html')
 
 @app.route('/addDevice.html', methods=['GET', 'POST'])
 def addDevice():
@@ -87,6 +106,8 @@ def devices():
     conn.close()
 
     return render_template('devices.html', rows=rows)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
