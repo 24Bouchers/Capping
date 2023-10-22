@@ -6,8 +6,6 @@ from flask import Flask
 import pymysql
 import sys
 
-#Swapped to pymysql for import consistancy 
-
 ######################
 # CONNECT TO MARIADB #
 ######################
@@ -18,18 +16,31 @@ import sys
 # This could be easy access for credentials of who can manipulate the DB
 
 app = Flask(__name__)
-try:
-    conn = pymysql.connect(
-        host='10.10.9.43',
-        user='root',
-        password='',
-        database='customer_data'
-    )
-except pymysql.Error as e:
-    print(f"Error connecting to MariaDB Platform: {e}")
-    sys.exit(1)
+#Toggle to run locally or on the vm
+LOCAL = True
+if(LOCAL):
+    try:
+        conn = pymysql.connect(
+            host='localhost',
+            user='root',
+            password='ArchFiber23',
+            database='customer_data'
+        )
+    except pymysql.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+        sys.exit(1)
+else:
+    try:
+        conn = pymysql.connect(
+            host='10.10.9.43',
+            user='root',
+            password='',
+            database='customer_data'
+        )
+    except pymysql.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+        sys.exit(1)
 cur = conn.cursor()
-
 ###################
 # CREATE DATABASE #
 ###################
@@ -84,9 +95,9 @@ cur.execute("/*!40101 SET character_set_client = utf8 */;")
 
 #Create Table radacct. Check Raddact.png for an easy display of information
 
-#####################
+
 # IMPORTANT NUMBERS #
-#####################
+
 # nasportid (Port ID),
 # acctstarttime (for uptime calculation)
 # acctupdatetime (Date/Time in device table)
@@ -137,6 +148,64 @@ cur.execute("/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;")
 # Restores the SQL_NOTES variable to its previous value. This variable controls the behavior of MySQL regarding comments in SQL statements.
 cur.execute("/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;")
 
+
+##############
+# Logs Table #
+##############
+
+#Drop Table if it 't exists (Quell In Stable Versions)
+cur.execute("DROP TABLE IF EXISTS `logs`;")
+
+# Preserving the value of character_set_client in the variable @saved_cs_client
+# in a way that is compatible with MySQL 4.01.01 and later.
+cur.execute("/*!40101 SET @saved_cs_client     = @@character_set_client */;")
+# Sets the MySQL session variable character_set_client to use the UTF-8 character set.
+cur.execute("/*!40101 SET character_set_client = utf8 */;")
+
+#Create The table
+#Time = date/time #Username = Varchar 64, framedIp = VARCHAR 15 reason = VARCHAR 64
+cur.execute("CREATE TABLE `logs` (`Time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `username` VARCHAR(64) NOT NULL DEFAULT '', `framedipaddress` VARCHAR(15) NOT NULL DEFAULT '', `reason` VARCHAR(64) NOT NULL DEFAULT '');")
+cur.execute("LOCK TABLES `logs` WRITE;")
+cur.execute("/*!40000 ALTER TABLE `logs` DISABLE KEYS */;")
+
+
+#Insert
+cur.execute("INSERT INTO `logs` VALUES (NOW(), 'The Eagle', '123.123.123.123', 'adding data');")
+conn.commit()
+
+# Enabling keys. Enabling keys means rebuilding or activating indexes on the table, which can improve query performance.
+cur.execute("/*!40000 ALTER TABLE `logs` ENABLE KEYS */;")
+cur.execute("UNLOCK TABLES;")
+
+##############
+# Logs Table #
+##############
+
+#Drop Table if it 't exists (Quell In Stable Versions)
+cur.execute("DROP TABLE IF EXISTS `logs`;")
+
+# Preserving the value of character_set_client in the variable @saved_cs_client
+# in a way that is compatible with MySQL 4.01.01 and later.
+cur.execute("/*!40101 SET @saved_cs_client     = @@character_set_client */;")
+# Sets the MySQL session variable character_set_client to use the UTF-8 character set.
+cur.execute("/*!40101 SET character_set_client = utf8 */;")
+
+#Create The table
+#Time = date/time #Username = Varchar 64, framedIp = VARCHAR 15 reason = VARCHAR 64
+cur.execute("CREATE TABLE `logs` (`Time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `username` VARCHAR(64) NOT NULL DEFAULT '', `framedipaddress` VARCHAR(15) NOT NULL DEFAULT '', `reason` VARCHAR(64) NOT NULL DEFAULT '');")
+cur.execute("LOCK TABLES `logs` WRITE;")
+cur.execute("/*!40000 ALTER TABLE `logs` DISABLE KEYS */;")
+
+
+#Insert
+cur.execute("INSERT INTO `logs` VALUES (NOW(), 'The Eagle', '123.123.123.123', 'adding data');")
+conn.commit()
+
+# Enabling keys. Enabling keys means rebuilding or activating indexes on the table, which can improve query performance.
+cur.execute("/*!40000 ALTER TABLE `logs` ENABLE KEYS */;")
+cur.execute("UNLOCK TABLES;")
+
+
 #########
 # Flask #
 #########
@@ -148,3 +217,21 @@ def index():
 
 if __name__ == "__main__":
     app.run()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
