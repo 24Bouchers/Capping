@@ -10,6 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="../static/css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" ></script>
 </head>
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -168,7 +169,27 @@
                                             <i class="fas fa-chart-area me-1"></i>
                                             Requests
                                         </div>
-                                        <div class="card-body"><canvas id="myAreaChart" width="100%" height="40"></canvas></div>
+                                        <div class="card-body"><canvas id="myAreaChart" width="100%" height="40"></canvas>
+                                            <!-- Will have to see about changing where this script is -->
+                                        <script>
+                                            var ctx = document.getElementById("myAreaChart").getContext("2d");
+                                            var lineChart = new Chart(document.getElementById('myAreaChart'),{
+                                            type: "line",
+                                            data: {
+                                                labels: {{ labels | tojson }},
+                                                datasets: [{
+                                                        label: "Data Points",
+                                                        data: {{ values | tojson }},
+                                                        fill: false,
+                                                        lineTention: 0.5
+                                                    }
+                                                ]
+                                            },
+                                            options: {
+                                                response: false
+                                            }
+                                        });
+                                        </script></div>
                                     </div>
                                 </div>
                                 <!--
