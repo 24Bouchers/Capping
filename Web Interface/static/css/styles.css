@@ -11290,6 +11290,19 @@ body {
   transition: background-color 0.3s;
 }
 
+.device-button {
+  padding: 12px 25px;
+  margin-bottom: 20px;
+  font-size: 18px;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  background-color: rgb(241, 91, 64);
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
 .small-button:hover {
   background-color: rgb(198, 73, 51);
 }
