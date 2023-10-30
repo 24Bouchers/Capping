@@ -14,7 +14,9 @@
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
-            <a class="navbar-brand ps-3" href="index.html">Archtop Fiber</a>
+            <a class="navbar-brand ps-3" href="index.html">
+                <img src="../assets/img/archtop_logo.png" alt="Archtop Fiber Logo" width="60" height="60">
+            </a>
             <!-- Sidebar Toggle-->
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
             <!-- Navbar Search-->
@@ -111,17 +113,17 @@
                             <link rel="stylesheet" href="static/css/styles.css">
                         </head>
                         <form action="addDevice.html">
-                            <button class="small-button" type="submit">Add Device</button>
-                        </form>
-                        <form action="/devices.html" method="post">
-                            <input type="text" name="query" placeholder="Search...">
-                            <input type="submit" value="Search">
+                            <button class="device-button" type="submit">Add Device</button>
                         </form>
                         <div class="card mb-4">
                             <div class="card-header">
                                 <i class="fas fa-table me-1"></i>
                                 Devices
                             </div>
+                            <form action="/devices.html" method="post">
+                                <input type="text" name="query" placeholder="Search..." style="margin-left: 15px; margin-top: 15px;">
+                                <input type="submit" value="Search">
+                            </form>
                             <div class="card-body">
                                 <table style="width:100%", id="datatablesSimple">
                                     <thead>
@@ -130,6 +132,7 @@
                                             <th>MAC Address</th>
                                             <th>IPv4 Address</th>
                                             <th>IPv6 Address</th>
+                                            <th>Edit/Remove</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -139,6 +142,12 @@
                                             <td>{{ row['callingstationid'] }}</td>
                                             <td>{{ row['framedipaddress'] }}</td>
                                             <td>{{ row['framedipv6address'] }}</td>
+                                            <td>
+                                                <form action="/removeDevice" method="post" onsubmit="return confirm('Are you sure you want to remove this device?')" style="display: inline-block;">
+                                                    <input type="hidden" name="mac" value="{{ row['callingstationid'] }}">
+                                                    <input type="submit" value="Remove">
+                                                </form>
+                                            </td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>
