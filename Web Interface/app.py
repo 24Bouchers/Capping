@@ -52,6 +52,27 @@ def addDevice():
 
     return render_template('addDevice.html')
 
+@app.route("/removeDevice", methods=["POST"])
+def remove_device():
+    mac = request.form.get("mac")
+    
+    # Connect to the customer_data database
+    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='customer_data')
+    cursor = conn.cursor()
+    
+    # SQL query to delete the device entry based on the MAC address
+    query = "DELETE FROM radacct WHERE callingstationid = %s"  # Assuming 'callingstationid' stores the MAC addresses
+    try:
+        cursor.execute(query, (mac,))
+        conn.commit()
+    except Exception as e:
+        print(f"Error while removing device: {e}")
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect('/devices.html')
+
 @app.route('/devices.html', methods=['GET', 'POST'])
 def devices():
     conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='customer_data')
