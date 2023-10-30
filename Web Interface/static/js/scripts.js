@@ -24,3 +24,23 @@ window.addEventListener('DOMContentLoaded', event => {
     }
 
 });
+
+// retrieves the last part of the current URL (index.html, devices.html, ...)
+document.addEventListener("DOMContentLoaded", function() {
+    var currentPage = window.location.pathname.split('/').pop();
+    var links = document.querySelectorAll('.nav-link');
+
+    links.forEach(function(link) {
+        // check if the current page is addDevice.html and the link's href is devices.html
+        // if on addDevice.html, still have "devices" highlighted in sidebar
+        if (currentPage === 'addDevice.html' && link.getAttribute('href') === 'devices.html') {
+            link.classList.add('active');
+        } else if (link.getAttribute('href') === currentPage) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+});
+
+
