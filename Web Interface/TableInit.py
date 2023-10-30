@@ -17,7 +17,7 @@ import sys
 
 app = Flask(__name__)
 #Toggle to run locally or on the vm
-LOCAL = False
+LOCAL = True
 if(LOCAL):
     try:
         conn = pymysql.connect(
@@ -48,7 +48,6 @@ cur = conn.cursor()
 
 #Drop Database for testing purposes 
 cur.execute("DROP DATABASE IF EXISTS customer_data")
-#Create and Select Database, Create Table
 cur.execute("CREATE DATABASE customer_data; ")
 cur.execute("USE customer_data;")
 
@@ -90,6 +89,7 @@ cur.execute("/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_Z
 cur.execute("/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;")
 
 #Drop radacct and logs for demo and test purposes (REMOVE LATER)
+cur.execute("UNLOCK TABLES ;")
 cur.execute("DROP TABLE IF EXISTS `radacct`;")
 cur.execute("DROP TABLE IF EXISTS `logs`;")
 
@@ -169,38 +169,39 @@ cur.execute("/*!40000 ALTER TABLE `radacct` DISABLE KEYS */;")
 ##############
 
 #Drop Table if it 't exists (Quell In Stable Versions)
+cur.execute("UNLOCK TABLES")
 cur.execute("DROP TABLE IF EXISTS `logs`;")
 
 # Preserving the value of character_set_client in the variable @saved_cs_client
 # in a way that is compatible with MySQL 4.01.01 and later.
-cur.execute("/*!40101 SET @saved_cs_client     = @@character_set_client */;")
+#cur.execute("/*!40101 SET @saved_cs_client     = @@character_set_client */;")
 # Sets the MySQL session variable character_set_client to use the UTF-8 character set.
-cur.execute("/*!40101 SET character_set_client = utf8 */;")
+#cur.execute("/*!40101 SET character_set_client = utf8 */;")
 
 #Create The table
 #Time = date/time #Username = Varchar 64, framedIp = VARCHAR 15 reason = VARCHAR 64
 
-cur.execute('''CREATE TABLE `logs` 
-(`Time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `username` VARCHAR(64) NOT NULL DEFAULT '',
-`framedipaddress` VARCHAR(15) NOT NULL DEFAULT '', `reason` VARCHAR(64) NOT NULL DEFAULT '');''')
+#cur.execute('''CREATE TABLE `logs` 
+#(`Time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `username` VARCHAR(64) NOT NULL DEFAULT '',
+#`framedipaddress` VARCHAR(15) NOT NULL DEFAULT '', `reason` VARCHAR(64) NOT NULL DEFAULT '');''')
 
 #This statement is acquiring a write lock on the logs table.
 # it means that other sessions or connections won't be able to write to the table while the lock is held. 
 # The lock remains in place until it is explicitly released or the current session ends.
-cur.execute("LOCK TABLES `logs` WRITE;")
-cur.execute("/*!40000 ALTER TABLE `logs` DISABLE KEYS */;")
+#cur.execute("LOCK TABLES `logs` WRITE;")
+#cur.execute("/*!40000 ALTER TABLE `logs` DISABLE KEYS */;")
 
 # Enabling keys. Enabling keys means rebuilding or activating indexes on the table, which can improve query performance.
-cur.execute("/*!40000 ALTER TABLE `logs` ENABLE KEYS */;")
-cur.execute("UNLOCK TABLES;")
+#cur.execute("/*!40000 ALTER TABLE `logs` ENABLE KEYS */;")
+#cur.execute("UNLOCK TABLES;")
 
 ########################
 # INSERT CONSTANT DATA #
 ########################
 
 #Insert
-cur.execute("INSERT INTO `logs` VALUES (NOW(), 'The Eagle', '123.123.123.123', 'adding data');")
-conn.commit()
+#cur.execute("INSERT INTO `logs` VALUES (NOW(), 'The Eagle', '123.123.123.123', 'adding data');")
+#conn.commit()
 
 cur.execute('''INSERT INTO `radacct` VALUES 
 (1,'000000000000-0021000000-0006000000-003E6F2565','43920d1a27c58bc035fe0f9e75d17bb5','=25=7BUser-Name=7D=25','',
@@ -304,10 +305,6 @@ NULL,'','','',342,1008,'','A0-CE-C8-A5-74-97','','','','204.11.161.15','','','',
 
 conn.commit()
 
-#Log
-cur.execute("INSERT INTO `logs` VALUES (NOW(), 'The Eagle', '123.123.123.123', 'adding data');")
-conn.commit()
-
 
 ##################
 # INSERT CLEANUP #
@@ -315,7 +312,7 @@ conn.commit()
 
 # Enabling keys. Enabling keys means rebuilding or activating indexes on the table, which can improve query performance. 
 cur.execute("/*!40000 ALTER TABLE `radacct` ENABLE KEYS */;")
-cur.execute("/*!40000 ALTER TABLE `logs` ENABLE KEYS */;")
+#cur.execute("/*!40000 ALTER TABLE `logs` ENABLE KEYS */;")
 cur.execute("UNLOCK TABLES;")
 
 # This statement is used to restore the MySQL session's time zone to the value it had before the script or tool made any changes. 
