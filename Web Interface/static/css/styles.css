@@ -85,6 +85,13 @@
 }
 */
 
+.form-control {
+  text-align: left !important;
+}
+
+.nav-link.active {
+  background-color: rgb(241, 91, 64);
+}
 
 .info-header {
   display: block;
