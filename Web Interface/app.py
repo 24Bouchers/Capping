@@ -8,7 +8,7 @@ app.secret_key = 'ArchFiber23'
 @app.route('/')
 @app.route('/index.html', methods=['GET'])
 def main():
-    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='customer_data')
+    conn = pymysql.connect(host='localhost', user='root', password='Que98214', db='customer_data')
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     
     query = request.form.get('query') if request.method == 'POST' else None
@@ -28,7 +28,7 @@ def main():
     cursor.close()
     conn.close()
 
-    todayDate = date.now()
+    todayDate = date.today()
     currentTime = datetime.now().strftime("%H:%M:%S")
     yesterdayDate = todayDate - timedelta(days = 1)
     todayDate = str(todayDate)
@@ -38,6 +38,7 @@ def main():
     # convert current time into minutes
     currentTimeSplit = str(currentTime).split(':')
     currentTimeMin = int(currentTimeSplit[1]) + (int(currentTimeSplit[0])*60)
+    print(currentTimeMin)
     # list that will store the 15 minute interval numbers
     # going to be every 15 min for 6 hours
     intervals = [0] * 24
@@ -47,6 +48,7 @@ def main():
         splitDateTime = str(x.get('acctstarttime')).split() # separates date and time into 2 separate list elements
         splitTime = str(splitDateTime[1]).split(':')
         totalTimeMin = int(splitTime[1]) + (int(splitTime[0])*60)
+        print(totalTimeMin, splitDateTime[0])
         # check if at least 6 hours have passed since start of day 
         if currentTimeMin >= 360:
             # makes sure the dates match
@@ -54,7 +56,7 @@ def main():
             #  SWITCH todayDate WITH tempDate SO IT FUNCTIONS WITH OUR DATA
             #  DELETE tempDate AND THIS MESSAGE BEFORE DELIVERY OF FINAL APPLICATION
             #-------------------------------------------------------------------------
-            if splitDateTime[0] == tempDate:
+            if splitDateTime[0] == todayDate:
                     # first finds out how many 15 minute intervals passed
                     diff = int(currentTimeMin/15) - int(totalTimeMin/15)
                     if diff <= len(intervals) and diff > -1:
@@ -75,30 +77,12 @@ def main():
     print(intervals)
     # the bottom labels of the line graph representing 15 minute increments
     labels = [
-        "now - 15 min",
-        "15 - 30 min",
-        "30 - 45 min",
-        "45 min - 1 hour ",
-        "1 hour - 1:15 min",
-        "15 - 30 min",
-        "30 - 45 min",
-        "45 - 2 hours",
-        "2 hours - 15 min",
-        "15 - 30 min",
-        "30 - 45 min",
-        "45 min - 3 hours",
-        "3 hours - 15 min",
-        "15 - 30 min",
-        "30 - 45 min",
-        "45 min - 4 hours",
-        "4 hours - 15 min",
-        "15 - 30 min",
-        "30 - 45 min",
-        "45 min - 5 hours",
-        "5 hours - 15 min",
-        "15 - 30 min",
-        "30 - 45 min",
-        "45 min - 6 hours"
+        "now - 15 min", "15 - 30 min", "30 - 45 min", "45 min - 1 hour ",
+        "1 hour - 1:15 min", "15 - 30 min", "30 - 45 min", "45 - 2 hours",
+        "2 hours - 15 min", "15 - 30 min"  ,"30 - 45 min", "45 min - 3 hours",
+        "3 hours - 15 min", "15 - 30 min", "30 - 45 min", "45 min - 4 hours",
+        "4 hours - 15 min", "15 - 30 min", "30 - 45 min", "45 min - 5 hours",
+        "5 hours - 15 min", "15 - 30 min", "30 - 45 min", "45 min - 6 hours"
     ]
     
     return render_template('index.html', labels=labels, values=intervals)
