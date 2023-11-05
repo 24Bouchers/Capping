@@ -8,7 +8,8 @@ app.secret_key = 'ArchFiber23'
 @app.route('/')
 @app.route('/index.html', methods=['GET'])
 def main():
-    conn = pymysql.connect(host='localhost', user='root', password='Que98214', db='customer_data')
+
+    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='customer_data')
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     
     query = request.form.get('query') if request.method == 'POST' else None
@@ -41,7 +42,6 @@ def main():
     # THIS IS A TEST VARIABLE!!
     # DELETE BEFORE PUSH TO FULL PRODUCTION
     currentTimeMin = 60
-    print(currentTimeMin)
     # list that will store the 15 minute interval numbers
     # going to be every 15 min for 6 hours
     intervals = [0] * 24
@@ -77,7 +77,6 @@ def main():
                             intervals[diff] += 1
 
 
-    print(intervals)
     # the bottom labels of the line graph representing 15 minute increments
     labels = [
         "now - 15 min", "15 - 30 min", "30 - 45 min", "45 min - 1 hour ",
@@ -89,6 +88,22 @@ def main():
     ]
     
     return render_template('index.html', labels=labels, values=intervals)
+    # the bottom labels of the line graph
+    labels = [
+        "2000",
+        "2001",
+        "2002",
+        "2003",
+        "2004",
+        "2005",
+        "2006",
+        "2007",    
+    ]
+    # the value that each data point represents
+    values = [100,200,300,400,502,557,604,700]
+
+    return render_template('index.html', labels=labels, values=values)
+
 
 @app.route('/addDevice.html', methods=['GET', 'POST'])
 def addDevice():
