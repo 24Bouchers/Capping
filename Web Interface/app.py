@@ -9,7 +9,7 @@ app.secret_key = 'ArchFiber23'
 @app.route('/index.html', methods=['GET'])
 def main():
 
-    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='customer_data')
+    conn = pymysql.connect(host='localhost', user='root', password='Que98214', db='customer_data')
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     
     query = request.form.get('query') if request.method == 'POST' else None
@@ -88,21 +88,6 @@ def main():
     ]
     
     return render_template('index.html', labels=labels, values=intervals)
-    # the bottom labels of the line graph
-    labels = [
-        "2000",
-        "2001",
-        "2002",
-        "2003",
-        "2004",
-        "2005",
-        "2006",
-        "2007",    
-    ]
-    # the value that each data point represents
-    values = [100,200,300,400,502,557,604,700]
-
-    return render_template('index.html', labels=labels, values=values)
 
 
 @app.route('/addDevice.html', methods=['GET', 'POST'])
