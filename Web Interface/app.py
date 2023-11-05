@@ -33,11 +33,14 @@ def main():
     yesterdayDate = todayDate - timedelta(days = 1)
     todayDate = str(todayDate)
     yesterdayDate = str(yesterdayDate)
-    tempDate = "2023-10-10" # DELETE BEFORE DELIVER!!!!!----------------------------------------------------------------------------------
+    tempDate = "2023-11-05" # DELETE BEFORE DELIVER!!!!!----------------------------------------------------------------------------------
 
     # convert current time into minutes
     currentTimeSplit = str(currentTime).split(':')
     currentTimeMin = int(currentTimeSplit[1]) + (int(currentTimeSplit[0])*60)
+    # THIS IS A TEST VARIABLE!!
+    # DELETE BEFORE PUSH TO FULL PRODUCTION
+    currentTimeMin = 60
     print(currentTimeMin)
     # list that will store the 15 minute interval numbers
     # going to be every 15 min for 6 hours
@@ -56,7 +59,7 @@ def main():
             #  SWITCH todayDate WITH tempDate SO IT FUNCTIONS WITH OUR DATA
             #  DELETE tempDate AND THIS MESSAGE BEFORE DELIVERY OF FINAL APPLICATION
             #-------------------------------------------------------------------------
-            if splitDateTime[0] == todayDate:
+            if splitDateTime[0] == tempDate:
                     # first finds out how many 15 minute intervals passed
                     diff = int(currentTimeMin/15) - int(totalTimeMin/15)
                     if diff <= len(intervals) and diff > -1:
