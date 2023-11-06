@@ -88,22 +88,6 @@ def main():
     ]
     
     return render_template('index.html', labels=labels, values=intervals)
-    # the bottom labels of the line graph
-    labels = [
-        "2000",
-        "2001",
-        "2002",
-        "2003",
-        "2004",
-        "2005",
-        "2006",
-        "2007",    
-    ]
-    # the value that each data point represents
-    values = [100,200,300,400,502,557,604,700]
-
-    return render_template('index.html', labels=labels, values=values)
-
 
 @app.route('/addDevice.html', methods=['GET', 'POST'])
 def addDevice():
