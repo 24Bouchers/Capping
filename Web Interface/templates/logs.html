@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Dashboard - SB Admin</title>
+        <title>Logs - Archtop Fiber</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="../static/css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -34,7 +34,7 @@
                         <li><a class="dropdown-item" href="#!">Settings</a></li>
                         <li><a class="dropdown-item" href="#!">Activity Log</a></li>
                         <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" href="#!">Logout</a></li>
+                        <li><a class="dropdown-item" href="login.html">Logout</a></li>
                     </ul>
                 </li>
             </ul>
@@ -45,22 +45,22 @@
                     <div class="sb-sidenav-menu">
                         <div class="nav">
                             <!-- <div class="sb-sidenav-menu-heading">Core</div> -->
-                            <a class="nav-link" href="index.html" data-link="index">
+                            <a class="nav-link" href="{{ url_for('main') }}">
 								<div class="sb-nav-link-icon">
 									<i class="fas fa-home" style="color: #ffffff;"></i>
 								</div> Dashboard
 							</a>
-							<a class="nav-link" href="devices.html" data-link="devices">
+							<a class="nav-link" href="devices.html">
 								<div class="sb-nav-link-icon">
 									<i class="fas fa-server" style="color: #ffffff;"></i>
 								</div> Devices
 							</a>
-							<a class="nav-link" href="logs.html" data-link="logs">
+							<a class="nav-link" href="logs.html">
 								<div class="sb-nav-link-icon">
 									<i class="fas fa-list" style="color: #ffffff;"></i>
 								</div> Logs
 							</a>
-							<a class="nav-link" href="users.html" data-link="users">
+							<a class="nav-link" href="users.html">
 								<div class="sb-nav-link-icon">
 									<i class="fas fa-users" style="color: #ffffff;"></i>
 								</div> Users
@@ -102,11 +102,40 @@
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">Users</h1>
+                        <h1 class="mt-4">Logs</h1>
                         <!-- <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Users</li>
+                            <li class="breadcrumb-item active">Logs</li>
                         </ol> -->
-                        <h3 class="mt-4">Work in Progress...</h3>
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-table me-1"></i>
+                                Logs
+                            </div>
+                            <div class="card-body">
+                                <table style="width:100%", id="datatablesSimple">
+                                    <thead>
+                                        <tr>
+                                            <th>DATE/TIME</th>
+                                            <th>USER/MAC ADDRESS</th>
+                                            <th>IP ADDRESS</th>
+                                            <th>REASON</th>
+                                            <th>PORT ID</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for row in rows %}
+                                        <tr>
+                                            <td>{{ row['date/time'] }}</td>
+                                            <td>{{ row['username'] }}</td>
+                                            <td>{{ row['framedipaddress'] }}</td>
+                                            <td>{{ row['reason'] }}</td>
+                                            <td>{{ row['portID'] }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>                                
+                            </div>
+                        </div>
                     </div>
                 </main>
                 <footer class="py-4 bg-dark mt-auto">
