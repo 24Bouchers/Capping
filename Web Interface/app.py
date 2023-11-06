@@ -42,6 +42,7 @@ def main():
     # THIS IS A TEST VARIABLE!!
     # DELETE BEFORE PUSH TO FULL PRODUCTION
     currentTimeMin = 60
+    yesterdayDate = "2023-11-04"
     # list that will store the 15 minute interval numbers
     # going to be every 15 min for 6 hours
     intervals = [0] * 24
