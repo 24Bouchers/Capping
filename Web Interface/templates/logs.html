@@ -117,19 +117,15 @@
                                         <tr>
                                             <th>DATE/TIME</th>
                                             <th>USER/MAC ADDRESS</th>
-                                            <th>IP ADDRESS</th>
                                             <th>REASON</th>
-                                            <th>PORT ID</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for row in rows %}
                                         <tr>
-                                            <td>{{ row['date/time'] }}</td>
-                                            <td>{{ row['username'] }}</td>
-                                            <td>{{ row['framedipaddress'] }}</td>
+                                            <td>{{ row['time'] }}</td>
+                                            <td>{{ row['callingstationid'] }}</td>
                                             <td>{{ row['reason'] }}</td>
-                                            <td>{{ row['portID'] }}</td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>
