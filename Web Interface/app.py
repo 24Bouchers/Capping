@@ -3,13 +3,13 @@ import pymysql
 from datetime import datetime, timedelta, date
 
 app = Flask(__name__)
-app.secret_key = 'ArchFiber23'
+app.secret_key = 'ArchFiber23' 
 
 @app.route('/')
 @app.route('/index.html', methods=['GET'])
 def main():
 
-    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='customer_data')
+    conn = pymysql.connect(host='127.0.0.0', user='root', password='', db='customer_data')
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     
     query = request.form.get('query') if request.method == 'POST' else None
@@ -116,7 +116,7 @@ def addDevice():
         ipv6_address = request.form.get('framedipv6address', default=None)
 
         # Connect to MariaDB
-        conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='customer_data')
+        conn = pymysql.connect(host='127.0.0.0', user='root', password='', db='customer_data')
         cursor = conn.cursor()
 
         # Insert the device data into the database
@@ -139,7 +139,7 @@ def remove_device():
     mac = request.form.get("mac")
     
     # Connect to the customer_data database
-    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='customer_data')
+    conn = pymysql.connect(host='127.0.0.0', user='root', password='', db='customer_data')
     cursor = conn.cursor()
     
     # SQL query to delete the device entry based on the MAC address
@@ -157,7 +157,7 @@ def remove_device():
 
 @app.route('/devices.html', methods=['GET', 'POST'])
 def devices():
-    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='customer_data')
+    conn = pymysql.connect(host='127.0.0.0', user='root', password='', db='customer_data')
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     
     query = request.form.get('query') if request.method == 'POST' else None
