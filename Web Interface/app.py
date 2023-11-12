@@ -96,5 +96,28 @@ def devices():
 
     return render_template('devices.html', rows=rows)
 
+""" logs route draft code
+@app.route('/logs.html', methods=['GET', 'POST'])
+def logs():
+    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='customer_data')
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    
+    query = request.form.get('query') if request.method == 'POST' else None
+    
+    if query:
+        # probaly have to adjust the fields here in the SQL query based on the database schema, kinda just winging it
+        cursor.execute('''SELECT LogID, time, callingstationid, reason FROM logs 
+                       WHERE time LIKE %s OR callingstationid LIKE %s OR reason LIKE %s''',
+                       ('%' + query + '%', '%' + query + '%', '%' + query + '%'))
+    else:
+        cursor.execute('SELECT LogID, time, callingstationid, reason FROM logs;')
+
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return render_template('logs.html', rows=rows)
+"""
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
