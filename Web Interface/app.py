@@ -188,11 +188,11 @@ def logs():
     
     if query:
         # probaly have to adjust the fields here in the SQL query based on the database schema, kinda just winging it
-        cursor.execute('''SELECT LogID, time, callingstationid, reason FROM logs 
-                       WHERE time LIKE %s OR callingstationid LIKE %s OR reason LIKE %s''',
+        cursor.execute('''SELECT logId, time, username, reason FROM logs 
+                       WHERE time LIKE %s OR username LIKE %s OR reason LIKE %s''',
                        ('%' + query + '%', '%' + query + '%', '%' + query + '%'))
     else:
-        cursor.execute('SELECT LogID, time, callingstationid, reason FROM logs;')
+        cursor.execute('SELECT LogID, time, username, reason FROM logs;')
 
     rows = cursor.fetchall()
     cursor.close()
