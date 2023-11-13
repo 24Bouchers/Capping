@@ -1,92 +1,99 @@
 from flask import Flask, app, flash, redirect, render_template, request
 import pymysql
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta, date, timezone
 
 app = Flask(__name__)
 app.secret_key = 'ArchFiber23'
 
 @app.route('/')
-@app.route('/index.html', methods=['GET'])
+@app.route('/index.html')
 def main():
 
-    conn = pymysql.connect(host='localhost', user='root', password='Que98214', db='customer_data')
+    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='customer_data')
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     
-    query = request.form.get('query') if request.method == 'POST' else None
-    
-    if query:
-        # Query is searching from database based on name, mac address, ipv4 or ipv6 address
-        # It is NOT case sensitive
-        # Used Parameterized quieries to protect from SQL injections
-        pass
-        # cursor.execute('''SELECT * FROM radacct 
-        #                WHERE username LIKE %s or callingstationid LIKE %s or framedipaddress LIKE %s or framedipv6address LIKE %s;''', 
-        #                ('%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%'))
-    else:
-        cursor.execute('SELECT acctstarttime FROM radacct;')
+    cursor.execute('SELECT acctstarttime FROM radacct;')
 
     stime = cursor.fetchall()
     cursor.close()
     conn.close()
 
     todayDate = date.today()
-    currentTime = datetime.now().strftime("%H:%M:%S")
+    currentTimeUTC = datetime.now(timezone.utc).strftime("%H:%M")
+    currentTimeEST = datetime.now().strftime("%H:%M")
     yesterdayDate = todayDate - timedelta(days = 1)
     todayDate = str(todayDate)
     yesterdayDate = str(yesterdayDate)
-    tempDate = "2023-11-05" # DELETE BEFORE DELIVER!!!!!----------------------------------------------------------------------------------
-
+    tempDate = "2023-11-04" # DELETE BEFORE DELIVER!!!!!----------------------------------------------------------------------------------
+    # -------------------------------------------------------------------------------------
+    # MIGHT HAVE TO USE/CONVERT TO UTC TO PREVENT DAYLIGHT SAVINGS ISSUES
+    # --------------------------------------------------------------------------------
     # convert current time into minutes
-    currentTimeSplit = str(currentTime).split(':')
-    currentTimeMin = int(currentTimeSplit[1]) + (int(currentTimeSplit[0])*60)
-    # THIS IS A TEST VARIABLE!!
+    currentTimeSplit = str(currentTimeUTC).split(':')
+    # counts down to the nearest 15 minute interval
+    close15MinInterval =int(currentTimeSplit[1])
+    while close15MinInterval % 15 != 0:
+        close15MinInterval -= 1
+    currentTimeMin = close15MinInterval + (int(currentTimeSplit[0])*60)
+
+    print(currentTimeMin)
+    # THESE ARE TEST VARIABLES!!
     # DELETE BEFORE PUSH TO FULL PRODUCTION
-    currentTimeMin = 60
+    # currentTimeMin = 60
     yesterdayDate = "2023-11-04"
+
+
     # list that will store the 15 minute interval numbers
     # going to be every 15 min for 6 hours
     intervals = [0] * 24
+    hoursInMin = 360 # 360 represents 6 hours
     # loop through the list of times given from acctstarttime
     for x in stime:
-        # convert the acctstarttime into minutes
-        splitDateTime = str(x.get('acctstarttime')).split() # separates date and time into 2 separate list elements
-        splitTime = str(splitDateTime[1]).split(':')
-        totalTimeMin = int(splitTime[1]) + (int(splitTime[0])*60)
-        print(totalTimeMin, splitDateTime[0])
-        # check if at least 6 hours have passed since start of day 
-        if currentTimeMin >= 360:
-            # makes sure the dates match
-            # ------------------------------------------------------------------------
-            #  SWITCH todayDate WITH tempDate SO IT FUNCTIONS WITH OUR DATA
-            #  DELETE tempDate AND THIS MESSAGE BEFORE DELIVERY OF FINAL APPLICATION
-            #-------------------------------------------------------------------------
-            if splitDateTime[0] == tempDate:
+        if x:
+            # convert the acctstarttime into minutes
+            splitDateTime = str(x.get('acctstarttime')).split() # separates date and time into 2 separate list elements
+            splitTime = str(splitDateTime[1]).split(':')
+            totalTimeMin = int(splitTime[1]) + (int(splitTime[0])*60)
+            print(totalTimeMin, splitDateTime[0])
+            # since the time were comparing against is the closest 15 minute interval that has already passed
+            # if a time appears that has todays date and is passed the time were checking from
+            # it gets added to the most recent colom of the graph
+            if totalTimeMin > currentTimeMin and splitDateTime[0] == tempDate:
+                intervals[0] += 1 
+            # check if at least 6 hours have passed since start of day 
+            elif currentTimeMin >= hoursInMin:
+                # makes sure the dates match
+                # ------------------------------------------------------------------------
+                #  SWITCH todayDate WITH tempDate SO IT FUNCTIONS WITH OUR DATA
+                #  DELETE tempDate AND THIS MESSAGE BEFORE DELIVERY OF FINAL APPLICATION
+                #-------------------------------------------------------------------------
+                if splitDateTime[0] == tempDate:
                     # first finds out how many 15 minute intervals passed
                     diff = int(currentTimeMin/15) - int(totalTimeMin/15)
+                    if diff <= len(intervals)-1 and diff > -1:
+                        intervals[diff+1] += 1
+            # sees if there was a 6 hour diffrence max between times and thta date matches either today or yesterday
+            elif (1440 - totalTimeMin) + currentTimeMin <= hoursInMin and (splitDateTime[0] == todayDate or splitDateTime[0] == yesterdayDate):
+                if splitDateTime[0] == yesterdayDate:
+                    # 1440 is the amount of minutes in a day
+                    diff = int(currentTimeMin/15) + int((1440 - totalTimeMin)/15)
                     if diff <= len(intervals) and diff > -1:
-                        intervals[diff] += 1
+                        intervals[diff+1] += 1
+                else:
+                    diff = int(currentTimeMin/15) - int(totalTimeMin/15)
+                    if diff <= len(intervals) and diff > -1:
+                        intervals[diff+1] += 1
         
-        # sees if there was a 6 hour diffrence max between times and thta date matches either today or yesterday
-        elif (1440 - totalTimeMin) + currentTimeMin <= 360 and (splitDateTime[0] == todayDate or splitDateTime[0] == yesterdayDate):
-            if splitDateTime[0] == yesterdayDate:
-                diff = int(currentTimeMin/15) + int((1440 - totalTimeMin)/15)
-                if diff <= len(intervals) and diff > -1:
-                            intervals[diff] += 1
-            else:
-                diff = int(currentTimeMin/15) - int(totalTimeMin/15)
-                if diff <= len(intervals) and diff > -1:
-                            intervals[diff] += 1
-
-
+    intervals.reverse()
     # the bottom labels of the line graph representing 15 minute increments
-    labels = [
-        "now - 15 min", "15 - 30 min", "30 - 45 min", "45 min - 1 hour ",
-        "1 hour - 1:15 min", "15 - 30 min", "30 - 45 min", "45 - 2 hours",
-        "2 hours - 15 min", "15 - 30 min"  ,"30 - 45 min", "45 min - 3 hours",
-        "3 hours - 15 min", "15 - 30 min", "30 - 45 min", "45 min - 4 hours",
-        "4 hours - 15 min", "15 - 30 min", "30 - 45 min", "45 min - 5 hours",
-        "5 hours - 15 min", "15 - 30 min", "30 - 45 min", "45 min - 6 hours"
-    ]
+    labels = [''] * 24
+    while close15MinInterval % 15 != 0:
+         close15MinInterval -= 1
+    for x in range(24):
+        if x == 0:
+            labels[x] = currentTimeEST
+        else:
+             labels[x] = currentTimeEST
     
     return render_template('index.html', labels=labels, values=intervals)
 
