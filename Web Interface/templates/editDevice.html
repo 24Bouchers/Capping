@@ -107,19 +107,18 @@
                           </div>
                           <div class="row mb-3">
                             <body>
-                                <form action="{{ url_for('update_device', callingstationid=row.callingstationid) }}" method="post">
-                                    <label for="username">Customer Name:</label>
-                                    <input type="text" name="username" maxlength="50" class="form-control" placeholder="Customer Name" value="{{ row['username'] }}">
-                            
-                                    <label for="callingstationid">MAC Address:</label>
-                                    <input type="text" name="callingstationid" maxlength="50" class="form-control" placeholder="Mac Address" value="{{ row['callingstationid'] }}">
-
+                                <form action="/updateDevice/{{ callingstationid }}" method="post">
+                                    <input type="hidden" name="callingstationid" value="{{ callingstationid }}">
+                                    
+                                    <label for="username">Username:</label>
+                                    <input type="text" id="username" name="username" value="{{ current_device_data.username }}" required><br><br>
+                                    
                                     <label for="framedipaddress">IPv4 Address:</label>
-                                    <input type="text" name="framedipaddress" maxlength="50" class="form-control" placeholder="IPv4 Address" value="{{ row['framedipaddress'] }}">
-
+                                    <input type="text" id="framedipaddress" name="framedipaddress" value="{{ current_device_data.framedipaddress }}"><br><br>
+                                    
                                     <label for="framedipv6address">IPv6 Address:</label>
-                                    <input type="text" name="framedipv6address" maxlength="50" class="form-control" placeholder="IPv6 Address" value="{{ row['framedipv6address'] }}">
-                            
+                                    <input type="text" id="framedipv6address" name="framedipv6address" value="{{ current_device_data.framedipv6address }}"><br><br>
+                                    
                                     <input type="submit" value="Update Device">
                                 </form>
                             </body>
