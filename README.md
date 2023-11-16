@@ -23,7 +23,7 @@ Christian
 ## Introduction
 
 The purpose of this Api is to allow Gtel Employee's to insert static ip address through their website and verify through
-their free radius servers. This webpage also displays relevant data about their servers, connectivity, MAC-addresses and Ip Address  
+their free radius servers. This webpage also displays relevant data about their servers, connectivity, MAC-addresses and Ip Addresses.  
 
 ## Authentication
 
@@ -31,11 +31,12 @@ Explain how to authenticate when using the API. Include details about API keys, 
 
 ## Endpoints
 
-List and describe the available endpoints. Include HTTP methods, endpoint URLs, and what each endpoint does.
+The Api currently connects to a web server (http://10.10.9.40:5000) and a MariaDb server (10.10.9.43) both hosted by Marist College.
+Ultimately, These servers will be on Gtel/ArchtopFiber Servers.
 
 ### Endpoint 1
 
-- **URL:** `/endpoint1`
+- **http://10.10.9.40:5000:** `/endpoint1`
 - **Method:** GET
 - **Description:** Description of what this endpoint does.
 - **Parameters:**
