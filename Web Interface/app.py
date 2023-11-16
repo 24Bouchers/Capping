@@ -42,7 +42,6 @@ def main():
     currentTimeMin = close15MinInterval + (int(currentTimeSplit[0])*60)
 
 
-    
     # THESE ARE TEST VARIABLES!!
     # DELETE BEFORE PUSH TO FULL PRODUCTION
     # currentTimeMin = 60
@@ -53,7 +52,6 @@ def main():
     # going to be every 15 min for 6 hours
     intervals = [0] * 24
     hoursInMin = 360 # 360 represents 6 hours
-
     # loop through the list of times given from acctstarttime
     for x in stime:
         # convert the acctstarttime into minutes
@@ -85,6 +83,7 @@ def main():
                 if splitDateTime[0] == yesterdayDate:
                     # 1440 is the amount of minutes in a day
                     diff = int(currentTimeMin/15) + int((1440 - totalTimeMin)/15)
+
                     if diff <= len(intervals) and diff > -1:
                         intervals[diff+1] += 1
                 else:
