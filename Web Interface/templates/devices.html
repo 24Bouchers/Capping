@@ -137,6 +137,7 @@
                                             <td>{{ row['framedipaddress'] }}</td>
                                             <td>{{ row['framedipv6address'] }}</td>
                                             <td>
+                                                <a href="/editDevice/{{ row['callingstationid'] }}" class="btn btn-primary">Edit</a>
                                                 <form action="/removeDevice" method="post" onsubmit="return confirm('Are you sure you want to remove this device?')" style="display: inline-block;">
                                                     <input type="hidden" name="mac" value="{{ row['callingstationid'] }}">
                                                     <input type="submit" value="Remove">
