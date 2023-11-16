@@ -10,7 +10,7 @@ app.secret_key = 'ArchFiber23'
 @app.route('/index.html', methods=['GET'])
 def main():
 
-    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='customer_data')
+    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     
 
@@ -133,20 +133,18 @@ def addDevice():
     if request.method == 'POST':
       
         # Get data from the form with default values
-        name = request.form.get('username', default=None)
-        mac_address = request.form.get('callingstationid', default=None)
-        ipv4_address = request.form.get('framedipaddress', default=None)
-        ipv6_address = request.form.get('framedipv6address', default=None)
+        p_userName = request.form.get('MAC', default=None)
+        p_ipv4 = request.form.get('IPv4', default=None)
+        p_ipv6Prefix = request.form.get('IPv6 Prefix', default=None)
+        p_ipv6 = request.form.get('IPv6', default=None)
 
         # Connect to MariaDB
-        conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='customer_data')
+        conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
         cursor = conn.cursor()
 
         # Insert the device data into the database
  
-        sql = '''INSERT INTO radacct (username, callingstationid, framedipaddress, framedipv6address) 
-                 VALUES (%s, %s, %s, %s)'''
-        cursor.execute(sql, (name, mac_address, ipv4_address, ipv6_address))
+        cursor.callproc('radius_netelastic.PROC_InsUpRadiusUser', (p_userName, p_ipv4, p_ipv6Prefix, p_ipv6))
         conn.commit()
 
         cursor.close()
@@ -162,7 +160,7 @@ def remove_device():
     mac = request.form.get("mac")
     
     # Connect to the customer_data database
-    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='customer_data')
+    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
     cursor = conn.cursor()
     
     # SQL query to delete the device entry based on the MAC address
@@ -192,7 +190,7 @@ def get_device_data(callingstationid):
     # Connect to the customer_data database
     try:
         # Establish a connection to the database
-        conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='customer_data')
+        conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
         cursor = conn.cursor(pymysql.cursors.DictCursor)  # Use DictCursor to get data as a dictionary
 
         # SQL query to fetch the device data based on the callingstationid
@@ -221,7 +219,7 @@ def update_device(callingstationid):
 
     # Connect to the customer_data database
     try:
-        conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='customer_data')
+        conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
         cursor = conn.cursor()
 
         # SQL query to update the device entry based on the callingstationid
@@ -248,7 +246,7 @@ def update_device(callingstationid):
 
 @app.route('/devices.html', methods=['GET', 'POST'])
 def devices():
-    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='customer_data')
+    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     
     query = request.form.get('query') if request.method == 'POST' else None
@@ -257,12 +255,28 @@ def devices():
         # Query is searching from database based on name, mac address, ipv4 or ipv6 address
         # It is NOT case sensitive
         # Used Parameterized quieries to protect from SQL injections
-        cursor.execute('''SELECT * FROM radacct 
-                       WHERE username LIKE %s or callingstationid LIKE %s or framedipaddress LIKE %s or framedipv6address LIKE %s;''', 
-                       ('%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%'))
-    else:
-        cursor.execute('SELECT username, callingstationid, framedipaddress, framedipv6address FROM radacct;')
+        cursor.execute('''SELECT username, 
+                                MAX(CASE WHEN attribute = 'Framed-IP-Address' THEN value END) AS 'Framed-IP-Address',
+                                MAX(CASE WHEN attribute = 'Framed-IPv6-Prefix' THEN value END) AS 'Framed-IPv6-Prefix',
+                                MAX(CASE WHEN attribute = 'Framed-IPv6-Address' THEN value END) AS 'Framed-IPv6-Address'
+                        FROM radreply 
+                        WHERE username LIKE %s 
+                            OR (MAX(CASE WHEN attribute = 'Framed-IP-Address' THEN value END) LIKE %s) 
+                            OR (MAX(CASE WHEN attribute = 'Framed-IPv6-Prefix' THEN value END) LIKE %s) 
+                            OR (MAX(CASE WHEN attribute = 'Framed-IPv6-Address' THEN value END) LIKE %s)
+                        GROUP BY username;''', 
+                    ('%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%'))
 
+    else:
+        cursor.execute('''SELECT
+            username,
+            MAX(CASE WHEN `attribute` = 'Framed-IP-Address' THEN value END) AS 'Framed-IP-Address',
+            MAX(CASE WHEN `attribute` = 'Framed-IPv6-Prefix' THEN value END) AS 'Framed-IPv6-Prefix',
+            MAX(CASE WHEN `attribute` = 'Framed-IPv6-Address' THEN value END) AS 'Framed-IPv6-Address'
+            FROM radreply
+            WHERE `attribute` IN ('Framed-IP-Address', 'Framed-IPv6-Prefix', 'Framed-IPv6-Address')
+            GROUP BY username;
+        ''')
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
@@ -272,7 +286,7 @@ def devices():
 """ logs route draft code
 @app.route('/logs.html', methods=['GET', 'POST'])
 def logs():
-    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='customer_data')
+    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     
     query = request.form.get('query') if request.method == 'POST' else None
@@ -293,4 +307,4 @@ def logs():
 """
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0', port=5555)
