@@ -39,7 +39,7 @@ def main():
     currentTimeMin = close15MinInterval + (int(currentTimeSplit[0])*60)
 
 
-    print(currentTimeMin)
+    
     # THESE ARE TEST VARIABLES!!
     # DELETE BEFORE PUSH TO FULL PRODUCTION
     # currentTimeMin = 60
