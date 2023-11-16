@@ -120,54 +120,53 @@
                                 {% endwith %}
                                 <!-- <form action="/addDevice.html" method="post">
                                     <label>Customer:</label>
-                                    <input type="text" name="customer" required>
+                                    <input type="text" name="MAC" required>
                                     <br>
                                     <label>MAC Address:</label>
-                                    <input type="text" name="mac_address" required>
+                                    <input type="text" name="IPv4" required>
                                     <br>
                                     <label>IPv4 Address:</label>
-                                    <input type="text" name="ipv4_address">
+                                    <input type="text" name="IPv6 Prefix">
                                     <br>
                                     <label>IPv6 Address:</label>
-                                    <input type="text" name="ipv6_address">
+                                    <input type="text" name="IPv6">
                                     <br>
                                     <input type="submit" value="Add Device">
                                 </form>
                             -->
                             <form action="/addDevice.html" method="post" >
                                 <div class="row mb-3">
-                                    <label for="username" class="col-sm-3 col-form-label text-lg-end">
-                                        Customer
+                                    <label for="MAC" class="col-sm-3 col-form-label text-lg-end">
+                                        MAC
                                     </label>
                                     <div class="col">
-                                        <input type="text" name="username" maxlength="64" class="form-control" placeholder="Customer" id="customer" required>
+                                        <input type="text" name="MAC" maxlength="64" class="form-control" placeholder="MAC Address" id="mac_address" required>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <label for="mac_address" class="col-sm-3 col-form-label text-lg-end">
-                                        MAC Address
-                                    </label>
+                                    <label for="IPv4" class="col-sm-3 col-form-label text-lg-end">
+                                        IPv4                                    </label>
                                     <div class="col">
-                                        <input type="text" name="callingstationid" maxlength="50" class="form-control" placeholder="MAC Address" id="mac_address" required>
+                                        <input type="text" name="IPv4" maxlength="50" class="form-control" placeholder="IPv4 Address" id="ipv4_address" required>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <label for="framedipaddress" class="col-sm-3 col-form-label text-lg-end">
-                                        IPv4 Address
+                                    <label for="IPv6 Prefix" class="col-sm-3 col-form-label text-lg-end">
+                                        IPv6 Prefix
                                     </label>
                                     <div class="col">
-                                        <input type="text" name="framedipaddress" maxlength="50" class="form-control" placeholder="IPv4 Address" id="ipv4_address">
+                                        <input type="text" name="IPv6 Prefix" maxlength="50" class="form-control" placeholder="IPv6 Prefix" id="ipv6_prefix">
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <label for="framedipv6address" class="col-sm-3 col-form-label text-lg-end">
-                                        IPv6 Address
+                                    <label for="IPv6" class="col-sm-3 col-form-label text-lg-end">
+                                        IPv6
                                     </label>
                                     <div class="col">
-                                        <input type="text" name="framedipv6address" maxlength="50" class="form-control" placeholder="IPv6 Address" id="ipv6_address">
+                                        <input type="text" name="IPv6" maxlength="50" class="form-control" placeholder="IPv6_Address" id="ipv6_address">
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
