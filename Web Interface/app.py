@@ -166,7 +166,7 @@ def remove_device():
     # SQL query to delete the device entry based on the MAC address
     
     try:
-        cursor.callproc('radius_netelastic.PROC_DeleteRadiusUser', (p_username))
+        cursor.callproc('radius_netelastic.PROC_DeleteRadiusUser', (p_username,))
         conn.commit()
     except Exception as e:
         print(f"Error while removing device: {e}")
