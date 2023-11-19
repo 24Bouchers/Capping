@@ -126,6 +126,7 @@
                                             <th>Framed-IP-Address</th>
                                             <th>Framed-IPv6-Prefix</th>
                                             <th>Framed-IPv6-Address</th>
+                                            <th>Edit/Remove</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -136,9 +137,9 @@
                                             <td>{{ row['Framed-IPv6-Prefix'] }}</td>
                                             <td>{{ row['Framed-IPv6-Address'] }}</td>
                                             <td>
-                                                <a href="/editDevice/{{ row['callingstationid'] }}" class="btn btn-primary">Edit</a>
+                                                <a href="/editDevice/{{ row['username'] }}" class="btn btn-primary">Edit</a>
                                                 <form action="/removeDevice" method="post" onsubmit="return confirm('Are you sure you want to remove this device?')" style="display: inline-block;">
-                                                    <input type="hidden" name="mac" value="{{ row['callingstationid'] }}">
+                                                    <input type="hidden" name="username" value="{{ row['username'] }}">
                                                     <input type="submit" value="Remove">
                                                 </form>
                                             </td>
