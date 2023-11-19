@@ -16,7 +16,7 @@ app = Flask(__name__)
 # This could be easy access for credentials of who can manipulate the DB
 
 #Toggle to run locally or on the vm
-LOCAL = True
+LOCAL = False
 
 if(LOCAL):
 	conn = pymysql.connect(host='localhost', user='root', password='ArchFiber23', db='radius_netelastic')
@@ -553,7 +553,7 @@ cur.execute('UNLOCK TABLES')
 ##################
 # CRUD FUNCTIONS # 
 ##################
-
+"""
 #Add or Update Radcheck and Radreply based on username IPV4,IPv6Per
 cur.execute('''CREATE DEFINER=`root`@`localhost` PROCEDURE `radius_netelastic`.`PROC_InsUpRadiusUser`(
     p_userName VARCHAR(64),
@@ -757,7 +757,7 @@ END;
 ''')
 
 conn.commit()
-
+"""
 #########
 # Flask #
 #########
