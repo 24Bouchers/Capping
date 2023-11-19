@@ -236,7 +236,6 @@ def show_edit_device_page(username):
 @app.route('/updateDevice/<path:username>', methods=['POST'])
 def update_device(username):
     # Get updated data from the form
-    p_userName = request.form.get('MAC')
     p_ipv4 = request.form.get('IPv4')
     p_ipv6Prefix = request.form.get('IPv6 Prefix')
     p_ipv6 = request.form.get('IPv6')
