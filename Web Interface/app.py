@@ -85,6 +85,7 @@ def main():
                 if splitDateTime[0] == yesterdayDate:
                     # 1440 is the amount of minutes in a day
                     diff = int(currentTimeMin/15) + int((1440 - totalTimeMin)/15)
+
                     if diff <= len(intervals) and diff > -1:
                         intervals[diff+offset] += 1
                 else:
