@@ -10,7 +10,22 @@ app.secret_key = 'ArchFiber23'
     # DEVICES REQUEST GRAPH #
     #########################
     
+    
+    
 '''
+
+@app.route('/')
+@app.route('/index.html', methods=['POST'])
+def verifyConnection():
+    try:
+        conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
+        connection = 'good'
+    except pymysql.Error as e:
+        error_message = f"Error connecting to the database: {e}"
+        connection = 'bad'
+    return connection
+
+
 @app.route('/')
 @app.route('/index.html', methods=['POST'])
 def totalDevices():
