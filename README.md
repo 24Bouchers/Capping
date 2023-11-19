@@ -1,28 +1,47 @@
-# Capping
-A Marist Collaboration Between a group of Students and Gtel
+# Appy.py
 
-# Helpful Links in Discord. (I plan on adding )
+Appi.py Api is a collabertative capping (Capstone) projects from five students at Marist College For GTel.
 
-Trello
-https://trello.com/b/HOYu7etE/action-item-board
+Steven Boucher
+Easton   
+Nick 
+Liam
+Christian
 
-Website Design Prototype 
-https://www.canva.com/design/DAFtOC2Wkeo/BdsbIsCdVqWsIogO1uZZbA/view?mode=prototype
+## Table of Contents
 
-Free Radius API
-https://doc.freeradius.org/globals.html
+- [Introduction](#introduction)
+- [Authentication](#authentication)
+- [Endpoints](#endpoints)
+- [Parameters](#parameters)
+- [Responses](#responses)
+- [Rate Limiting](#rate-limiting)
+- [Errors](#errors)
+- [Examples](#examples)
+- [License](#license)
 
-Flask Tutorial
-https://code.visualstudio.com/docs/python/tutorial-flask
+## Introduction
 
-Flask Restful
-https://flask-restful.readthedocs.io/en/latest/
+The purpose of this Api is to allow Gtel Employee's to insert static ip address through their website and verify through
+their free radius servers. This webpage also displays relevant data about their servers, connectivity, MAC-addresses and Ip Addresses.  
 
-GitHub That might be helpful
-https://github.com/enckse/freeradius
+## Authentication
 
-JSON for Python
-https://pypi.org/project/jsonlib/
+Explain how to authenticate when using the API. Include details about API keys, tokens, or any other necessary authentication methods.
 
-MariaDB Python Connetor 
-https://mariadb-corporation.github.io/mariadb-connector-python/index.html
+## Endpoints
+
+The Api currently connects to a web server (http://10.10.9.40:5000) and a MariaDb server (10.10.9.43) both hosted by Marist College.
+Ultimately, These servers will be on Gtel/ArchtopFiber Servers.
+
+### Endpoint 1
+
+- **http://10.10.9.40:5000:** `/endpoint1`
+- **Method:** GET
+- **Description:** Description of what this endpoint does.
+- **Parameters:**
+  - `param1` (Type): Description
+- **Example Request:**
+
+GET /endpoint1?param1=value
+
