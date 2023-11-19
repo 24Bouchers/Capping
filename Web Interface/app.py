@@ -157,16 +157,16 @@ def addDevice():
 
 @app.route("/removeDevice", methods=["POST"])
 def remove_device():
-    mac = request.form.get("mac")
+    p_username = request.form.get('username')
     
     # Connect to the customer_data database
     conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
     cursor = conn.cursor()
     
     # SQL query to delete the device entry based on the MAC address
-    query = "DELETE FROM radacct WHERE callingstationid = %s"  # Assuming 'callingstationid' stores the MAC addresses
+    
     try:
-        cursor.execute(query, (mac,))
+        cursor.callproc('radius_netelastic.PROC_DeleteRadiusUser', (p_username,))
         conn.commit()
     except Exception as e:
         print(f"Error while removing device: {e}")
