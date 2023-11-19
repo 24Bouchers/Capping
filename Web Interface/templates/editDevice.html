@@ -108,19 +108,20 @@
                           <div class="row mb-3">
                             <body>
                                 <form action="/updateDevice/{{ username }}" method="post">
-                                    <input type="hidden" name="username" value="{{ callingstationid }}">
-                                                                        
-                                    <label for="framedipaddress">IPv4 Address:</label>
-                                    <input type="text" id="ipv4_address" name="IPv4" value="{{ current_device_data.framedipaddress }}"><br><br>
+                                    <input type="hidden" name="username" value="{{ username }}">
                                     
-                                    <label for="framedipv6address">IPv6 Prefix:</label>
-                                    <input type="text" id="ipv6_prefix" name="IPv6 Prefix" value="{{ current_device_data.framedipv6address }}"><br><br>
+                                    <label for="ipv4_address">IPv4 Address:</label>
+                                    <input type="text" id="ipv4_address" name="IPv4" value="{{ current_device_data['Framed-IP-Address'] }}"><br><br>
                                     
-                                    <label for="framedipv6address">IPv6 Address:</label>
-                                    <input type="text" id="ipv6_address" name="IPv6" value="{{ current_device_data.framedipv6address }}"><br><br>
-                                        
+                                    <label for="ipv6_prefix">IPv6 Prefix:</label>
+                                    <input type="text" id="ipv6_prefix" name="IPv6 Prefix" value="{{ current_device_data['Framed-IPv6-Prefix'] }}"><br><br>
+                                    
+                                    <label for="ipv6_address">IPv6 Address:</label>
+                                    <input type="text" id="ipv6_address" name="IPv6" value="{{ current_device_data['Framed-IPv6-Address'] }}"><br><br>
+                                    
                                     <input type="submit" value="Update Device">
                                 </form>
+                                
                             </body>
                     </div>                    
                 </main>            
