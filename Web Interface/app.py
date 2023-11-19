@@ -159,7 +159,7 @@ def addDevice():
 def remove_device():
     p_username = request.form.get('username')
     
-    # Connect to the customer_data database
+    # Connect to the radius_netelastic database
     conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
     cursor = conn.cursor()
     
@@ -176,26 +176,28 @@ def remove_device():
 
     return redirect('/devices.html')
 
-@app.route('/editDevice/<callingstationid>')
-def show_edit_device_page(callingstationid):
-    # Fetch the device data from your database based on the callingstationid
-    # Here you would retrieve the device data from the database and pass it to the template
-    current_device_data = get_device_data(callingstationid)
-    return render_template('editDevice.html', callingstationid=callingstationid, current_device_data=current_device_data)
-
-def get_device_data(callingstationid):
+def get_device_data(username):
     # Placeholder dictionary to store device data
     device_data = {}
 
-    # Connect to the customer_data database
+    # Connect to the radius_netelastic database
     try:
         # Establish a connection to the database
         conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
         cursor = conn.cursor(pymysql.cursors.DictCursor)  # Use DictCursor to get data as a dictionary
 
-        # SQL query to fetch the device data based on the callingstationid
-        cursor.execute('SELECT username, callingstationid, framedipaddress, framedipv6address FROM radacct WHERE callingstationid = %s', (callingstationid,))
-        
+        # SQL query to fetch the device data based on the provided username
+        sql = '''SELECT 
+                    username, 
+                    MAX(CASE WHEN attribute = 'Framed-IP-Address' THEN value END) AS 'Framed-IP-Address',
+                    MAX(CASE WHEN attribute = 'Framed-IPv6-Prefix' THEN value END) AS 'Framed-IPv6-Prefix',
+                    MAX(CASE WHEN attribute = 'Framed-IPv6-Address' THEN value END) AS 'Framed-IPv6-Address'
+                FROM radreply
+                WHERE username = %s
+                GROUP BY username;'''
+
+        cursor.execute(sql, (username,))
+
         # Fetch one record and store it in the device_data dictionary
         device_data = cursor.fetchone()
 
@@ -205,28 +207,34 @@ def get_device_data(callingstationid):
         device_data = None
     finally:
         # Close the cursor and the connection
-        cursor.close()
-        conn.close()
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 
     return device_data
 
-@app.route('/updateDevice/<path:callingstationid>', methods=['POST'])
-def update_device(callingstationid):
-    # Get updated data from the form
-    username = request.form.get('username')
-    framedipaddress = request.form.get('framedipaddress')
-    framedipv6address = request.form.get('framedipv6address')
+@app.route('/editDevice/<username>')
+def show_edit_device_page(username):
+    # Fetch the device data from your database based on the callingstationid
+    # Here you would retrieve the device data from the database and pass it to the template
+    current_device_data = get_device_data(username)
+    return render_template('editDevice.html', username=username, current_device_data=current_device_data)
 
-    # Connect to the customer_data database
+@app.route('/updateDevice/<path:username>', methods=['POST'])
+def update_device(username):
+    # Get updated data from the form
+    p_userName = request.form.get('MAC')
+    p_ipv4 = request.form.get('IPv4')
+    p_ipv6Prefix = request.form.get('IPv6 Prefix')
+    p_ipv6 = request.form.get('IPv6')
+
+    # Connect to the radius_netelastic database
     try:
         conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
         cursor = conn.cursor()
 
-        # SQL query to update the device entry based on the callingstationid
-        sql = '''UPDATE radacct 
-                 SET username=%s, framedipaddress=%s, framedipv6address=%s 
-                 WHERE callingstationid = %s'''
-        cursor.execute(sql, (username, framedipaddress, framedipv6address, callingstationid))
+        cursor.callproc('radius_netelastic.PROC_InsUpRadiusUser', (username, p_ipv4, p_ipv6Prefix, p_ipv6))
         conn.commit()
 
         # Check if the update was successful
