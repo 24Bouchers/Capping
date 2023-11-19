@@ -1,6 +1,6 @@
 # Appy.py
 
-Appi.py Api is a collabertative capping (Capstone) projects from five students at Marist College For GTel.
+Appi.py Api is a collabertative capping (Capstone) projects from five students at Marist College for GTel.
 
 Steven Boucher
 Easton   
