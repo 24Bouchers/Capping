@@ -2,19 +2,17 @@ from flask import Flask, app, flash, redirect, render_template, request
 import pymysql
 from datetime import datetime, timedelta, date, timezone
 
-
 app = Flask(__name__)
 app.secret_key = 'ArchFiber23'
 
 @app.route('/')
 @app.route('/index.html', methods=['GET'])
 
+
 def main():
 
     conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    
-    
     
     #########################
     # DEVICES REQUEST GRAPH #
@@ -46,7 +44,6 @@ def main():
         minIntervalTimeEST -= 1 
         sameTime = False
     currentTimeMin = close15MinInterval + (int(currentTimeSplit[0])*60)
-
 
     # THESE ARE TEST VARIABLES!!
     # DELETE BEFORE PUSH TO FULL PRODUCTION
@@ -138,7 +135,6 @@ def main():
 ################
 
 #Add Device
-
 @app.route('/addDevice.html', methods=['GET', 'POST'])
 def addDevice():
     if request.method == 'POST':
@@ -153,8 +149,7 @@ def addDevice():
         conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
         cursor = conn.cursor()
 
-        # Insert the device data into the database
- 
+        # Insert the device data into the databases
         cursor.callproc('radius_netelastic.PROC_InsUpRadiusUser', (p_username, p_ipv4, p_ipv6Prefix, p_ipv6))
         cursor.execute('INSERT INTO radius_netelastic.logs(username, reason, time) VALUES (%s, %s, NOW())', (p_username, 'Added'))
         conn.commit()
@@ -168,7 +163,6 @@ def addDevice():
     return render_template('addDevice.html')
 
 #Remove device
-
 @app.route("/removeDevice", methods=["POST"])
 def remove_device():
     p_username = request.form.get('username')
@@ -178,7 +172,6 @@ def remove_device():
     cursor = conn.cursor()
     
     # SQL query to delete the device entry based on the MAC address
-    
     try:
         cursor.callproc('radius_netelastic.PROC_DeleteRadiusUser', (p_username,))
         cursor.execute('INSERT INTO radius_netelastic.logs(username, reason, time) VALUES (%s, %s, NOW())', (p_username, 'Removed'))
@@ -192,8 +185,7 @@ def remove_device():
 
     return redirect('/devices.html')
 
-# Get the device to edit
-
+# Get the device information to edit
 def get_device_data(username):
     # Placeholder dictionary to store device data
     device_data = {}
@@ -232,7 +224,7 @@ def get_device_data(username):
 
     return device_data
 
-#Get The Details For Edit Page
+#Get The details For edit Page
 @app.route('/editDevice/<username>')
 def show_edit_device_page(username):
     # Fetch the device data from your database based on the callingstationid
@@ -278,7 +270,6 @@ def update_device(username):
 ##################
 
 #Display Devices
-
 @app.route('/devices.html', methods=['GET', 'POST'])
 def devices():
     conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
@@ -317,7 +308,6 @@ def devices():
     conn.close()
 
     return render_template('/devices.html', rows=rows)
-
 
 #Display Logs 
 @app.route('/logs.html', methods=['GET', 'POST'])
