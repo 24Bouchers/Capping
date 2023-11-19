@@ -8,11 +8,17 @@ app.secret_key = 'ArchFiber23'
 
 @app.route('/')
 @app.route('/index.html', methods=['GET'])
+
 def main():
 
     conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     
+    
+    
+    #########################
+    # DEVICES REQUEST GRAPH #
+    #########################
 
     cursor.execute('select acctstarttime from radacct order by acctstarttime DESC;')
 
@@ -127,6 +133,11 @@ def main():
     labels.reverse()
     return render_template('index.html', labels=labels, values=intervals)
 
+################
+# ALTER TABLES #
+################
+
+#Add Device
 
 @app.route('/addDevice.html', methods=['GET', 'POST'])
 def addDevice():
@@ -156,6 +167,8 @@ def addDevice():
 
     return render_template('addDevice.html')
 
+#Remove device
+
 @app.route("/removeDevice", methods=["POST"])
 def remove_device():
     p_username = request.form.get('username')
@@ -178,6 +191,8 @@ def remove_device():
         conn.close()
 
     return redirect('/devices.html')
+
+# Get the device to edit
 
 def get_device_data(username):
     # Placeholder dictionary to store device data
@@ -217,12 +232,17 @@ def get_device_data(username):
 
     return device_data
 
+#Get The Details For Edit Page
+
 @app.route('/editDevice/<username>')
 def show_edit_device_page(username):
     # Fetch the device data from your database based on the callingstationid
     # Here you would retrieve the device data from the database and pass it to the template
     current_device_data = get_device_data(username)
     return render_template('editDevice.html', username=username, current_device_data=current_device_data)
+
+
+#Update The Devices Page
 
 @app.route('/updateDevice/<path:username>', methods=['POST'])
 def update_device(username):
@@ -255,6 +275,12 @@ def update_device(username):
         conn.close()
 
     return redirect('/devices.html')
+
+##################
+# DISPLAY TABLES #
+##################
+
+#Display Devices
 
 @app.route('/devices.html', methods=['GET', 'POST'])
 def devices():
@@ -294,6 +320,9 @@ def devices():
     conn.close()
 
     return render_template('/devices.html', rows=rows)
+
+
+#Display Logs 
 
 @app.route('/logs.html', methods=['GET', 'POST'])
 def logs():
