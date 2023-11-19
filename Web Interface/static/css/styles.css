@@ -79,12 +79,6 @@
   --bs-highlight-bg: #fff3cd;
 }
 
-/*
-#systemStatus {
-  
-}
-*/
-
 .form-control {
   text-align: left !important;
 }
@@ -100,27 +94,10 @@
   margin-bottom: 8px;
 }
 
-/* some JS or some other CSS is interfering with this, 
-decided to just apply style inline in html
-.info-header i {
-  padding-right: 10px;
-}
-*/
-
-
 .info-data {
   font-size: 24px; 
   font-weight: 700; 
 }
-
-/* in case we want to use custom icons
-.dash-icons {
-  height: 16px;
-  width: 16px;
-  margin-right: 5px;
-  vertical-align: middle;
-} 
-*/
 
 *,
 *::before,
