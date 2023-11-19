@@ -15,7 +15,7 @@
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
             <a class="navbar-brand ps-3" href="index.html">
-                <img src="../assets/img/archtop_logo.png" alt="Archtop Fiber Logo" width="60" height="60">
+                <img src="{{ url_for('static', filename='img/archtop_logo.png') }}" alt="Archtop Fiber Logo" width="60" height="60">
             </a>
             <!-- Sidebar Toggle-->
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
@@ -106,35 +106,7 @@
                         <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item active">Add Devices</li>
                         </ol>           
-                          </div>
-                          <div class="row mb-3">
-                            <body>
-                                {% with messages = get_flashed_messages() %}
-                                    {% if messages %}
-                                        <ul>
-                                            {% for message in messages %}
-                                                <li>{{ message }}</li>
-                                            {% endfor %}
-                                        </ul>
-                                    {% endif %}
-                                {% endwith %}
-                                <!-- <form action="/addDevice.html" method="post">
-                                    <label>Customer:</label>
-                                    <input type="text" name="MAC" required>
-                                    <br>
-                                    <label>MAC Address:</label>
-                                    <input type="text" name="IPv4" required>
-                                    <br>
-                                    <label>IPv4 Address:</label>
-                                    <input type="text" name="IPv6 Prefix">
-                                    <br>
-                                    <label>IPv6 Address:</label>
-                                    <input type="text" name="IPv6">
-                                    <br>
-                                    <input type="submit" value="Add Device">
-                                </form>
-                            -->
-                            <form action="/addDevice.html" method="post" >
+                                <form action="/addDevice.html" method="post" >
                                 <div class="row mb-3">
                                     <label for="MAC" class="col-sm-3 col-form-label text-lg-end">
                                         MAC

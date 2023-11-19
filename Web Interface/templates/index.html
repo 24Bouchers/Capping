@@ -17,7 +17,7 @@
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Navbar Brand-->
         <a class="navbar-brand ps-3" href="index.html">
-            <img src="../assets/img/archtop_logo.png" alt="Archtop Fiber Logo" width="60" height="60">
+            <img src="{{ url_for('static', filename='img/archtop_logo.png') }}" alt="Archtop Fiber Logo" width="60" height="60">
         </a>
         <!-- Sidebar Toggle-->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
@@ -110,13 +110,13 @@
             <main>
                 <div class="container-fluid px-4 mt-3">
                     <div class="row">
-                        <!--Left column of the screen, takes up 70% of screen width-->
-                        <div class="col-xl-9 col-md-6" style="width: 70%;">
+                        <!--Left column of the screen, takes up 3/4 of screen width-->
+                        <div class="col-xl-9 col-md-6" >
                             <div class="row"> 
                                 <div class="col-xl-3 col-md-6">
                                     <div class="card bg-primary text-white mb-4">
                                         <div class="card-body">
-                                            <!--uses Font Awesome icon-->
+                                            <!--uses Font Awesome icons-->
                                             <span class="info-header"><i class="fa-solid fa-server" style="color: #ffffff; margin-right: 5;" ></i></i>Total Devices</span> 
                                             <span class="info-data">10,053</span> 
                                         </div>
@@ -211,7 +211,7 @@
                             </div>
                         </div>
                         <!-- Right column for system status -->
-                        <div class="col-xl-3 col-md-6" style="width: 30%;">
+                        <div class="col-xl-3 col-md-6">
                             <div class="card mb-4">
                                 <div class="card-header text-center">
                                     <h5 class="card-title">
@@ -222,6 +222,7 @@
                                     <!-- Green check mark for system status-->
                                     <div class="text-center">
                                         <i class="fa-regular fa-circle-check fa-8x" style="color: #43c81e;"></i>
+                                        <!-- Red Circle X for when server is down: <i class="fa-regular fa-circle-xmark fa-8x" style="color: #d21414;"></i> -->
                                         <br>
                                         <span class="mx-2">All Good!</span>
                                     </div>
@@ -231,11 +232,13 @@
                                     <div class="text-center">
                                         <div style="display: inline-block;">
                                             <i class="fa-solid fa-lock fa-2x" style="color: #43c81e;"></i>
+                                            <!-- Red icon: <i class="fa-solid fa-lock fa-2x" style="color: #d21414;"></i> -->
                                             <br>
                                             <span class="mx-2">freeradius</span>
                                         </div>
                                         <div style="display: inline-block; margin-left: 20px;">
-                                            <i class="fas fa-database fa-2x" style="color: #43c81e;"></i> 
+                                            <i class="fas fa-database fa-2x" style="color: #43c81e;"></i>
+                                            <!-- Red icon: <i class="fas fa-database fa-2x" style="color: #d21414;"></i> --> 
                                             <br>
                                             <span class="mx-2">sql_server</span>
                                         </div>
