@@ -2,19 +2,122 @@ from flask import Flask, app, flash, redirect, render_template, request
 import pymysql
 from datetime import datetime, timedelta, date, timezone
 
-
 app = Flask(__name__)
 app.secret_key = 'ArchFiber23'
 
+
+
+'''
+@app.route('/')
+@app.route('/index.html', methods=['POST'])
+def totalDevices():
+    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
+    cursor = conn.cursor()
+
+    # Execute the query to get the count
+    cursor.execute('SELECT COUNT(*) FROM radcheck')
+    result = cursor.fetchone()
+
+    if result is not None:
+        total_devices_count = result[0]
+    else:
+        total_devices_count = 0  # or any default value you want to assign
+
+    # Close the cursor and connection
+    cursor.close()
+    conn.close()
+
+    # Return the count as a string
+    return render_template('index.html', total_devices_count=str(total_devices_count))
+    
+// Get Static IPs
+@app.route('/')
+@app.route('/index.html', methods=['POST'])
+def getStaticDevices():    
+    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
+    cursor = conn.cursor()
+
+    # Execute the query to get the count
+    cursor.execute('SELECT COUNT(DISTINCT username) AS count_entries
+    FROM radreply
+    WHERE username IS NOT NULL;
+    ')
+    result = cursor.fetchone()
+
+    if result is not None:
+        static_devices_count = result[0]
+    else:
+        static_devices_count  = 0  # or any default value you want to assign
+
+    # Close the cursor and connection
+    cursor.close()
+    conn.close()
+
+    # Return the count as a string
+    return render_template('index.html', static_devices_count =str(static_devices_count ))
+    
+    // Get unreachable IPs
+@app.route('/')
+@app.route('/index.html', methods=['POST'])
+def getUnReachableDevices():    
+    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
+    cursor = conn.cursor()
+
+    # Execute the query to get the count
+    cursor.execute('SELECT COUNT(DISTINCT username) AS count_entries
+    FROM radacct
+    WHERE acctterminatecause = NULL;
+    ')
+    result = cursor.fetchone()
+
+    if result is not None:
+        unreachable_device_count = result[0]
+    else:
+        unreachable_device_count  = 0  # or any default value you want to assign
+
+    # Close the cursor and connection
+    cursor.close()
+    conn.close()
+
+    # Return the count as a string
+    return render_template('index.html', unreachable_device_count =str(unreachable_device_count ))
+    
+    
+        // Get live IPs
+@app.route('/')
+@app.route('/index.html', methods=['POST'])
+def getReachableDevices():    
+    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
+    cursor = conn.cursor()
+
+    # Execute the query to get the count
+    cursor.execute('SELECT COUNT(DISTINCT username) AS count_entries
+    FROM radacct
+    WHERE acctterminatecause IS NOT NULL;
+    ')
+    result = cursor.fetchone()
+
+    if result is not None:
+        reachable_device_count = result[0]
+    else:
+        reachable_device_count  = 0  # or any default value you want to assign
+
+    # Close the cursor and connection
+    cursor.close()
+    conn.close()
+
+    # Return the count as a string
+    return render_template('index.html', reachable_device_count =str(reachable_device_count ))
+    
+'''
+
+
 @app.route('/')
 @app.route('/index.html', methods=['GET'])
-
 def main():
 
     conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    
-    
     
     #########################
     # DEVICES REQUEST GRAPH #
@@ -30,10 +133,10 @@ def main():
 
     currentTimeUTC = datetime.now(timezone.utc).strftime("%H:%M")
     currentTimeEST = datetime.now().strftime("%H:%M")
-    yesterdayDate = todayDate - timedelta(days = 1)
+    yesterdayDate = str(todayDate - timedelta(days = 1))
     todayDate = str(todayDate)
-    yesterdayDate = str(yesterdayDate)
-    tempDate = "2023-10-10" # DELETE BEFORE DELIVER!!!!!----------------------------------------------------------------------------------
+    # yesterdayDate = str(yesterdayDate)
+    # tempDate = "2023-10-31" # DELETE BEFORE DELIVER!!!!!----------------------------------------------------------------------------------
     # convert current time into minutes
     currentTimeSplit = str(currentTimeUTC).split(':')
     currentTimeEST = str(currentTimeEST).split(':')
@@ -47,17 +150,19 @@ def main():
         sameTime = False
     currentTimeMin = close15MinInterval + (int(currentTimeSplit[0])*60)
 
-
+    
     # THESE ARE TEST VARIABLES!!
     # DELETE BEFORE PUSH TO FULL PRODUCTION
     # currentTimeMin = 60
-    yesterdayDate = "2023-10-09"
+    # yesterdayDate = "2023-10-09"
     # TODO delete temp code
 
     # list that will store the 15 minute interval numbers
     # going to be every 15 min for 6 hours
     intervals = [0] * 24
     hoursInMin = 360 # 360 represents 6 hours
+    offset = 0
+
     # loop through the list of times given from acctstarttime
     for x in stime:
         # convert the acctstarttime into minutes
@@ -66,12 +171,12 @@ def main():
         if splitDateTime and splitDateTime[0] != 'None':
             splitTime = str(splitDateTime[1]).split(':')
             totalTimeMin = int(splitTime[1]) + (int(splitTime[0])*60)
-            # print(totalTimeMin, splitDateTime[0])
             # since the time were comparing against is the closest 15 minute interval that has already passed
             # if a time appears that has todays date and is passed the time were checking from
             # it gets added to the most recent colom of the graph
-            if totalTimeMin > currentTimeMin and splitDateTime[0] == tempDate:
+            if totalTimeMin > currentTimeMin and splitDateTime[0] == todayDate and (totalTimeMin-currentTimeMin) <= 15 :
                 intervals[0] += 1 
+                offset = 1
             # check if at least 6 hours have passed since start of day 
             elif currentTimeMin >= hoursInMin:
                 # makes sure the dates match
@@ -79,11 +184,11 @@ def main():
                 #  SWITCH todayDate WITH tempDate SO IT FUNCTIONS WITH OUR DATA
                 #  DELETE tempDate AND THIS MESSAGE BEFORE DELIVERY OF FINAL APPLICATION
                 #-------------------------------------------------------------------------
-                if splitDateTime[0] == tempDate:
+                if splitDateTime[0] == todayDate:
                     # first finds out how many 15 minute intervals passed
                     diff = int(currentTimeMin/15) - int(totalTimeMin/15)
-                    if diff <= len(intervals)-1 and diff > -1:
-                        intervals[diff+1] += 1
+                    if diff <= len(intervals)-offset and diff > -1:
+                        intervals[diff+offset] += 1
             # sees if there was a 6 hour diffrence max between times and thta date matches either today or yesterday
             elif (1440 - totalTimeMin) + currentTimeMin <= hoursInMin and (splitDateTime[0] == todayDate or splitDateTime[0] == yesterdayDate):
                 if splitDateTime[0] == yesterdayDate:
@@ -91,44 +196,57 @@ def main():
                     diff = int(currentTimeMin/15) + int((1440 - totalTimeMin)/15)
 
                     if diff <= len(intervals) and diff > -1:
-                        intervals[diff+1] += 1
+                        intervals[diff+offset] += 1
                 else:
                     diff = int(currentTimeMin/15) - int(totalTimeMin/15)
                     if diff <= len(intervals) and diff > -1:
-                        intervals[diff+1] += 1
+                        intervals[diff+offset] += 1
         
     # the bottom labels of the line graph representing 15 minute increments
-    labels = [''] * 24
+    labels = [''] * 25
     hourCount = 0
     startingHour = currentTimeEST[0]
+    offset = 0
     for x in range(24):
+        # if the current time is not a even 15 minunet interval the it will be added as the first place on the graph display
+        # it then addes the the closest 15 minute interval that has passed as the second place in the display  
         if x == 0 and not sameTime:
             if int(currentTimeEST[0]) > 12:
                 labels[x] = str(int(currentTimeEST[0])-12) + ':' + currentTimeEST[1] + ' pm'
             else:
                 labels[x] = currentTimeEST[0] + ':' + currentTimeEST[1] + ' am'
+
+            if int(currentTimeEST[0]) > 12:
+                labels[x+1] = str(int(currentTimeEST[0])-12) + ':' + str(minIntervalTimeEST) + ' pm'
+            else:
+                labels[x+1] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' am'
+            x = 2
+            offset = 1
         else:
             # subtracts 15 minutes form previous time
             if int(minIntervalTimeEST) - 15 > 0:
                 minIntervalTimeEST -= 15
                 if int(currentTimeEST[0]) > 12:
-                    labels[x] = str(int(currentTimeEST[0])-12) + ':' + str(minIntervalTimeEST) + ' pm'
+                    labels[x+offset] = str(int(currentTimeEST[0])-12) + ':' + str(minIntervalTimeEST) + ' pm'
                 else:
-                    labels[x] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' am' 
+                    labels[x+offset] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' am' 
+                
             # adjusts the hour value
             else: 
                 if int(currentTimeEST[0]) > 12:
-                    labels[x] = str(int(currentTimeEST[0])-12) + ':00 pm'
+                    labels[x+offset] = str(int(currentTimeEST[0])-12) + ':00 pm'
                 else:
-                    labels[x] = currentTimeEST[0] + ':00 am'  
+                    labels[x+offset] = currentTimeEST[0] + ':00 am'  
                 minIntervalTimeEST =60
                 hourCount += 1
                 currentTimeEST[0] = str(int(startingHour)-hourCount)
+                # reset the hours for 12 am and 12 pm
                 if currentTimeEST[0] == '0':
                     currentTimeEST[0] = '12'
                 if int(currentTimeEST[0])  < 0:
                     currentTimeEST[0] = '23'
-
+    # reverse the lists so they appear from right to left on webpage 
+    del labels[-1]
     intervals.reverse()
     labels.reverse()
     return render_template('index.html', labels=labels, values=intervals)
@@ -138,7 +256,6 @@ def main():
 ################
 
 #Add Device
-
 @app.route('/addDevice.html', methods=['GET', 'POST'])
 def addDevice():
     if request.method == 'POST':
@@ -153,8 +270,7 @@ def addDevice():
         conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
         cursor = conn.cursor()
 
-        # Insert the device data into the database
- 
+        # Insert the device data into the databases
         cursor.callproc('radius_netelastic.PROC_InsUpRadiusUser', (p_username, p_ipv4, p_ipv6Prefix, p_ipv6))
         cursor.execute('INSERT INTO radius_netelastic.logs(username, reason, time) VALUES (%s, %s, NOW())', (p_username, 'Added'))
         conn.commit()
@@ -168,7 +284,6 @@ def addDevice():
     return render_template('addDevice.html')
 
 #Remove device
-
 @app.route("/removeDevice", methods=["POST"])
 def remove_device():
     p_username = request.form.get('username')
@@ -178,7 +293,6 @@ def remove_device():
     cursor = conn.cursor()
     
     # SQL query to delete the device entry based on the MAC address
-    
     try:
         cursor.callproc('radius_netelastic.PROC_DeleteRadiusUser', (p_username,))
         cursor.execute('INSERT INTO radius_netelastic.logs(username, reason, time) VALUES (%s, %s, NOW())', (p_username, 'Removed'))
@@ -192,8 +306,7 @@ def remove_device():
 
     return redirect('/devices.html')
 
-# Get the device to edit
-
+# Get the device information to edit
 def get_device_data(username):
     # Placeholder dictionary to store device data
     device_data = {}
@@ -232,8 +345,7 @@ def get_device_data(username):
 
     return device_data
 
-#Get The Details For Edit Page
-
+#Get The details For edit Page
 @app.route('/editDevice/<username>')
 def show_edit_device_page(username):
     # Fetch the device data from your database based on the callingstationid
@@ -241,13 +353,10 @@ def show_edit_device_page(username):
     current_device_data = get_device_data(username)
     return render_template('editDevice.html', username=username, current_device_data=current_device_data)
 
-
 #Update The Devices Page
-
 @app.route('/updateDevice/<path:username>', methods=['POST'])
 def update_device(username):
     # Get updated data from the form
-    p_userName = request.form.get('MAC')
     p_ipv4 = request.form.get('IPv4')
     p_ipv6Prefix = request.form.get('IPv6 Prefix')
     p_ipv6 = request.form.get('IPv6')
@@ -281,7 +390,6 @@ def update_device(username):
 ##################
 
 #Display Devices
-
 @app.route('/devices.html', methods=['GET', 'POST'])
 def devices():
     conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
@@ -321,9 +429,7 @@ def devices():
 
     return render_template('/devices.html', rows=rows)
 
-
 #Display Logs 
-
 @app.route('/logs.html', methods=['GET', 'POST'])
 def logs():
     conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
