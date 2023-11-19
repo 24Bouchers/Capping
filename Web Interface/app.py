@@ -6,7 +6,10 @@ app = Flask(__name__)
 app.secret_key = 'ArchFiber23'
 
 
-
+    #########################
+    # DEVICES REQUEST GRAPH #
+    #########################
+    
 '''
 @app.route('/')
 @app.route('/index.html', methods=['POST'])
@@ -119,10 +122,6 @@ def main():
     conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     
-    #########################
-    # DEVICES REQUEST GRAPH #
-    #########################
-
     cursor.execute('select acctstarttime from radacct order by acctstarttime DESC;')
 
     stime = cursor.fetchall()
