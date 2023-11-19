@@ -15,7 +15,7 @@
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
             <a class="navbar-brand ps-3" href="index.html">
-                <img src="../assets/img/archtop_logo.png" alt="Archtop Fiber Logo" width="60" height="60">
+                <img src="{{ url_for('static', filename='img/archtop_logo.png') }}" alt="Archtop Fiber Logo" width="60" height="60">
             </a>
             <!-- Sidebar Toggle-->
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
@@ -122,7 +122,7 @@
                                 <table style="width:100%", id="datatablesSimple">
                                     <thead>
                                         <tr>
-                                            <th>Username</th>
+                                            <th>MAC-Address</th>
                                             <th>Framed-IP-Address</th>
                                             <th>Framed-IPv6-Prefix</th>
                                             <th>Framed-IPv6-Address</th>
