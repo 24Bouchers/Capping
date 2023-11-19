@@ -18,6 +18,7 @@ app = Flask(__name__)
 #####################
 # CONNECTION TOGGLE #
 #####################
+
 # Maybe for website purposes have username and password be the same as website login
 # This could be easy access for credentials of who can manipulate the DB
 
@@ -371,12 +372,14 @@ cur.execute(query_12)
 cur.execute(query_13)
 cur.execute(query_14)
 cur.execute(query_15)
+conn.commit()
 
 cur.execute('''INSERT INTO radius_netelastic.radreply (username,`attribute`,op,value) VALUES
 	 ('cc-66-18-ec-69-d0','Framed-IP-Address','=','204.11.161.194'),
 	 ('CC-66-18-E7-3f-00','Framed-IP-Address','=','204.11.161.199'),
 	 ('CC-66-18-E7-3f-00','Framed-IPv6-Prefix','=','2607:2040:300:800A::1/64'),
 	 ('CC-66-18-E7-3f-00','Framed-IPv6-Address','=','2607:2040:300:800A::1/64');''')
+conn.commit()
  
 cur.execute('''INSERT INTO radius_netelastic.radcheck (username,`attribute`,op,value) VALUES
 	 ('aa-bb-cc-dd-ee-ff','Cleartext-Password',':=',' aa-bb-cc-dd-ee-ff'),
@@ -384,6 +387,7 @@ cur.execute('''INSERT INTO radius_netelastic.radcheck (username,`attribute`,op,v
 	 ('ben','Cleartext-Password',':=','ben'),
 	 ('tim','Cleartext-Password',':=','tim'),
 	 ('CC-66-18-E7-3f-00','Cleartext-Password',':=','CC-66-18-E7-3f-00');''')
+conn.commit()
 
 
 cur.execute(''' INSERT INTO radius_netelastic.logs(username, reason, time)
@@ -517,8 +521,6 @@ END;
 
 conn.commit()
 
-
-
 ###########
 # LOCK UP #
 ###########
@@ -556,214 +558,6 @@ conn.commit()
 
 cur.execute('UNLOCK TABLES')
 
-##################
-# CRUD FUNCTIONS # 
-##################
-"""
-#Add or Update Radcheck and Radreply based on username IPV4,IPv6Per
-cur.execute('''CREATE DEFINER=`root`@`localhost` PROCEDURE `radius_netelastic`.`PROC_InsUpRadiusUser`(
-    p_userName VARCHAR(64),
-    p_ipv4 VARCHAR(15),
-    p_ipv6Perfix VARCHAR(45),
-    p_ipv6 VARCHAR(45)
-)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-
-        GET DIAGNOSTICS CONDITION 1 @p1 = MYSQL_ERRNO, @p2 = MESSAGE_TEXT;
-
-        SIGNAL SQLSTATE '45000' SET MYSQL_ERRNO = @p1, MESSAGE_TEXT = @p2;
-    END;
-
-    START TRANSACTION;
-
-    /*
-     * Insert the user if it does not exist
-     */
-    INSERT INTO radius_netelastic.radcheck (username, `attribute`, op, value)
-    SELECT p_userName, 'Cleartext-Password', ':=', p_userName
-    WHERE NOT EXISTS (
-        SELECT *
-        FROM radius_netelastic.radcheck
-        WHERE username = p_userName
-    );
-
-    /* Update the ipv4 if it exists */
-    UPDATE radius_netelastic.radreply
-    SET value = p_ipv4
-    WHERE `attribute` = 'Framed-IP-Address' AND username = p_userName;
-
-    /* Update the prefix ipv6 if it exists */
-    UPDATE radius_netelastic.radreply
-    SET value = p_ipv6Perfix
-    WHERE `attribute` = 'Framed-IPv6-Prefix' AND username = p_userName;
-
-    /* Update the ipv6 if it exists */
-    UPDATE radius_netelastic.radreply
-    SET value = p_ipv6
-    WHERE `attribute` = 'Framed-IPv6-Address' AND username = p_userName;
-
-    /* Add the ipv4 if it does not exist */
-    INSERT INTO radius_netelastic.radreply (username, `attribute`, op, value)
-    SELECT p_userName, 'Framed-IP-Address', '=', p_ipv4
-    WHERE NOT EXISTS (
-        SELECT *
-        FROM radius_netelastic.radreply
-        WHERE username = p_userName AND `attribute` = 'Framed-IP-Address'
-    );
-
-    /* Add the ipv6 prefix if it does not exist */
-    INSERT INTO radius_netelastic.radreply (username, `attribute`, op, value)
-    SELECT p_userName, 'Framed-IPv6-Prefix', '=', p_ipv6Perfix
-    WHERE NOT EXISTS (
-        SELECT *
-        FROM radius_netelastic.radreply
-        WHERE username = p_userName AND `attribute` = 'Framed-IPv6-Prefix'
-    );
-
-    /* Add the ipv6 if it does not exist */
-    INSERT INTO radius_netelastic.radreply (username, `attribute`, op, value)
-    SELECT p_userName, 'Framed-IPv6-Address', '=', p_ipv6
-    WHERE NOT EXISTS (
-        SELECT *
-        FROM radius_netelastic.radreply
-        WHERE username = p_userName AND `attribute` = 'Framed-IPv6-Address'
-    );
-
-    /* SELECT *
-    FROM radius_netelastic.radreply
-    WHERE username = p_userName; */
-
-    COMMIT;
-END;
-''')
-
-#Delete MAC from Radcheck and Radreply
-cur.execute('''CREATE PROCEDURE radius_netelastic.PROC_DeleteRadiusUser(p_userName VARCHAR(64))
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        GET DIAGNOSTICS CONDITION 1 @p1 = MYSQL_ERRNO, @p2 = MESSAGE_TEXT;
-
-        SIGNAL SQLSTATE '45000' SET MYSQL_ERRNO = @p1, MESSAGE_TEXT = @p2;
-    END;
-
-    START TRANSACTION;
-    DELETE FROM radius_netelastic.radcheck WHERE username = p_userName;
-    DELETE FROM radius_netelastic.radreply WHERE username = p_userName;
-    COMMIT;
-END;
-''')
-
-conn.commit()
-
-##################
-# CRUD FUNCTIONS # 
-##################
-
-#Add or Update Radcheck and Radreply based on username IPV4,IPv6Per
-cur.execute('''CREATE DEFINER=`root`@`localhost` PROCEDURE `radius_netelastic`.`PROC_InsUpRadiusUser`(
-    p_userName VARCHAR(64),
-    p_ipv4 VARCHAR(15),
-    p_ipv6Perfix VARCHAR(45),
-    p_ipv6 VARCHAR(45)
-)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-
-        GET DIAGNOSTICS CONDITION 1 @p1 = MYSQL_ERRNO, @p2 = MESSAGE_TEXT;
-
-        SIGNAL SQLSTATE '45000' SET MYSQL_ERRNO = @p1, MESSAGE_TEXT = @p2;
-    END;
-
-    START TRANSACTION;
-
-    /*
-     * Insert the user if it does not exist
-     */
-    INSERT INTO radius_netelastic.radcheck (username, `attribute`, op, value)
-    SELECT p_userName, 'Cleartext-Password', ':=', p_userName
-    WHERE NOT EXISTS (
-        SELECT *
-        FROM radius_netelastic.radcheck
-        WHERE username = p_userName
-    );
-
-    /* Update the ipv4 if it exists */
-    UPDATE radius_netelastic.radreply
-    SET value = p_ipv4
-    WHERE `attribute` = 'Framed-IP-Address' AND username = p_userName;
-
-    /* Update the prefix ipv6 if it exists */
-    UPDATE radius_netelastic.radreply
-    SET value = p_ipv6Perfix
-    WHERE `attribute` = 'Framed-IPv6-Prefix' AND username = p_userName;
-
-    /* Update the ipv6 if it exists */
-    UPDATE radius_netelastic.radreply
-    SET value = p_ipv6
-    WHERE `attribute` = 'Framed-IPv6-Address' AND username = p_userName;
-
-    /* Add the ipv4 if it does not exist */
-    INSERT INTO radius_netelastic.radreply (username, `attribute`, op, value)
-    SELECT p_userName, 'Framed-IP-Address', '=', p_ipv4
-    WHERE NOT EXISTS (
-        SELECT *
-        FROM radius_netelastic.radreply
-        WHERE username = p_userName AND `attribute` = 'Framed-IP-Address'
-    );
-
-    /* Add the ipv6 prefix if it does not exist */
-    INSERT INTO radius_netelastic.radreply (username, `attribute`, op, value)
-    SELECT p_userName, 'Framed-IPv6-Prefix', '=', p_ipv6Perfix
-    WHERE NOT EXISTS (
-        SELECT *
-        FROM radius_netelastic.radreply
-        WHERE username = p_userName AND `attribute` = 'Framed-IPv6-Prefix'
-    );
-
-    /* Add the ipv6 if it does not exist */
-    INSERT INTO radius_netelastic.radreply (username, `attribute`, op, value)
-    SELECT p_userName, 'Framed-IPv6-Address', '=', p_ipv6
-    WHERE NOT EXISTS (
-        SELECT *
-        FROM radius_netelastic.radreply
-        WHERE username = p_userName AND `attribute` = 'Framed-IPv6-Address'
-    );
-
-    /* SELECT *
-    FROM radius_netelastic.radreply
-    WHERE username = p_userName; */
-
-    COMMIT;
-END;
-''')
-
-#Delete MAC from Radcheck and Radreply
-cur.execute('''CREATE PROCEDURE radius_netelastic.PROC_DeleteRadiusUser(p_userName VARCHAR(64))
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        GET DIAGNOSTICS CONDITION 1 @p1 = MYSQL_ERRNO, @p2 = MESSAGE_TEXT;
-
-        SIGNAL SQLSTATE '45000' SET MYSQL_ERRNO = @p1, MESSAGE_TEXT = @p2;
-    END;
-
-    START TRANSACTION;
-    DELETE FROM radius_netelastic.radcheck WHERE username = p_userName;
-    DELETE FROM radius_netelastic.radreply WHERE username = p_userName;
-    COMMIT;
-END;
-''')
-
-conn.commit()
-"""
 #########
 # Flask #
 #########
