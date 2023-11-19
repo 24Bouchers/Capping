@@ -133,7 +133,7 @@ def addDevice():
     if request.method == 'POST':
       
         # Get data from the form with default values
-        p_userName = request.form.get('MAC', default=None)
+        p_username = request.form.get('MAC', default=None)
         p_ipv4 = request.form.get('IPv4', default=None)
         p_ipv6Prefix = request.form.get('IPv6 Prefix', default=None)
         p_ipv6 = request.form.get('IPv6', default=None)
@@ -144,7 +144,8 @@ def addDevice():
 
         # Insert the device data into the database
  
-        cursor.callproc('radius_netelastic.PROC_InsUpRadiusUser', (p_userName, p_ipv4, p_ipv6Prefix, p_ipv6))
+        cursor.callproc('radius_netelastic.PROC_InsUpRadiusUser', (p_username, p_ipv4, p_ipv6Prefix, p_ipv6))
+        cursor.execute('INSERT INTO radius_netelastic.logs(username, reason, time) VALUES (%s, %s, NOW())', (p_username, 'Added'))
         conn.commit()
 
         cursor.close()
@@ -167,6 +168,8 @@ def remove_device():
     
     try:
         cursor.callproc('radius_netelastic.PROC_DeleteRadiusUser', (p_username,))
+        cursor.execute('INSERT INTO radius_netelastic.logs(username, reason, time) VALUES (%s, %s, NOW())', (p_username, 'Removed'))
+
         conn.commit()
     except Exception as e:
         print(f"Error while removing device: {e}")
@@ -235,6 +238,7 @@ def update_device(username):
         cursor = conn.cursor()
 
         cursor.callproc('radius_netelastic.PROC_InsUpRadiusUser', (username, p_ipv4, p_ipv6Prefix, p_ipv6))
+        cursor.execute('INSERT INTO radius_netelastic.logs(username, reason, time) VALUES (%s, %s, NOW())', (username, 'Edited'))
         conn.commit()
 
         # Check if the update was successful
@@ -291,29 +295,6 @@ def devices():
 
     return render_template('/devices.html', rows=rows)
 
-""" logs route draft code
-@app.route('/logs.html', methods=['GET', 'POST'])
-def logs():
-    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
-    cursor = conn.cursor(pymysql.cursors.DictCursor)
-    
-    query = request.form.get('query') if request.method == 'POST' else None
-    
-    if query:
-        # probaly have to adjust the fields here in the SQL query based on the database schema, kinda just winging it
-        cursor.execute('''SELECT LogID, time, callingstationid, reason FROM logs 
-                       WHERE time LIKE %s OR callingstationid LIKE %s OR reason LIKE %s''',
-                       ('%' + query + '%', '%' + query + '%', '%' + query + '%'))
-    else:
-        cursor.execute('SELECT LogID, time, callingstationid, reason FROM logs;')
-
-    rows = cursor.fetchall()
-    cursor.close()
-    conn.close()
-
-    return render_template('logs.html', rows=rows)
-"""
-
 @app.route('/logs.html', methods=['GET', 'POST'])
 def logs():
     conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
@@ -324,10 +305,11 @@ def logs():
     if query:
         # probaly have to adjust the fields here in the SQL query based on the database schema, kinda just winging it
         cursor.execute('''SELECT logId, time, username, reason FROM logs 
-                       WHERE time LIKE %s OR username LIKE %s OR reason LIKE %s''',
-                       ('%' + query + '%', '%' + query + '%', '%' + query + '%'))
+                   WHERE time LIKE %s OR username LIKE %s OR reason LIKE %s''',
+                   ('%' + query + '%', '%' + query + '%', '%' + query + '%'))
+
     else:
-        cursor.execute('SELECT logID, time, username, reason FROM logs;')
+        cursor.execute('SELECT logID, time, username, reason FROM logs ORDER BY time DESC;')
 
     rows = cursor.fetchall()
     cursor.close()
