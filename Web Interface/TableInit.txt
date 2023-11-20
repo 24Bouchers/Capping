@@ -41,6 +41,14 @@ cur.execute("DROP DATABASE IF EXISTS radius_netelastic")
 cur.execute("CREATE DATABASE radius_netelastic; ")
 cur.execute("USE radius_netelastic;")
 
+cur.execute('''CREATE USER 'radius_UI'@'%' IDENTIFIED BY 'GKwaxhBnkvNZSHHcZukn'; 
+GRANT Delete ON radius_netelastic.* TO 'radius_UI'@'%';
+GRANT Insert ON radius_netelastic.* TO 'radius_UI'@'%';
+GRANT Select ON radius_netelastic.* TO 'radius_UI'@'%';
+GRANT Update ON radius_netelastic.* TO 'radius_UI'@'%'
+''')
+cur.commit()
+
 #Declaratives
 
 # This statement saves the current value of the CHARACTER_SET_CLIENT session variable into a user-defined variable for later restoration.
