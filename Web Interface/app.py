@@ -223,7 +223,7 @@ def addDevice():
         p_ipv6 = request.form.get('IPv6', default=None)
 
         # Connect to MariaDB
-        conn = pymysql.connect(host=GLOBAL_HOST, user='root', password='', db='radius_netelastic')
+        conn = pymysql.connect(host=GLOBAL_HOST, user=GLOBAL_USER, password=GLOBAL_PASSWORD, db=GLOBAL_DB)
         cursor = conn.cursor()
 
         # Insert the device data into the databases
