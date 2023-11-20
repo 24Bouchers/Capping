@@ -191,7 +191,7 @@ def main():
                     currentTimeEST[0] = '12'
                 if int(currentTimeEST[0])  < 0:
                     currentTimeEST[0] = '23'
-
+                    
     # reverse the lists so they appear from right to left on webpage 
     del labels[-1]
     intervals.reverse()
@@ -306,7 +306,6 @@ def show_edit_device_page(username):
 @app.route('/updateDevice/<path:username>', methods=['POST'])
 def update_device(username):
     # Get updated data from the form
-    p_userName = request.form.get('MAC')
     p_ipv4 = request.form.get('IPv4')
     p_ipv6Prefix = request.form.get('IPv6 Prefix')
     p_ipv6 = request.form.get('IPv6')
