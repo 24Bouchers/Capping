@@ -5,6 +5,10 @@ from datetime import datetime, timedelta, date, timezone
 app = Flask(__name__)
 app.secret_key = 'ArchFiber23'
 
+GLOBAL_HOST = '10.10.9.43'
+GLOBAL_USER = 'root'''
+GLOBAL_PASSWORD = ''
+GLOBAL_DB = 'radius_netelastic'
 
 #####################
 # HOME PAGE DISPLAY #
@@ -14,7 +18,7 @@ app.secret_key = 'ArchFiber23'
 @app.route('/index.html', methods=['GET'])
 def main():
 
-    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
+    conn = pymysql.connect(host=GLOBAL_HOST, user=GLOBAL_USER, password=GLOBAL_PASSWORD, db=GLOBAL_DB)
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     
     #######################
@@ -219,7 +223,7 @@ def addDevice():
         p_ipv6 = request.form.get('IPv6', default=None)
 
         # Connect to MariaDB
-        conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
+        conn = pymysql.connect(host=GLOBAL_HOST, user='root', password='', db='radius_netelastic')
         cursor = conn.cursor()
 
         # Insert the device data into the databases
@@ -241,7 +245,7 @@ def remove_device():
     p_username = request.form.get('username')
     
     # Connect to the radius_netelastic database
-    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
+    conn = pymysql.connect(host=GLOBAL_HOST, user=GLOBAL_USER, password=GLOBAL_PASSWORD, db=GLOBAL_DB)
     cursor = conn.cursor()
     
     # SQL query to delete the device entry based on the MAC address
@@ -266,7 +270,7 @@ def get_device_data(username):
     # Connect to the radius_netelastic database
     try:
         # Establish a connection to the database
-        conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
+        conn = pymysql.connect(host=GLOBAL_HOST, user=GLOBAL_USER, password=GLOBAL_PASSWORD, db=GLOBAL_PASSWORD)
         cursor = conn.cursor(pymysql.cursors.DictCursor)  # Use DictCursor to get data as a dictionary
 
         # SQL query to fetch the device data based on the provided username
@@ -315,7 +319,7 @@ def update_device(username):
 
     # Connect to the radius_netelastic database
     try:
-        conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
+        conn = pymysql.connect(host=GLOBAL_HOST, user=GLOBAL_USER, password=GLOBAL_PASSWORD, db=GLOBAL_DB)
         cursor = conn.cursor()
 
         cursor.callproc('radius_netelastic.PROC_InsUpRadiusUser', (username, p_ipv4, p_ipv6Prefix, p_ipv6))
@@ -344,7 +348,7 @@ def update_device(username):
 #Display Devices
 @app.route('/devices.html', methods=['GET', 'POST'])
 def devices():
-    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
+    conn = pymysql.connect(host=GLOBAL_HOST, user=GLOBAL_USER, password=GLOBAL_PASSWORD, db=GLOBAL_DB)
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     
     query = request.form.get('query') if request.method == 'POST' else None
@@ -384,7 +388,7 @@ def devices():
 #Display Logs 
 @app.route('/logs.html', methods=['GET', 'POST'])
 def logs():
-    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
+    conn = pymysql.connect(host=GLOBAL_HOST, user=GLOBAL_USER, password=GLOBAL_PASSWORD, db=GLOBAL_DB)
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     
     query = request.form.get('query') if request.method == 'POST' else None
