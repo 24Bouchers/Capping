@@ -6,7 +6,7 @@ app = Flask(__name__)
 app.secret_key = 'ArchFiber23'
 
 GLOBAL_HOST = '10.10.9.43'
-GLOBAL_USER = 'root'''
+GLOBAL_USER = 'root'
 GLOBAL_PASSWORD = ''
 GLOBAL_DB = 'radius_netelastic'
 
