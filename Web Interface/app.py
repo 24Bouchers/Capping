@@ -137,6 +137,61 @@ def main():
     conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     
+    #######################
+    ## Reachable Devices ##
+    #######################
+    # Execute the query to get the count
+    cursor.execute('SELECT COUNT(DISTINCT username) AS count_entries FROM radacct WHERE acctterminatecause IS NOT NULL;')
+    result = cursor.fetchall()
+
+    if result is not None:
+        reachable_device_count = result[0]
+    else:
+        reachable_device_count  = 0  # or any default value you want to assign
+
+
+    ##################
+    ##  Static IP's ##
+    ##################
+    # Execute the query to get the count
+    cursor.execute('SELECT COUNT(DISTINCT username) AS count_entries FROM radreply WHERE username IS NOT NULL;')
+    result = cursor.fetchall()
+
+    if result is not None:
+        static_devices_count = result[0]
+    else:
+        static_devices_count  = 0  # or any default value you want to assign
+    
+
+    ######################
+    ## Unreachable IP's ##
+    ######################
+    # Execute the query to get the count
+    cursor.execute('SELECT COUNT(DISTINCT username) AS count_entries FROM radacct WHERE acctterminatecause = NULL;')
+    result = cursor.fetchall()
+
+    if result is not None:
+        unreachable_device_count = result[0]
+    else:
+        unreachable_device_count  = 0  # or any default value you want to assign
+
+
+    ###################
+    ## Total Devices ##
+    ###################
+    # Execute the query to get the count
+    cursor.execute('SELECT COUNT(*) FROM radcheck')
+    result = cursor.fetchall()
+
+    if result is not None:
+        total_devices_count = result[0]
+    else:
+        total_devices_count = 0  # or any default value you want to assign
+
+
+    ##################
+    ##    GRAPH     ##
+    ##################
     cursor.execute('select acctstarttime from radacct order by acctstarttime DESC;')
 
     stime = cursor.fetchall()
@@ -259,11 +314,14 @@ def main():
                     currentTimeEST[0] = '12'
                 if int(currentTimeEST[0])  < 0:
                     currentTimeEST[0] = '23'
+                    
     # reverse the lists so they appear from right to left on webpage 
     del labels[-1]
     intervals.reverse()
     labels.reverse()
-    return render_template('index.html', labels=labels, values=intervals)
+    return render_template('index.html', labels=labels, values=intervals, reachable_device_count = reachable_device_count.get('count_entries'), 
+        static_devices_count = static_devices_count.get('count_entries'), unreachable_device_count = unreachable_device_count.get('count_entries'),
+        total_devices_count = total_devices_count.get('COUNT(*)'))
 
 ################
 # ALTER TABLES #
