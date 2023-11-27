@@ -64,7 +64,7 @@ def main():
     ## Total Devices ##
     ###################
     # Execute the query to get the count
-    cursor.execute('SELECT COUNT(*) FROM radcheck')
+    cursor.execute('SELECT COUNT(DISTINCT username) AS count_entries FROM radacct')
     result = cursor.fetchall()
 
     if result is not None:
@@ -270,7 +270,7 @@ def get_device_data(username):
     # Connect to the radius_netelastic database
     try:
         # Establish a connection to the database
-        conn = pymysql.connect(host=GLOBAL_HOST, user=GLOBAL_USER, password=GLOBAL_PASSWORD, db=GLOBAL_PASSWORD)
+        conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
         cursor = conn.cursor(pymysql.cursors.DictCursor)  # Use DictCursor to get data as a dictionary
 
         # SQL query to fetch the device data based on the provided username
@@ -319,7 +319,7 @@ def update_device(username):
 
     # Connect to the radius_netelastic database
     try:
-        conn = pymysql.connect(host=GLOBAL_HOST, user=GLOBAL_USER, password=GLOBAL_PASSWORD, db=GLOBAL_DB)
+        conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
         cursor = conn.cursor()
 
         cursor.callproc('radius_netelastic.PROC_InsUpRadiusUser', (username, p_ipv4, p_ipv6Prefix, p_ipv6))
