@@ -17,7 +17,7 @@ GLOBAL_DB = 'radius_netelastic'
 @app.route('/')
 @app.route('/index.html', methods=['GET'])
 def main():
-    
+    global connectionStatus
     try:
         conn = pymysql.connect(host=GLOBAL_HOST, user=GLOBAL_USER, password=GLOBAL_PASSWORD, db=GLOBAL_DB)
         cursor = conn.cursor(pymysql.cursors.DictCursor)
@@ -117,6 +117,7 @@ def main():
 
         # list that will store the 15 minute interval numbers
         # going to be every 15 min for 6 hours
+        global intervals
         intervals = [0] * 24
         hoursInMin = 360 # 360 represents 6 hours
         offset = 0
@@ -161,6 +162,7 @@ def main():
                             intervals[diff+offset] += 1
             
         # the bottom labels of the line graph representing 15 minute increments
+        global labels
         labels = [''] * 25
         hourCount = 0
         startingHour = currentTimeEST[0]
@@ -224,14 +226,18 @@ def main():
         total_devices_count = 0
         
         connectionStatus = False
-
+    
     finally:
             
-            # TODO Innit Variables for the Graph
-            
+        # TODO Innit Variables for the Graph
+        if connectionStatus:
             return render_template('index.html', labels=labels, values=intervals, reachable_device_count = reachable_device_count.get('count_entries'), 
             static_devices_count = static_devices_count.get('count_entries'), unreachable_device_count = unreachable_device_count.get('count_entries'),
             total_devices_count = total_devices_count.get('COUNT(*)'))
+        else:
+            return render_template('index.html', labels='', values=0, reachable_device_count = reachable_device_count, 
+            static_devices_count = static_devices_count, unreachable_device_count = unreachable_device_count,
+            total_devices_count = total_devices_count)
 
 ################
 # ALTER TABLES #
