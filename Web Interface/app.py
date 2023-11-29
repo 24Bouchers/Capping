@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, date, timezone
 app = Flask(__name__)
 app.secret_key = 'ArchFiber23'
 
-GLOBAL_HOST = '10.10.9.2'
+GLOBAL_HOST = '10.10.9.43'
 GLOBAL_USER = 'radius_UI'
 GLOBAL_PASSWORD = 'REDACTED_PASSWORD'
 GLOBAL_DB = 'radius_netelastic'
@@ -228,8 +228,6 @@ def main():
         connectionStatus = False
     
     finally:
-            
-        # TODO Innit Variables for the Graph
         if connectionStatus:
             return render_template('index.html', labels=labels, values=intervals, reachable_device_count = reachable_device_count.get('count_entries'), 
             static_devices_count = static_devices_count.get('count_entries'), unreachable_device_count = unreachable_device_count.get('count_entries'),
@@ -399,6 +397,9 @@ def update_device(username):
 # Display Devices
 @app.route('/devices.html', methods=['GET', 'POST'])
 def devices():
+    # Initialize variables outside the try block
+    conn = None
+    cursor = None
     try:
         conn = pymysql.connect(host=GLOBAL_HOST, user=GLOBAL_USER, password=GLOBAL_PASSWORD, db=GLOBAL_DB)
         cursor = conn.cursor(pymysql.cursors.DictCursor)
@@ -432,13 +433,12 @@ def devices():
                 GROUP BY username;
             ''')
         rows = cursor.fetchall()
+        
     except Exception as e:
         print(f"Error while fetching devices data: {e}")
         # You might want to handle the error appropriately, such as displaying an error page
         return render_template('error.html')
-    finally:
-        cursor.close()
-        conn.close()
+
 
     return render_template('/devices.html', rows=rows)
 
