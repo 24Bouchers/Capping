@@ -8,7 +8,7 @@ This simply servers as an archive of the table structure and set up used
 when this API was initally created.
 '''
 
-# mysql -u root -p 
+# mysql -u radius_UI -p REDACTED_PASSWORD
 #: Login for consol
 from flask import Flask
 import pymysql
@@ -41,13 +41,22 @@ cur.execute("DROP DATABASE IF EXISTS radius_netelastic")
 cur.execute("CREATE DATABASE radius_netelastic; ")
 cur.execute("USE radius_netelastic;")
 
-cur.execute('''CREATE USER 'radius_UI'@'%' IDENTIFIED BY 'REDACTED_PASSWORD'; 
-GRANT Delete ON radius_netelastic.* TO 'radius_UI'@'%';
-GRANT Insert ON radius_netelastic.* TO 'radius_UI'@'%';
-GRANT Select ON radius_netelastic.* TO 'radius_UI'@'%';
-GRANT Update ON radius_netelastic.* TO 'radius_UI'@'%'
-''')
-cur.commit()
+# Drop user if exists
+cur.execute("DROP USER IF EXISTS 'radius_UI'@'%';")
+# Commit the changes
+conn.commit()
+# Create user
+cur.execute("CREATE USER 'radius_UI'@'%' IDENTIFIED BY 'REDACTED_PASSWORD';")
+# Commit the changes
+conn.commit()
+# Grant privileges
+cur.execute("GRANT DELETE ON radius_netelastic.* TO 'radius_UI'@'%';")
+cur.execute("GRANT INSERT ON radius_netelastic.* TO 'radius_UI'@'%';")
+cur.execute("GRANT SELECT ON radius_netelastic.* TO 'radius_UI'@'%';")
+cur.execute("GRANT UPDATE ON radius_netelastic.* TO 'radius_UI'@'%';")
+# Commit the changes
+conn.commit()
+
 
 #Declaratives
 
