@@ -25,7 +25,7 @@ def main():
     ## Reachable Devices ##
     #######################
     # Execute the query to get the count
-    cursor.execute('SELECT COUNT(DISTINCT username) AS count_entries FROM radacct WHERE acctterminatecause IS NOT NULL;')
+    cursor.execute("SELECT COUNT(DISTINCT username) AS count_entries FROM radacct WHERE acctterminatecause = '';")
     result = cursor.fetchall()
 
     if result is not None:
@@ -51,7 +51,10 @@ def main():
     ## Unreachable IP's ##
     ######################
     # Execute the query to get the count
-    cursor.execute('SELECT COUNT(DISTINCT username) AS count_entries FROM radacct WHERE acctterminatecause = NULL;')
+    cursor.execute("""SELECT COUNT(*) FROM (SELECT username FROM radacct r WHERE acctterminatecause <> '' 
+                   AND NOT EXISTS(SELECT * FROM radacct r2 WHERE r2.username = r.username and r2.acctterminatecause = '') 
+                   GROUP BY username ) a;""")
+
     result = cursor.fetchall()
 
     if result is not None:
@@ -64,7 +67,7 @@ def main():
     ## Total Devices ##
     ###################
     # Execute the query to get the count
-    cursor.execute('SELECT COUNT(DISTINCT username) AS count_entries FROM radacct')
+    cursor.execute("SELECT COUNT(*) FROM (SELECT 'x' x FROM radacct GROUP BY username) a;")
     result = cursor.fetchall()
 
     if result is not None:
