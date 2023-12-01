@@ -23,70 +23,89 @@ SERVER_TWO_DB = 'radius_netelastic'
 @app.route('/index.html', methods=['GET'])
 def main():
     global connectionStatus
+    
+        ##############################
+        ##  Sever Two | Static IPs  ##
+        ##############################
+        
+    try:
+                
+        serverTwoConn = pymysql.connect(host=SERVER_TWO_HOST, user=SERVER_TWO_USER, password=SERVER_TWO_PASSWORD, db=SERVER_TWO_DB)
+        serverTwocursor = serverTwoConn.cursor(pymysql.cursors.DictCursor)
+        
+
+        serverTwocursor.execute('SELECT COUNT(DISTINCT username) AS count_entries FROM radreply WHERE username IS NOT NULL;')
+        result = serverTwocursor.fetchall()
+
+        if result is not None and len(result) > 0:
+            static_devices_count = result[0]['count_entries']
+        else:
+            static_devices_count = 0
+                    
+    except pymysql.Error as e:
+        print(f"Error connecting to the database: {e}")
+        static_devices_count = 0
+        
+        
+        ################
+        ## Server One ##
+        ################
+        
     try:
         serverOneConn = pymysql.connect(host=SERVER_ONE_HOST, user=SERVER_ONE_USER, password=SERVER_ONE_PASSWORD, db=SERVER_ONE_DB)
         serverOnecursor = serverOneConn.cursor(pymysql.cursors.DictCursor)
-        
-        serverTwoConn = pymysql.connect(host=SERVER_TWO_HOST, user=SERVER_TWO_USER, password=SERVER_TWO_PASSWORD, db=SERVER_TWO_DB)
-        serverTwocursor = serverTwoConn.cursor(pymysql.cursors.DictCursor)
         
         #######################
         ## Reachable Devices ##
         #######################
 
         serverOnecursor.execute("SELECT COUNT(DISTINCT username) AS count_entries FROM radacct WHERE acctterminatecause = '';")
-        result = serverOnecursor.fetchall()
+        result = serverOnecursor.fetchone()
 
         if result is not None:
-            reachable_device_count = result[0]
+            reachable_device_count = result['count_entries']
         else:
-            reachable_device_count  = 0
-
-
-        ##################
-        ##  Static IP's ##
-        ##################
-        serverTwocursor.execute('SELECT COUNT(DISTINCT username) AS count_entries FROM radreply WHERE username IS NOT NULL;')
-        result = serverTwocursor.fetchall()
-
-        if result is not None:
-            static_devices_count = result[0]
-        else:
-            static_devices_count  = 0
-        
+            reachable_device_count = 0
 
         ######################
         ## Unreachable IP's ##
         ######################
-        # Execute the query to get the count
-        serverOnecursor.execute("""SELECT COUNT(*) FROM (SELECT username FROM radacct r WHERE acctterminatecause <> '' 
-                    AND NOT EXISTS(SELECT * FROM radacct r2 WHERE r2.username = r.username and r2.acctterminatecause = '') 
-                    GROUP BY username ) a;""")
-
-        result = serverOnecursor.fetchall()
+        
+        serverOnecursor.execute("""
+            SELECT COUNT(*) AS count_entries FROM (
+                SELECT username FROM radacct r 
+                WHERE acctterminatecause <> '' 
+                AND NOT EXISTS (
+                    SELECT * FROM radacct r2 
+                    WHERE r2.username = r.username 
+                    AND r2.acctterminatecause = ''
+                ) 
+                GROUP BY username
+            ) a;
+        """)
+        result = serverOnecursor.fetchone()
 
         if result is not None:
-            unreachable_device_count = result[0]
+            unreachable_device_count = result['count_entries']
         else:
-            unreachable_device_count  = 0
-
+            unreachable_device_count = 0
 
         ###################
         ## Total Devices ##
         ###################
-        # Execute the query to get the count
-        serverOnecursor.execute("SELECT COUNT(*) FROM (SELECT 'x' x FROM radacct GROUP BY username) a;")
-        result = serverOnecursor.fetchall()
+
+        serverOnecursor.execute("SELECT COUNT(*) AS total_devices_count FROM (SELECT 'x' x FROM radacct GROUP BY username) a;")
+        result = serverOnecursor.fetchone()
 
         if result is not None:
-            total_devices_count = result[0]
+            total_devices_count = result['total_devices_count']
         else:
             total_devices_count = 0
-
 
         ##################
         ##    GRAPH     ##
         ##################
+        
         serverOnecursor.execute('select acctstarttime from radacct order by acctstarttime DESC;')
 
         stime = serverOnecursor.fetchall()
@@ -114,7 +133,6 @@ def main():
             sameTime = False
         currentTimeMin = close15MinInterval + (int(currentTimeSplit[0])*60)
 
-        
         # THESE ARE TEST VARIABLES!!
         # DELETE BEFORE PUSH TO FULL PRODUCTION
         # currentTimeMin = 60
@@ -227,21 +245,23 @@ def main():
         
         # Set default values
         reachable_device_count = 0
-        static_devices_count = 0
         unreachable_device_count = 0
         total_devices_count = 0
-        
         connectionStatus = False
-    
+        
     finally:
         if connectionStatus:
-            return render_template('index.html', labels=labels, values=intervals, reachable_device_count = reachable_device_count.get('count_entries'), 
-            static_devices_count = static_devices_count.get('count_entries'), unreachable_device_count = unreachable_device_count.get('count_entries'),
-            total_devices_count = total_devices_count.get('COUNT(*)'))
+            return render_template('index.html', labels=labels, values=intervals, 
+                reachable_device_count=reachable_device_count, 
+                static_devices_count=static_devices_count, 
+                unreachable_device_count=unreachable_device_count,
+                total_devices_count=total_devices_count)
         else:
-            return render_template('index.html', labels='', values=0, reachable_device_count = reachable_device_count, 
-            static_devices_count = static_devices_count, unreachable_device_count = unreachable_device_count,
-            total_devices_count = total_devices_count)
+            return render_template('index.html', labels='', values=0, 
+                reachable_device_count=reachable_device_count, 
+                static_devices_count=static_devices_count, 
+                unreachable_device_count=unreachable_device_count,
+                total_devices_count=total_devices_count)
 
 ################
 # ALTER TABLES #
@@ -355,7 +375,6 @@ def show_edit_device_page(username):
         return render_template('editDevice.html', username=username, current_device_data=current_device_data)
     except Exception as e:
         print(f"Error while fetching device data: {e}")
-        # You might want to handle the error appropriately, such as displaying an error page
         return render_template('500.html')
 
 
@@ -414,8 +433,6 @@ def devices():
         
         if query:
             # Query is searching from the database based on name, mac address, ipv4, or ipv6 address
-            # It is NOT case sensitive
-            # Used Parameterized queries to protect from SQL injections
             serverTwocursor.execute('''SELECT username, 
                                     MAX(CASE WHEN attribute = 'Framed-IP-Address' THEN value END) AS 'Framed-IP-Address',
                                     MAX(CASE WHEN attribute = 'Framed-IPv6-Prefix' THEN value END) AS 'Framed-IPv6-Prefix',
@@ -442,7 +459,6 @@ def devices():
         
     except Exception as e:
         print(f"Error while fetching devices data: {e}")
-        # You might want to handle the error appropriately, such as displaying an error page
         return render_template('500.html')
 
 
@@ -469,7 +485,6 @@ def logs():
         rows = serverTwocursor.fetchall()
     except Exception as e:
         print(f"Error while fetching logs data: {e}")
-        # You might want to handle the error appropriately, such as displaying an error page
         return render_template('500.html')
     finally:
         serverTwocursor.close()
