@@ -5,10 +5,15 @@ from datetime import datetime, timedelta, date, timezone
 app = Flask(__name__)
 app.secret_key = 'ArchFiber23'
 
-GLOBAL_HOST = '10.10.9.43'
-GLOBAL_USER = 'radius_UI'
-GLOBAL_PASSWORD = 'REDACTED_PASSWORD'
-GLOBAL_DB = 'radius_netelastic'
+SERVER_ONE_HOST = '10.10.9.43'
+SERVER_ONE_USER = 'radius_UI'
+SERVER_ONE_PASSWORD = 'REDACTED_PASSWORD'
+SERVER_ONE_DB = 'radius_netelastic'
+
+SERVER_TWO_HOST = '10.10.9.43'
+SERVER_TWO_USER = 'radius_UI'
+SERVER_TWO_PASSWORD = 'REDACTED_PASSWORD'
+SERVER_TWO_DB = 'radius_netelastic'
 
 #####################
 # HOME PAGE DISPLAY #
@@ -19,16 +24,18 @@ GLOBAL_DB = 'radius_netelastic'
 def main():
     global connectionStatus
     try:
-        conn = pymysql.connect(host=GLOBAL_HOST, user=GLOBAL_USER, password=GLOBAL_PASSWORD, db=GLOBAL_DB)
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
-        # Your code using the connection and cursor goes here
+        serverOneConn = pymysql.connect(host=SERVER_ONE_HOST, user=SERVER_ONE_USER, password=SERVER_ONE_PASSWORD, db=SERVER_ONE_DB)
+        serverOnecursor = serverOneConn.cursor(pymysql.cursors.DictCursor)
+        
+        serverTwoConn = pymysql.connect(host=SERVER_TWO_HOST, user=SERVER_TWO_USER, password=SERVER_TWO_PASSWORD, db=SERVER_TWO_DB)
+        serverTwocursor = serverTwoConn.cursor(pymysql.cursors.DictCursor)
         
         #######################
         ## Reachable Devices ##
         #######################
-        # Execute the query to get the count
-        cursor.execute("SELECT COUNT(DISTINCT username) AS count_entries FROM radacct WHERE acctterminatecause = '';")
-        result = cursor.fetchall()
+
+        serverOnecursor.execute("SELECT COUNT(DISTINCT username) AS count_entries FROM radacct WHERE acctterminatecause = '';")
+        result = serverOnecursor.fetchall()
 
         if result is not None:
             reachable_device_count = result[0]
@@ -39,9 +46,8 @@ def main():
         ##################
         ##  Static IP's ##
         ##################
-        # Execute the query to get the count
-        cursor.execute('SELECT COUNT(DISTINCT username) AS count_entries FROM radreply WHERE username IS NOT NULL;')
-        result = cursor.fetchall()
+        serverTwocursor.execute('SELECT COUNT(DISTINCT username) AS count_entries FROM radreply WHERE username IS NOT NULL;')
+        result = serverTwocursor.fetchall()
 
         if result is not None:
             static_devices_count = result[0]
@@ -53,11 +59,11 @@ def main():
         ## Unreachable IP's ##
         ######################
         # Execute the query to get the count
-        cursor.execute("""SELECT COUNT(*) FROM (SELECT username FROM radacct r WHERE acctterminatecause <> '' 
+        serverOnecursor.execute("""SELECT COUNT(*) FROM (SELECT username FROM radacct r WHERE acctterminatecause <> '' 
                     AND NOT EXISTS(SELECT * FROM radacct r2 WHERE r2.username = r.username and r2.acctterminatecause = '') 
                     GROUP BY username ) a;""")
 
-        result = cursor.fetchall()
+        result = serverOnecursor.fetchall()
 
         if result is not None:
             unreachable_device_count = result[0]
@@ -69,8 +75,8 @@ def main():
         ## Total Devices ##
         ###################
         # Execute the query to get the count
-        cursor.execute("SELECT COUNT(*) FROM (SELECT 'x' x FROM radacct GROUP BY username) a;")
-        result = cursor.fetchall()
+        serverOnecursor.execute("SELECT COUNT(*) FROM (SELECT 'x' x FROM radacct GROUP BY username) a;")
+        result = serverOnecursor.fetchall()
 
         if result is not None:
             total_devices_count = result[0]
@@ -81,11 +87,11 @@ def main():
         ##################
         ##    GRAPH     ##
         ##################
-        cursor.execute('select acctstarttime from radacct order by acctstarttime DESC;')
+        serverOnecursor.execute('select acctstarttime from radacct order by acctstarttime DESC;')
 
-        stime = cursor.fetchall()
-        cursor.close()
-        conn.close()
+        stime = serverOnecursor.fetchall()
+        serverOnecursor.close()
+        serverOnecursor.close()
 
         todayDate = date.today()
 
@@ -253,16 +259,16 @@ def addDevice():
             p_ipv6 = request.form.get('IPv6', default=None)
 
             # Connect to MariaDB
-            conn = pymysql.connect(host=GLOBAL_HOST, user=GLOBAL_USER, password=GLOBAL_PASSWORD, db=GLOBAL_DB)
-            cursor = conn.cursor()
+            serverTwoConn = pymysql.connect(host=SERVER_TWO_HOST, user=SERVER_TWO_USER, password=SERVER_TWO_PASSWORD, db=SERVER_TWO_DB)
+            serverTwocursor = serverTwoConn.cursor(pymysql.cursors.DictCursor)
 
             # Insert the device data into the databases
-            cursor.callproc('radius_netelastic.PROC_InsUpRadiusUser', (p_username, p_ipv4, p_ipv6Prefix, p_ipv6))
-            cursor.execute('INSERT INTO radius_netelastic.logs(username, reason, time) VALUES (%s, %s, NOW())', (p_username, 'Added'))
-            conn.commit()
+            serverTwocursor.callproc('radius_netelastic.PROC_InsUpRadiusUser', (p_username, p_ipv4, p_ipv6Prefix, p_ipv6))
+            serverTwocursor.execute('INSERT INTO radius_netelastic.logs(username, reason, time) VALUES (%s, %s, NOW())', (p_username, 'Added'))
+            serverTwocursor.commit()
 
-            cursor.close()
-            conn.close()
+            serverTwocursor.close()
+            serverTwocursor.close()
 
             flash('Device added successfully!', 'success')
             return redirect('/devices.html')
@@ -280,23 +286,23 @@ def remove_device():
     
     # Connect to the radius_netelastic database
     try:
-        conn = pymysql.connect(host=GLOBAL_HOST, user=GLOBAL_USER, password=GLOBAL_PASSWORD, db=GLOBAL_DB)
-        cursor = conn.cursor()
+        serverTwoConn = pymysql.connect(host=SERVER_TWO_HOST, user=SERVER_TWO_USER, password=SERVER_TWO_PASSWORD, db=SERVER_TWO_DB)
+        serverTwocursor = serverTwoConn.cursor(pymysql.cursors.DictCursor)
         
         # SQL query to delete the device entry based on the MAC address
         try:
-            cursor.callproc('radius_netelastic.PROC_DeleteRadiusUser', (p_username,))
-            cursor.execute('INSERT INTO radius_netelastic.logs(username, reason, time) VALUES (%s, %s, NOW())', (p_username, 'Removed'))
+            serverTwocursor.callproc('radius_netelastic.PROC_DeleteRadiusUser', (p_username,))
+            serverTwocursor.execute('INSERT INTO radius_netelastic.logs(username, reason, time) VALUES (%s, %s, NOW())', (p_username, 'Removed'))
             
-            conn.commit()
+            serverTwocursor.commit()
         except Exception as e:
             print(f"Error while removing device: {e}")
         finally:
-            cursor.close()
+            serverTwocursor.close()
     except Exception as ex:
         print(f"Error connecting to the database: {ex}")
     finally:
-        conn.close()
+        serverTwocursor.close()
 
     return redirect('/devices.html')
 
@@ -308,8 +314,8 @@ def get_device_data(username):
     # Connect to the radius_netelastic database
     try:
         # Establish a connection to the database
-        conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
-        cursor = conn.cursor(pymysql.cursors.DictCursor)  # Use DictCursor to get data as a dictionary
+        serverTwoConn = pymysql.connect(host=SERVER_TWO_HOST, user=SERVER_TWO_USER, password=SERVER_TWO_PASSWORD, db=SERVER_TWO_DB)
+        serverTwocursor = serverTwoConn.cursor(pymysql.cursors.DictCursor)
 
         # SQL query to fetch the device data based on the provided username
         sql = '''SELECT 
@@ -321,10 +327,10 @@ def get_device_data(username):
                 WHERE username = %s
                 GROUP BY username;'''
 
-        cursor.execute(sql, (username,))
+        serverTwocursor.execute(sql, (username,))
 
         # Fetch one record and store it in the device_data dictionary
-        device_data = cursor.fetchone()
+        device_data = serverTwocursor.fetchone()
 
     except pymysql.MySQLError as e:
         print(f"Error connecting to MySQL Database: {e}")
@@ -332,10 +338,10 @@ def get_device_data(username):
         device_data = None
     finally:
         # Close the cursor and the connection
-        if cursor:
-            cursor.close()
-        if conn:
-            conn.close()
+        if serverTwocursor:
+            serverTwocursor.close()
+        if serverTwoConn:
+            serverTwoConn.close()
 
     return device_data
 
@@ -350,7 +356,7 @@ def show_edit_device_page(username):
     except Exception as e:
         print(f"Error while fetching device data: {e}")
         # You might want to handle the error appropriately, such as displaying an error page
-        return render_template('error.html')
+        return render_template('500.html')
 
 
 # Update The Devices Page
@@ -363,16 +369,16 @@ def update_device(username):
 
     # Connect to the radius_netelastic database
     try:
-        conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
-        cursor = conn.cursor()
+        serverTwoConn = pymysql.connect(host=SERVER_TWO_HOST, user=SERVER_TWO_USER, password=SERVER_TWO_PASSWORD, db=SERVER_TWO_DB)
+        serverTwocursor = serverTwoConn.cursor(pymysql.cursors.DictCursor)
 
         try:
-            cursor.callproc('radius_netelastic.PROC_InsUpRadiusUser', (username, p_ipv4, p_ipv6Prefix, p_ipv6))
-            cursor.execute('INSERT INTO radius_netelastic.logs(username, reason, time) VALUES (%s, %s, NOW())', (username, 'Edited'))
-            conn.commit()
+            serverTwocursor.callproc('radius_netelastic.PROC_InsUpRadiusUser', (username, p_ipv4, p_ipv6Prefix, p_ipv6))
+            serverTwocursor.execute('INSERT INTO radius_netelastic.logs(username, reason, time) VALUES (%s, %s, NOW())', (username, 'Edited'))
+            serverTwocursor.commit()
 
             # Check if the update was successful
-            if cursor.rowcount > 0:
+            if serverTwocursor.rowcount > 0:
                 flash('Device updated successfully!')
             else:
                 flash('No device was updated. Check if the device ID is correct.')
@@ -385,8 +391,8 @@ def update_device(username):
         print(f"Error while updating device: {e}")
         flash('Failed to update device. Please try again.')
     finally:
-        cursor.close()
-        conn.close()
+        serverTwocursor.close()
+        serverTwocursor.close()
 
     return redirect('/devices.html')
 
@@ -398,11 +404,11 @@ def update_device(username):
 @app.route('/devices.html', methods=['GET', 'POST'])
 def devices():
     # Initialize variables outside the try block
-    conn = None
-    cursor = None
+    serverTwoConn = None
+    serverTwocursor = None
     try:
-        conn = pymysql.connect(host=GLOBAL_HOST, user=GLOBAL_USER, password=GLOBAL_PASSWORD, db=GLOBAL_DB)
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        serverTwoConn = pymysql.connect(host=SERVER_TWO_HOST, user=SERVER_TWO_USER, password=SERVER_TWO_PASSWORD, db=SERVER_TWO_DB)
+        serverTwocursor = serverTwoConn.cursor(pymysql.cursors.DictCursor)
         
         query = request.form.get('query') if request.method == 'POST' else None
         
@@ -410,7 +416,7 @@ def devices():
             # Query is searching from the database based on name, mac address, ipv4, or ipv6 address
             # It is NOT case sensitive
             # Used Parameterized queries to protect from SQL injections
-            cursor.execute('''SELECT username, 
+            serverTwocursor.execute('''SELECT username, 
                                     MAX(CASE WHEN attribute = 'Framed-IP-Address' THEN value END) AS 'Framed-IP-Address',
                                     MAX(CASE WHEN attribute = 'Framed-IPv6-Prefix' THEN value END) AS 'Framed-IPv6-Prefix',
                                     MAX(CASE WHEN attribute = 'Framed-IPv6-Address' THEN value END) AS 'Framed-IPv6-Address'
@@ -423,7 +429,7 @@ def devices():
                         ('%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%'))
 
         else:
-            cursor.execute('''SELECT
+            serverTwocursor.execute('''SELECT
                 username,
                 MAX(CASE WHEN `attribute` = 'Framed-IP-Address' THEN value END) AS 'Framed-IP-Address',
                 MAX(CASE WHEN `attribute` = 'Framed-IPv6-Prefix' THEN value END) AS 'Framed-IPv6-Prefix',
@@ -432,12 +438,12 @@ def devices():
                 WHERE `attribute` IN ('Framed-IP-Address', 'Framed-IPv6-Prefix', 'Framed-IPv6-Address')
                 GROUP BY username;
             ''')
-        rows = cursor.fetchall()
+        rows = serverTwocursor.fetchall()
         
     except Exception as e:
         print(f"Error while fetching devices data: {e}")
         # You might want to handle the error appropriately, such as displaying an error page
-        return render_template('error.html')
+        return render_template('500.html')
 
 
     return render_template('/devices.html', rows=rows)
@@ -446,28 +452,28 @@ def devices():
 @app.route('/logs.html', methods=['GET', 'POST'])
 def logs():
     try:
-        conn = pymysql.connect(host=GLOBAL_HOST, user=GLOBAL_USER, password=GLOBAL_PASSWORD, db=GLOBAL_DB)
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        serverTwoConn = pymysql.connect(host=SERVER_TWO_HOST, user=SERVER_TWO_USER, password=SERVER_TWO_PASSWORD, db=SERVER_TWO_DB)
+        serverTwocursor = serverTwoConn.cursor(pymysql.cursors.DictCursor)
         
         query = request.form.get('query') if request.method == 'POST' else None
         
         if query:
             # Probably have to adjust the fields here in the SQL query based on the database schema, kinda just winging it
-            cursor.execute('''SELECT logId, time, username, reason FROM logs 
+            serverTwocursor.execute('''SELECT logId, time, username, reason FROM logs 
                        WHERE time LIKE %s OR username LIKE %s OR reason LIKE %s''',
                        ('%' + query + '%', '%' + query + '%', '%' + query + '%'))
 
         else:
-            cursor.execute('SELECT logID, time, username, reason FROM logs ORDER BY time DESC;')
+            serverTwocursor.execute('SELECT logID, time, username, reason FROM logs ORDER BY time DESC;')
 
-        rows = cursor.fetchall()
+        rows = serverTwocursor.fetchall()
     except Exception as e:
         print(f"Error while fetching logs data: {e}")
         # You might want to handle the error appropriately, such as displaying an error page
-        return render_template('error.html')
+        return render_template('500.html')
     finally:
-        cursor.close()
-        conn.close()
+        serverTwocursor.close()
+        serverTwoConn.close()
 
     return render_template('logs.html', rows=rows)
 
