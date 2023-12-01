@@ -25,10 +25,10 @@ app = Flask(__name__)
 #Toggle to run locally or on the vm
 LOCAL = False
 
-if(LOCAL):
-	conn = pymysql.connect(host='localhost', user='root', password='ArchFiber23', db='radius_netelastic')
-else: 
-    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
+#if(LOCAL):
+	#conn = pymysql.connect(host='localhost', user='root', password='ArchFiber23', db='radius_netelastic')
+#else: 
+conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
     
 cur = conn.cursor()
 
@@ -54,6 +54,11 @@ cur.execute("GRANT DELETE ON radius_netelastic.* TO 'radius_UI'@'%';")
 cur.execute("GRANT INSERT ON radius_netelastic.* TO 'radius_UI'@'%';")
 cur.execute("GRANT SELECT ON radius_netelastic.* TO 'radius_UI'@'%';")
 cur.execute("GRANT UPDATE ON radius_netelastic.* TO 'radius_UI'@'%';")
+# Grant EXECUTE privilege for the stored procedures
+
+# Commit the changes
+conn.commit()
+
 # Commit the changes
 conn.commit()
 
@@ -535,6 +540,10 @@ BEGIN
     COMMIT;
 END;
 ''')
+
+#Give Radius_UI access to these commands
+cur.execute("GRANT EXECUTE ON PROCEDURE radius_netelastic.PROC_InsUpRadiusUser TO 'radius_UI'@'%';")
+cur.execute("GRANT EXECUTE ON PROCEDURE radius_netelastic.PROC_DeleteRadiusUser TO 'radius_UI'@'%';")
 
 conn.commit()
 
