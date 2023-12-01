@@ -400,7 +400,7 @@ conn.commit()
  
 cur.execute('''INSERT INTO radius_netelastic.radcheck (username,`attribute`,op,value) VALUES
 	 ('aa-bb-cc-dd-ee-ff','Cleartext-Password',':=',' aa-bb-cc-dd-ee-ff'),
-	 ('cc-66-18-ec-69-d0','Cleartext-Password','=','cc-66-18-ec-69-d0'),
+	 ('cc-66-18-ec-69-d0','Cleartext-Password',':=','cc-66-18-ec-69-d0'),
 	 ('ben','Cleartext-Password',':=','ben'),
 	 ('tim','Cleartext-Password',':=','tim'),
 	 ('CC-66-18-E7-3f-00','Cleartext-Password',':=','CC-66-18-E7-3f-00');''')
