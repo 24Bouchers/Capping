@@ -1,6 +1,8 @@
 from flask import Flask, app, flash, redirect, render_template, request
 import pymysql
 from datetime import datetime, timedelta, date, timezone
+from pytz import timezone
+
 
 app = Flask(__name__)
 app.secret_key = 'ArchFiber23'
@@ -19,17 +21,9 @@ SERVER_TWO_DB = 'radius_netelastic'
 # HOME PAGE DISPLAY #
 #####################
 
-
-
 @app.route('/')
 @app.route('/index.html', methods=['GET'])
 def main():
-
-    global labels 
-    labels = [''] * 25
-    
-    global intervals
-    intervals = [0] * 24
 
     ###########################
     # Server Two | Static IPs #
@@ -126,7 +120,7 @@ def main():
 
             # setup date and time for both UTC(for value calculations) and EST(for bottom label of graph)
             stime = serverOnecursor.fetchall()
-            
+
             # setup date and time for both UTC(for value calculations) and EST(for bottom label of graph)
             todayDate = date.today()
             currentTimeUTC = datetime.now(timezone('UTC')).strftime("%H:%M")
@@ -148,6 +142,7 @@ def main():
 
             # list that will store the 15 minute interval numbers
             # going to be every 15 min for 6 hours
+            global intervals
             intervals = [0] * 24
             hoursInMin = 360 # 360 represents 6 hours
             offset = 0
@@ -187,6 +182,7 @@ def main():
                         break
                 
             # the bottom labels of the line graph representing 15 minute increments
+            global labels
             labels = [''] * 25
             firstgo = True 
             offset = 0
@@ -264,7 +260,6 @@ def main():
             del labels[-1]
             intervals.reverse()
             labels.reverse()
-
 
 
     except pymysql.Error as e:
