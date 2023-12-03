@@ -60,11 +60,11 @@
 									<i class="fas fa-list" style="color: #ffffff;"></i>
 								</div> Logs
 							</a>
-							<a class="nav-link" href="users.html">
+							<!-- <a class="nav-link" href="users.html">
 								<div class="sb-nav-link-icon">
 									<i class="fas fa-users" style="color: #ffffff;"></i>
 								</div> Users
-							</a>
+							</a> -->
                             <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
                                     <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
@@ -93,56 +93,57 @@
                             </div>
                         </div>
                     </div>
+                    <!--
                     <div class="sb-sidenav-footer">
                         <div class="small">Logged in as:</div>
                         Admin
-                    </div>
+                    </div> -->
                 </nav>
             </div>
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">Welcome, Admin</h1>
-                        <ol class="breadcrumb mb-4">
+                        <h1 class="mt-4">Add Device</h1>
+                        <!-- <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item active">Add Devices</li>
-                        </ol>           
+                        </ol> -->          
                                 <form action="/addDevice.html" method="post" >
                                 <div class="row mb-3">
-                                    <label for="MAC" class="col-sm-3 col-form-label text-lg-end">
+                                    <label for="MAC" class="col-sm-1 col-form-label text-lg-end">
                                         MAC
                                     </label>
-                                    <div class="col">
+                                    <div class="col-sm-8">
                                         <input type="text" name="MAC" maxlength="64" class="form-control" placeholder="MAC Address" id="mac_address" required>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <label for="IPv4" class="col-sm-3 col-form-label text-lg-end">
+                                    <label for="IPv4" class="col-sm-1 col-form-label text-lg-end">
                                         IPv4                                    </label>
-                                    <div class="col">
+                                    <div class="col-sm-8">
                                         <input type="text" name="IPv4" maxlength="64" class="form-control" placeholder="IPv4 Address" id="ipv4_address" required>
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <label for="IPv6 Prefix" class="col-sm-3 col-form-label text-lg-end">
+                                    <label for="IPv6 Prefix" class="col-sm-1 col-form-label text-lg-end">
                                         IPv6 Prefix
                                     </label>
-                                    <div class="col">
+                                    <div class="col-sm-8">
                                         <input type="text" name="IPv6 Prefix" maxlength="64" class="form-control" placeholder="IPv6 Prefix" id="ipv6_prefix">
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <label for="IPv6" class="col-sm-3 col-form-label text-lg-end">
+                                    <label for="IPv6" class="col-sm-1 col-form-label text-lg-end">
                                         IPv6
                                     </label>
-                                    <div class="col">
+                                    <div class="col-sm-8">
                                         <input type="text" name="IPv6" maxlength="64" class="form-control" placeholder="IPv6_Address" id="ipv6_address">
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
-                                <div class="text-end my-3">
+                                <div class="text-end my-3 col-sm-9">
                                     <input type="submit" value="Add Device" class="btn btn-primary">
                                 </div>
                             </form>
