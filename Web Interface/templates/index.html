@@ -237,41 +237,63 @@
                             </div>
                         </div>
                         <!-- Right column for system status -->
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card mb-4">
-                                <div class="card-header text-center">
-                                    <h5 class="card-title">
-                                        <i class="fas fa-database fa-2x align-middle me-2"></i><span class="align-middle">System Status</span>
-                                    </h5>
-                                </div>
-                                <div class="card-body">
-                                    <!-- Green check mark for system status-->
-                                    <div class="text-center">
-                                        <i class="fa-regular fa-circle-check fa-8x" style="color: #43c81e;"></i>
-                                        <!-- Red Circle X for when server is down: <i class="fa-regular fa-circle-xmark fa-8x" style="color: #d21414;"></i> -->
-                                        <br>
-                                        <span class="mx-2">All Good!</span>
-                                    </div>
-                                    <!-- Divider -->
-                                    <hr class="my-4">
-                                    <!-- Icons and text for servers -->
-                                    <div class="text-center">
-                                        <div style="display: inline-block;">
-                                            <i class="fa-solid fa-lock fa-2x" style="color: #43c81e;"></i>
-                                            <!-- Red icon: <i class="fa-solid fa-lock fa-2x" style="color: #d21414;"></i> -->
-                                            <br>
-                                            <span class="mx-2">freeradius</span>
-                                        </div>
-                                        <div style="display: inline-block; margin-left: 20px;">
-                                            <i class="fas fa-database fa-2x" style="color: #43c81e;"></i>
-                                            <!-- Red icon: <i class="fas fa-database fa-2x" style="color: #d21414;"></i> --> 
-                                            <br>
-                                            <span class="mx-2">sql_server</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+<div class="col-xl-3 col-md-6">
+    <div class="card mb-4">
+        <div class="card-header text-center">
+            <h5 class="card-title">
+                <i class="fas fa-database fa-2x align-middle me-2"></i><span class="align-middle">System Status</span>
+            </h5>
+        </div>
+        <div class="card-body">
+            <!-- Check the status and change the icon and text accordingly -->
+            <div class="text-center">
+                {% if serverOneConnection == 'online' and serverTwoConnection == 'online' %}
+                    <!-- Green check mark for system status when both are online -->
+                    <i class="fa-regular fa-circle-check fa-8x" style="color: #43c81e;"></i>
+                    <br>
+                    <span class="mx-2">All Good!</span>
+                {% elif serverOneConnection == 'online' or serverTwoConnection == 'online' %}
+                    <!-- Yellow symbol when one server is up but the other is down -->
+                    <i class="fa-solid fa-circle-exclamation fa-8x" style="color: #ffd700;"></i>
+                    <br>
+                    <span class="mx-2">One Server Down</span>
+                {% else %}
+                    <!-- Red Circle X for when both are down -->
+                    <i class="fa-regular fa-circle-xmark fa-8x" style="color: #d21414;"></i>
+                    <br>
+                    <span class="mx-2">Servers Down</span>
+                {% endif %}
+            </div>
+            <!-- Divider -->
+            <hr class="my-4">
+            <!-- Icons and text for servers -->
+            <div class="text-center">
+                <div style="display: inline-block;">
+                    <!-- Check the status and change the icon color accordingly -->
+                    {% if serverOneConnection == 'online' %}
+                    <i class="fas fa-database fa-2x" style="color: #43c81e;"></i>
+                    {% else %}
+                        <!-- Red icon when freeradius is down -->
+                        <i class="fas fa-database fa-2x" style="color: #d21414;"></i>
+                    {% endif %}
+                    <br>
+                    <span class="mx-2">Server One</span>
+                </div>
+                <div style="display: inline-block; margin-left: 20px;">
+                    <!-- Check the status and change the icon color accordingly -->
+                    {% if serverTwoConnection == 'online' %}
+                        <i class="fas fa-database fa-2x" style="color: #43c81e;"></i>
+                    {% else %}
+                        <!-- Red icon when sql_server is down -->
+                        <i class="fas fa-database fa-2x" style="color: #d21414;"></i>
+                    {% endif %}
+                    <br>
+                    <span class="mx-2">Server Two</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
                     </div>
                 </div>
             </main>
