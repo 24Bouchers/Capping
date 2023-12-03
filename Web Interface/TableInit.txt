@@ -8,7 +8,7 @@ This simply servers as an archive of the table structure and set up used
 when this API was initally created.
 '''
 
-# mysql -u root -p 
+# mysql -u radius_UI -p REDACTED_PASSWORD
 #: Login for consol
 from flask import Flask
 import pymysql
@@ -25,10 +25,10 @@ app = Flask(__name__)
 #Toggle to run locally or on the vm
 LOCAL = False
 
-if(LOCAL):
-	conn = pymysql.connect(host='localhost', user='root', password='ArchFiber23', db='radius_netelastic')
-else: 
-    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
+#if(LOCAL):
+	#conn = pymysql.connect(host='localhost', user='root', password='ArchFiber23', db='radius_netelastic')
+#else: 
+conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
     
 cur = conn.cursor()
 
@@ -40,6 +40,28 @@ cur = conn.cursor()
 cur.execute("DROP DATABASE IF EXISTS radius_netelastic")
 cur.execute("CREATE DATABASE radius_netelastic; ")
 cur.execute("USE radius_netelastic;")
+
+# Drop user if exists
+cur.execute("DROP USER IF EXISTS 'radius_UI'@'%';")
+# Commit the changes
+conn.commit()
+# Create user
+cur.execute("CREATE USER 'radius_UI'@'%' IDENTIFIED BY 'REDACTED_PASSWORD';")
+# Commit the changes
+conn.commit()
+# Grant privileges
+cur.execute("GRANT DELETE ON radius_netelastic.* TO 'radius_UI'@'%';")
+cur.execute("GRANT INSERT ON radius_netelastic.* TO 'radius_UI'@'%';")
+cur.execute("GRANT SELECT ON radius_netelastic.* TO 'radius_UI'@'%';")
+cur.execute("GRANT UPDATE ON radius_netelastic.* TO 'radius_UI'@'%';")
+# Grant EXECUTE privilege for the stored procedures
+
+# Commit the changes
+conn.commit()
+
+# Commit the changes
+conn.commit()
+
 
 #Declaratives
 
@@ -383,7 +405,7 @@ conn.commit()
  
 cur.execute('''INSERT INTO radius_netelastic.radcheck (username,`attribute`,op,value) VALUES
 	 ('aa-bb-cc-dd-ee-ff','Cleartext-Password',':=',' aa-bb-cc-dd-ee-ff'),
-	 ('cc-66-18-ec-69-d0','Cleartext-Password','=','cc-66-18-ec-69-d0'),
+	 ('cc-66-18-ec-69-d0','Cleartext-Password',':=','cc-66-18-ec-69-d0'),
 	 ('ben','Cleartext-Password',':=','ben'),
 	 ('tim','Cleartext-Password',':=','tim'),
 	 ('CC-66-18-E7-3f-00','Cleartext-Password',':=','CC-66-18-E7-3f-00');''')
@@ -518,6 +540,10 @@ BEGIN
     COMMIT;
 END;
 ''')
+
+#Give Radius_UI access to these commands
+cur.execute("GRANT EXECUTE ON PROCEDURE radius_netelastic.PROC_InsUpRadiusUser TO 'radius_UI'@'%';")
+cur.execute("GRANT EXECUTE ON PROCEDURE radius_netelastic.PROC_DeleteRadiusUser TO 'radius_UI'@'%';")
 
 conn.commit()
 
