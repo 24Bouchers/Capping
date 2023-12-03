@@ -331,10 +331,6 @@ def show_edit_device_page(username):
         print(error_message)
         return render_template('404.html', error_message=error_message)
 
-
-from flask import Flask, request, redirect, flash
-import pymysql
-
 @app.route('/updateDevice/<path:username>', methods=['POST'])
 def update_device(username):
     try:
