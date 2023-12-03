@@ -5,12 +5,12 @@ from datetime import datetime, timedelta, date, timezone
 app = Flask(__name__)
 app.secret_key = 'ArchFiber23'
 
-SERVER_ONE_HOST = 'localhost'
+SERVER_ONE_HOST = '10.10.9.43'
 SERVER_ONE_USER = 'radius_UI'
 SERVER_ONE_PASSWORD = 'GKwaxhBnkvNZSHHcZukn'
 SERVER_ONE_DB = 'radius_netelastic'
 
-SERVER_TWO_HOST = 'localhost'
+SERVER_TWO_HOST = '10.10.9.43'
 SERVER_TWO_USER = 'radius_UI'
 SERVER_TWO_PASSWORD = 'GKwaxhBnkvNZSHHcZukn'
 SERVER_TWO_DB = 'radius_netelastic'
