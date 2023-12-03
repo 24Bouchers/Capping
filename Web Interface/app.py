@@ -5,12 +5,12 @@ from datetime import datetime, timedelta, date, timezone
 app = Flask(__name__)
 app.secret_key = 'ArchFiber23'
 
-SERVER_ONE_HOST = '10.10.9.4'
+SERVER_ONE_HOST = 'localhost'
 SERVER_ONE_USER = 'radius_UI'
 SERVER_ONE_PASSWORD = 'GKwaxhBnkvNZSHHcZukn'
 SERVER_ONE_DB = 'radius_netelastic'
 
-SERVER_TWO_HOST = '10.10.9.4'
+SERVER_TWO_HOST = 'localhost'
 SERVER_TWO_USER = 'radius_UI'
 SERVER_TWO_PASSWORD = 'GKwaxhBnkvNZSHHcZukn'
 SERVER_TWO_DB = 'radius_netelastic'
@@ -19,10 +19,18 @@ SERVER_TWO_DB = 'radius_netelastic'
 # HOME PAGE DISPLAY #
 #####################
 
+
+
 @app.route('/')
 @app.route('/index.html', methods=['GET'])
 def main():
+
+    global labels 
+    labels = [''] * 25
     
+    global intervals
+    intervals = [0] * 24
+
     ###########################
     # Server Two | Static IPs #
     ###########################
@@ -31,221 +39,256 @@ def main():
         with (pymysql.connect(host=SERVER_TWO_HOST, user=SERVER_TWO_USER, password=SERVER_TWO_PASSWORD, db=SERVER_TWO_DB) as serverTwoConn, 
             serverTwoConn.cursor(pymysql.cursors.DictCursor) as serverTwocursor):
             
+            #Set the connection status for imgs
+            serverTwoConnection = 'online'
+            
             #Static IP
             serverTwocursor.execute('SELECT COUNT(DISTINCT username) AS count_entries FROM radreply WHERE username IS NOT NULL;')
             static_devices_count = serverTwocursor.fetchone().get('count_entries', 0)
 
-        serverTwocursor.execute('SELECT COUNT(DISTINCT username) AS count_entries FROM radreply WHERE username IS NOT NULL;')
-        result = serverTwocursor.fetchall()
+            serverTwocursor.execute('SELECT COUNT(DISTINCT username) AS count_entries FROM radreply WHERE username IS NOT NULL;')
+            result = serverTwocursor.fetchall()
 
         if result is not None and len(result) > 0:
             static_devices_count = result[0]['count_entries']
         else:
             static_devices_count = 0
-                    
-        connectionTwo = ""
+                            
     except pymysql.Error as e:
         print(f"Error connecting to Server Two: {e}")
         static_devices_count = 0
+        #Set the connection status for imgs
+        serverTwoConnection = 'offline'
 
     ################
     ## Server One ##
     ################
-        
+
     try:
-        serverOneConn = pymysql.connect(host=SERVER_ONE_HOST, user=SERVER_ONE_USER, password=SERVER_ONE_PASSWORD, db=SERVER_ONE_DB)
-        serverOnecursor = serverOneConn.cursor(pymysql.cursors.DictCursor)
+        with (pymysql.connect(host=SERVER_ONE_HOST, user=SERVER_ONE_USER, password=SERVER_ONE_PASSWORD, db=SERVER_ONE_DB) as serverOneConn, 
+            serverOneConn.cursor(pymysql.cursors.DictCursor) as serverOnecursor):
         
-        #######################
-        ## Reachable Devices ##
-        #######################
-
-        serverOnecursor.execute("SELECT COUNT(DISTINCT username) AS count_entries FROM radacct WHERE acctterminatecause = '';")
-        result = serverOnecursor.fetchone()
-
-        if result is not None:
-            reachable_device_count = result['count_entries']
-        else:
-            reachable_device_count = 0
-
-        ######################
-        ## Unreachable IP's ##
-        ######################
+            # Set the connection status for imgs
+            serverOneConnection = 'online'
         
-        serverOnecursor.execute("""
-            SELECT COUNT(*) FROM (SELECT username FROM radacct r WHERE acctterminatecause <> '' 
-            AND NOT EXISTS(SELECT * FROM radacct r2 
-            WHERE r2.username = r.username and r2.acctterminatecause = '') 
-            GROUP BY username ) a;""")
-        unreachable_device_count = serverOnecursor.fetchone().get('count_entries', 0)
+            #######################
+            ## Reachable Devices ##
+            #######################
 
-        ###################
-        ## Total Devices ##
-        ###################
+            serverOnecursor.execute("SELECT COUNT(DISTINCT username) AS count_entries FROM radacct WHERE acctterminatecause = '';")
+            result = serverOnecursor.fetchone()
 
-        serverOnecursor.execute("SELECT COUNT(*) AS total_devices_count FROM (SELECT 'x' x FROM radacct GROUP BY username) a;")
-        result = serverOnecursor.fetchone()
+            if result is not None:
+                reachable_device_count = result['count_entries']
+            else:
+                reachable_device_count = 0
 
-        if result is not None:
-            total_devices_count = result['total_devices_count']
-        else:
-            total_devices_count = 0
+            ######################
+            ## Unreachable IP's ##
+            ######################
+            
+            serverOnecursor.execute("""
+                SELECT COUNT(*) AS count_entries
+                FROM (
+                    SELECT username 
+                    FROM radacct r 
+                    WHERE acctterminatecause <> '' 
+                    AND NOT EXISTS (
+                        SELECT * 
+                        FROM radacct r2 
+                        WHERE r2.username = r.username 
+                        AND r2.acctterminatecause = ''
+                    )
+                    GROUP BY username 
+                ) a;
+            """)
 
-        ##################
-        ##    GRAPH     ##
-        ##################
-        
-        serverOnecursor.execute('select acctstarttime from radacct order by acctstarttime DESC;')
+            unreachable_device_count = serverOnecursor.fetchone().get('count_entries', 0)
 
-        # setup date and time for both UTC(for value calculations) and EST(for bottom label of graph)
-        stime = serverOnecursor.fetchall()
-        serverOnecursor.close()
-        serverOnecursor.close()
+            ###################
+            ## Total Devices ##
+            ###################
 
-        todayDate = date.today()
+            serverOnecursor.execute("SELECT COUNT(*) AS total_devices_count FROM (SELECT 'x' x FROM radacct GROUP BY username) a;")
+            result = serverOnecursor.fetchone()
 
-        currentTimeUTC = datetime.now(timezone.utc).strftime("%H:%M")
-        currentTimeEST = datetime.now().strftime("%H:%M")
-        yesterdayDate = str(todayDate - timedelta(days = 1))
-        todayDate = str(todayDate)
-        # yesterdayDate = str(yesterdayDate)
-        # tempDate = "2023-10-31" # DELETE BEFORE DELIVER!!!!!----------------------------------------------------------------------------------
-        # convert current time into minutes
-        currentTimeSplit = str(currentTimeUTC).split(':')
-        currentTimeEST = str(currentTimeEST).split(':')
-        # counts down to the nearest 15 minute interval
-        close15MinInterval =int(currentTimeSplit[1])
-        minIntervalTimeEST = int(currentTimeEST[1])
-        sameTime = True
-        while close15MinInterval % 15 != 0:
-            close15MinInterval -= 1
-            minIntervalTimeEST -= 1 
-            sameTime = False
-        currentTimeMin = close15MinInterval + (int(currentTimeSplit[0])*60)
+            if result is not None:
+                total_devices_count = result['total_devices_count']
+            else:
+                total_devices_count = 0
 
-        # THESE ARE TEST VARIABLES!!
-        # DELETE BEFORE PUSH TO FULL PRODUCTION
-        # currentTimeMin = 60
-        # yesterdayDate = "2023-10-09"
-        # TODO delete temp code
+            ##################
+            ##    GRAPH     ##
+            ##################
+            
+            # Grab the data
+            serverOnecursor.execute('select acctstarttime from radacct order by acctstarttime DESC;')
 
-        # list that will store the 15 minute interval numbers
-        # going to be every 15 min for 6 hours
-        global intervals
-        intervals = [0] * 24
-        hoursInMin = 360 # 360 represents 6 hours
-        offset = 0
+            # setup date and time for both UTC(for value calculations) and EST(for bottom label of graph)
+            stime = serverOnecursor.fetchall()
+            
+            # setup date and time for both UTC(for value calculations) and EST(for bottom label of graph)
+            todayDate = date.today()
+            currentTimeUTC = datetime.now(timezone('UTC')).strftime("%H:%M")
+            currentTimeEST = datetime.now(timezone('EST')).strftime("%H:%M")
+            yesterdayDate = str(todayDate - timedelta(days = 1))
+            todayDate = str(todayDate)
+            # convert current time into minutes
+            currentTimeSplit = str(currentTimeUTC).split(':')
+            currentTimeEST = str(currentTimeEST).split(':')
+            # counts down to the nearest 15 minute interval
+            close15MinInterval =int(currentTimeSplit[1])
+            minIntervalTimeEST = int(currentTimeEST[1])
+            sameTime = True
+            while close15MinInterval % 15 != 0:
+                close15MinInterval -= 1
+                minIntervalTimeEST -= 1 
+                sameTime = False
+            currentTimeMin = close15MinInterval + (int(currentTimeSplit[0])*60)
 
-        # loop through the list of times given from acctstarttime
-        for x in stime:
-            # convert the acctstarttime into minutes
-            splitDateTime = str(x.get('acctstarttime')).split() # separates date and time into 2 separate list elements
-
-            if splitDateTime and splitDateTime[0] != 'None':
-                splitTime = str(splitDateTime[1]).split(':')
-                totalTimeMin = int(splitTime[1]) + (int(splitTime[0])*60)
-                # since the time were comparing against is the closest 15 minute interval that has already passed
-                # if a time appears that has todays date and is passed the time were checking from
-                # it gets added to the most recent colom of the graph
-                if totalTimeMin > currentTimeMin and splitDateTime[0] == todayDate and (totalTimeMin-currentTimeMin) <= 15 :
-                    intervals[0] += 1 
-                    offset = 1
-                # check if at least 6 hours have passed since start of day 
-                elif currentTimeMin >= hoursInMin:
-                    # makes sure the dates match
-                    # ------------------------------------------------------------------------
-                    #  SWITCH todayDate WITH tempDate SO IT FUNCTIONS WITH OUR DATA
-                    #  DELETE tempDate AND THIS MESSAGE BEFORE DELIVERY OF FINAL APPLICATION
-                    #-------------------------------------------------------------------------
-                    if splitDateTime[0] == todayDate:
+            # list that will store the 15 minute interval numbers
+            # going to be every 15 min for 6 hours
+            intervals = [0] * 24
+            hoursInMin = 360 # 360 represents 6 hours
+            offset = 0
+            # loop through the list of times given from acctstarttime
+            for x in stime:
+                # convert the acctstarttime into minutes
+                splitDateTime = str(x.get('acctstarttime')).split() # separates date and time into 2 separate list elements
+                if splitDateTime and splitDateTime[0] != 'None':
+                    splitTime = str(splitDateTime[1]).split(':')
+                    totalTimeMin = int(splitTime[1]) + (int(splitTime[0])*60)
+                    # since the time were comparing against is the closest 15 minute interval that has already passed
+                    # if a time appears that has todays date and is passed the time were checking from
+                    # it gets added to the most recent column of the graph
+                    if totalTimeMin > currentTimeMin and splitDateTime[0] == todayDate and (totalTimeMin-currentTimeMin) <= 15 :
+                        intervals[0] += 1 
+                        offset = 1
+                    # check if at least 6 hours have passed since start of day and dates match
+                    elif currentTimeMin >= hoursInMin and splitDateTime[0] == todayDate:
                         # first finds out how many 15 minute intervals passed
                         diff = int(currentTimeMin/15) - int(totalTimeMin/15)
                         if diff <= len(intervals)-offset and diff > -1:
                             intervals[diff+offset] += 1
-                # sees if there was a 6 hour diffrence max between times and thta date matches either today or yesterday
-                elif (1440 - totalTimeMin) + currentTimeMin <= hoursInMin and (splitDateTime[0] == todayDate or splitDateTime[0] == yesterdayDate):
-                    if splitDateTime[0] == yesterdayDate:
-                        # 1440 is the amount of minutes in a day
-                        diff = int(currentTimeMin/15) + int((1440 - totalTimeMin)/15)
-
-                        if diff <= len(intervals) and diff > -1:
-                            intervals[diff+offset] += 1
+                    # sees if there was a 6 hour diffrence max between times and thta date matches either today or yesterday
+                    elif (1440 - totalTimeMin) + currentTimeMin <= hoursInMin and (splitDateTime[0] == todayDate or splitDateTime[0] == yesterdayDate):
+                        if splitDateTime[0] == yesterdayDate:
+                            # 1440 is the amount of minutes in a day
+                            diff = int(currentTimeMin/15) + int((1440 - totalTimeMin)/15)
+                            if diff <= len(intervals) and diff > -1:
+                                intervals[diff+offset] += 1
+                        else:
+                            diff = int(currentTimeMin/15) - int(totalTimeMin/15)
+                            if diff <= len(intervals) and diff > -1:
+                                intervals[diff+offset] += 1
+                    # once the date is not today or yesterday and the time has more then a 7 hour gap
+                    # code will break out of loop to save resorces and time
+                    elif (splitDateTime[0] == todayDate or splitDateTime[0] == yesterdayDate) and (currentTimeMin - totalTimeMin) > (hoursInMin+60):
+                        break
+                
+            # the bottom labels of the line graph representing 15 minute increments
+            labels = [''] * 25
+            firstgo = True 
+            offset = 0
+            for x in range(24):
+                # if the current time is not a even 15 minunet interval the it will be added as the first place on the graph display
+                # it then addes the the closest 15 minute interval that has passed as the second place in the display  
+                if x == 0 and not sameTime:
+                    # checks if time should be in am or pm
+                    if currentTimeEST[0] == '12':
+                        labels[x] = currentTimeEST[0] + ':' + currentTimeEST[1] + ' pm'
+                    elif int(currentTimeEST[0])*60 > 720:
+                        labels[x] = str(int(currentTimeEST[0])-12) + ':' + currentTimeEST[1] + ' pm'
                     else:
-                        diff = int(currentTimeMin/15) - int(totalTimeMin/15)
-                        if diff <= len(intervals) and diff > -1:
-                            intervals[diff+offset] += 1
-            
-        # the bottom labels of the line graph representing 15 minute increments
-        global labels
-        labels = [''] * 25
-        hourCount = 0
-        startingHour = currentTimeEST[0]
-        offset = 0
-        for x in range(24):
-            # if the current time is not a even 15 minunet interval the it will be added as the first place on the graph display
-            # it then addes the the closest 15 minute interval that has passed as the second place in the display  
-            if x == 0 and not sameTime:
-                if int(currentTimeEST[0]) > 12:
-                    labels[x] = str(int(currentTimeEST[0])-12) + ':' + currentTimeEST[1] + ' pm'
+                        labels[x] = currentTimeEST[0] + ':' + currentTimeEST[1] + ' am'
+                    # checks if time should be in am or pm
+                    if currentTimeEST[0] == '12':
+                        labels[x] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' pm'
+                    elif int(currentTimeEST[0])*60 > 720:
+                        labels[x+1] = str(int(currentTimeEST[0])-12) + ':' + str(minIntervalTimeEST) + ' pm'
+                    else:
+                        labels[x+1] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' am'
+                    # adds an offset since two separate labels get added above
+                    # only adds if current minute not withen first 15 minuts of an hour since code will auto fix time asignment only for the first 15 minutes 
+                    if int(currentTimeEST[1]) > 15:
+                        offset = 1
+                    firstgo = False
                 else:
-                    labels[x] = currentTimeEST[0] + ':' + currentTimeEST[1] + ' am'
+                    # subtracts 15 minutes form previous time
+                    if int(minIntervalTimeEST) - 15 > 0:
+                        if not firstgo:
+                            minIntervalTimeEST -= 15
+                        else:
+                            firstgo = False
+                        # checks if time should be in am or pm
+                        if currentTimeEST[0] == '12':
+                            labels[x+offset] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' pm'
+                        elif int(currentTimeEST[0])*60 > 720:
+                            labels[x+offset] = str(int(currentTimeEST[0])-12) + ':' + str(minIntervalTimeEST) + ' pm'
+                        else:
+                            labels[x+offset] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' am' 
+                    # will be true if the first entry (or x == 0), is on the hour and only then
+                    elif firstgo:
+                        # checks if time should be in am or pm
+                        if currentTimeEST[0] == '12':
+                            labels[x+offset] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' pm'
+                        elif int(currentTimeEST[0])*60 > 720:
+                            labels[x+offset] = str(int(currentTimeEST[0])-12) + ':' + str(minIntervalTimeEST) + ' pm'
+                        else:
+                            labels[x+offset] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' am'
+                        firstgo = False
+                    # adjusts the hour value
+                    else: 
+                        # checks if time should be in am or pm
+                        if currentTimeEST[0] == '12':
+                            labels[x+offset] = currentTimeEST[0] + ':00 pm'
+                        elif int(currentTimeEST[0])*60 > 720:
+                            labels[x+offset] = str(int(currentTimeEST[0])-12) + ':00 pm'
+                        else:
+                            labels[x+offset] = currentTimeEST[0] + ':00 am'  
+                        # reset the minute interval back to one hour
+                        minIntervalTimeEST = 60
+                        currentTimeEST[0] = str(int( currentTimeEST[0])-1)
+                        # reset the hours so it can calculate yesterday time if needed
+                        if int(currentTimeEST[0])  < 0:
+                            currentTimeEST[0] = '23'
+                        firstgo = False
 
-                if int(currentTimeEST[0]) > 12:
-                    labels[x+1] = str(int(currentTimeEST[0])-12) + ':' + str(minIntervalTimeEST) + ' pm'
-                else:
-                    labels[x+1] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' am'
-                x = 2
-                offset = 1
-            else:
-                # subtracts 15 minutes form previous time
-                if int(minIntervalTimeEST) - 15 > 0:
-                    minIntervalTimeEST -= 15
-                    if int(currentTimeEST[0]) > 12:
-                        labels[x+offset] = str(int(currentTimeEST[0])-12) + ':' + str(minIntervalTimeEST) + ' pm'
-                    else:
-                        labels[x+offset] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' am' 
-                    
-                # adjusts the hour value
-                else: 
-                    if int(currentTimeEST[0]) > 12:
-                        labels[x+offset] = str(int(currentTimeEST[0])-12) + ':00 pm'
-                    else:
-                        labels[x+offset] = currentTimeEST[0] + ':00 am'  
-                    minIntervalTimeEST =60
-                    hourCount += 1
-                    currentTimeEST[0] = str(int(startingHour)-hourCount)
-                    # reset the hours for 12 am and 12 pm
-                    if currentTimeEST[0] == '0':
-                        currentTimeEST[0] = '12'
-                    if int(currentTimeEST[0])  < 0:
-                        currentTimeEST[0] = '23'
-                        
-        # reverse the lists so they appear from right to left on webpage 
-        del labels[-1]
-        intervals.reverse()
-        labels.reverse()
+            # 12 am times appear as 0 for 24 hour format, adjusts to 12 hour format for labels
+            for x in range(24):
+                time = labels[x].split(':')
+                if time[0] == '0':
+                    labels[x] = '12:' + time[1]
+                            
+            # reverse the lists so they appear from right to left on webpage 
+            del labels[-1]
+            intervals.reverse()
+            labels.reverse()
 
 
-        #Connection Symbol
-        connectionStatus = True
 
     except pymysql.Error as e:
-        # Handle the exception (e.g., print an error message)
-        print(f"Error connecting to the database: {e}")
-        
-        # Set default values
-        reachable_device_count = 0
-        unreachable_device_count = 0
-        total_devices_count = 0
-        connectionStatus = False
-        labels = ''
-        intervals = 0
+            # Handle the exception (e.g., print an error message)
+            print(f"Error connecting to the database: {e}")
+            # Set default values
+            reachable_device_count = 0
+            unreachable_device_count = 0
+            total_devices_count = 0
+            labels = ''
+            intervals = 0
+            # Set the connection status for imgs
+            serverOneConnection = 'offline'
     finally:
-         return render_template('index.html', labels=labels, values=intervals, 
-                reachable_device_count=reachable_device_count, 
-                static_devices_count=static_devices_count, 
-                unreachable_device_count=unreachable_device_count,
-                total_devices_count=total_devices_count)
+        return render_template('index.html',
+            labels=labels,
+            values=intervals,
+            reachable_device_count=reachable_device_count,
+            static_devices_count=static_devices_count,
+            unreachable_device_count=unreachable_device_count,
+            total_devices_count=total_devices_count,
+            serverOneConnection=serverOneConnection,
+            serverTwoConnection=serverTwoConnection
+            )
 
 # Add Devie
 @app.route('/addDevice.html', methods=['GET', 'POST'])
