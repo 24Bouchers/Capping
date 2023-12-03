@@ -121,7 +121,7 @@ def main():
                 totalTimeMin = int(splitTime[1]) + (int(splitTime[0])*60)
                 # since the time were comparing against is the closest 15 minute interval that has already passed
                 # if a time appears that has todays date and is passed the time were checking from
-                # it gets added to the most recent colom of the graph
+                # it gets added to the most recent column of the graph
                 if totalTimeMin > currentTimeMin and splitDateTime[0] == todayDate and (totalTimeMin-currentTimeMin) <= 15 :
                     intervals[0] += 1 
                     offset = 1
@@ -157,15 +157,21 @@ def main():
             # it then addes the the closest 15 minute interval that has passed as the second place in the display  
             if x == 0 and not sameTime:
                 # checks if time should be in am or pm
-                if int(currentTimeEST[0])*60 > 720:
+                if currentTimeEST[0] == '12':
+                    labels[x] = currentTimeEST[0] + ':' + currentTimeEST[1] + ' pm'
+                elif int(currentTimeEST[0])*60 > 720:
                     labels[x] = str(int(currentTimeEST[0])-12) + ':' + currentTimeEST[1] + ' pm'
                 else:
                     labels[x] = currentTimeEST[0] + ':' + currentTimeEST[1] + ' am'
                 # checks if time should be in am or pm
-                if int(currentTimeEST[0])*60 > 720:
+                if currentTimeEST[0] == '12':
+                    labels[x] = currentTimeEST[0] + ':' + currentTimeEST[1] + ' pm'
+                elif int(currentTimeEST[0])*60 > 720:
                     labels[x+1] = str(int(currentTimeEST[0])-12) + ':' + str(minIntervalTimeEST) + ' pm'
                 else:
                     labels[x+1] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' am'
+                # adds an offset since two separate labels get added above
+                # only adds if current minute not withen first 15 minuts of an hour since code will auto fix time asignment only for the first 15 minutes 
                 if int(currentTimeEST[1]) > 15:
                     offset = 1
                 firstgo = False
@@ -177,14 +183,18 @@ def main():
                     else:
                         firstgo = False
                     # checks if time should be in am or pm
-                    if int(currentTimeEST[0])*60 > 720:
+                    if currentTimeEST[0] == '12':
+                        labels[x+offset] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' pm'
+                    elif int(currentTimeEST[0])*60 > 720:
                         labels[x+offset] = str(int(currentTimeEST[0])-12) + ':' + str(minIntervalTimeEST) + ' pm'
                     else:
                         labels[x+offset] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' am' 
-                # will be true if the first entry is on the hour and only then
+                # will be true if the first entry (or x == 0), is on the hour and only then
                 elif firstgo:
                     # checks if time should be in am or pm
-                    if int(currentTimeEST[0])*60 > 720:
+                    if currentTimeEST[0] == '12':
+                        labels[x+offset] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' pm'
+                    elif int(currentTimeEST[0])*60 > 720:
                         labels[x+offset] = str(int(currentTimeEST[0])-12) + ':' + str(minIntervalTimeEST) + ' pm'
                     else:
                         labels[x+offset] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' am'
@@ -192,17 +202,20 @@ def main():
                 # adjusts the hour value
                 else: 
                     # checks if time should be in am or pm
-                    if int(currentTimeEST[0])*60 > 720:
+                    if currentTimeEST[0] == '12':
+                        labels[x+offset] = currentTimeEST[0] + ':00 pm'
+                    elif int(currentTimeEST[0])*60 > 720:
                         labels[x+offset] = str(int(currentTimeEST[0])-12) + ':00 pm'
                     else:
                         labels[x+offset] = currentTimeEST[0] + ':00 am'  
+                    # reset the minute interval back to one hour
                     minIntervalTimeEST = 60
                     currentTimeEST[0] = str(int( currentTimeEST[0])-1)
                     # reset the hours so it can calculate yesterday time if needed
                     if int(currentTimeEST[0])  < 0:
                         currentTimeEST[0] = '23'
                     firstgo = False
-
+        # 12 am times appear as 0 for 24 hour format, adjusts to 12 hour format for labels
         for x in range(24):
             time = labels[x].split(':')
             if time[0] == '0':
