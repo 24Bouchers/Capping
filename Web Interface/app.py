@@ -5,12 +5,12 @@ from datetime import datetime, timedelta, date, timezone
 app = Flask(__name__)
 app.secret_key = 'ArchFiber23'
 
-SERVER_ONE_HOST = '10.10.9.43'
+SERVER_ONE_HOST = '10.10.9.4'
 SERVER_ONE_USER = 'radius_UI'
 SERVER_ONE_PASSWORD = 'REDACTED_PASSWORD'
 SERVER_ONE_DB = 'radius_netelastic'
 
-SERVER_TWO_HOST = '10.10.9.43'
+SERVER_TWO_HOST = '10.10.9.4'
 SERVER_TWO_USER = 'radius_UI'
 SERVER_TWO_PASSWORD = 'REDACTED_PASSWORD'
 SERVER_TWO_DB = 'radius_netelastic'
@@ -35,6 +35,15 @@ def main():
             serverTwocursor.execute('SELECT COUNT(DISTINCT username) AS count_entries FROM radreply WHERE username IS NOT NULL;')
             static_devices_count = serverTwocursor.fetchone().get('count_entries', 0)
 
+        serverTwocursor.execute('SELECT COUNT(DISTINCT username) AS count_entries FROM radreply WHERE username IS NOT NULL;')
+        result = serverTwocursor.fetchall()
+
+        if result is not None and len(result) > 0:
+            static_devices_count = result[0]['count_entries']
+        else:
+            static_devices_count = 0
+                    
+        connectionTwo = ""
     except pymysql.Error as e:
         print(f"Error connecting to Server Two: {e}")
         static_devices_count = 0
@@ -88,6 +97,7 @@ def main():
         
         serverOnecursor.execute('select acctstarttime from radacct order by acctstarttime DESC;')
 
+        # setup date and time for both UTC(for value calculations) and EST(for bottom label of graph)
         stime = serverOnecursor.fetchall()
         serverOnecursor.close()
         serverOnecursor.close()
