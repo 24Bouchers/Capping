@@ -109,6 +109,8 @@ def main():
         
         # Grab the data
         serverOnecursor.execute('select acctstarttime from radacct order by acctstarttime DESC;')
+
+        # setup date and time for both UTC(for value calculations) and EST(for bottom label of graph)
         stime = serverOnecursor.fetchall()
         
         # Close the connections
