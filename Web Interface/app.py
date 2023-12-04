@@ -1,27 +1,39 @@
+# Importing everything necessary
 from flask import Flask, app, flash, redirect, render_template, request
 import pymysql
 from datetime import datetime, timedelta, date, timezone
 
 
+# Creating a Flask web application
 app = Flask(__name__)
 app.secret_key = 'ArchFiber23'
 
+
+# Defining routes for the root URL and index.html URL
 @app.route('/')
 @app.route('/index.html', methods=['GET'])
+
+
+# This is the function for the graph displayed on the home page
 def main():
 
+    #establishing connection to the database & creating cursor object for executing SQL queries
     conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     
-
+    #Executing an SQL query using the cursor object
     cursor.execute('select acctstarttime from radacct order by acctstarttime DESC;')
 
+
+    #Fetching results of earlier SQL query and closing cursor/DB connection
     stime = cursor.fetchall()
     cursor.close()
     conn.close()
 
+    #Getting current date
     todayDate = date.today()
 
+    #Getting the current time and calculating yesterday's date
     currentTimeUTC = datetime.now(timezone.utc).strftime("%H:%M")
     currentTimeEST = datetime.now().strftime("%H:%M")
     yesterdayDate = todayDate - timedelta(days = 1)
@@ -129,6 +141,7 @@ def main():
 
 
 @app.route('/addDevice.html', methods=['GET', 'POST'])
+# This is the function used to add a device
 def addDevice():
     if request.method == 'POST':
       
@@ -143,7 +156,7 @@ def addDevice():
         cursor = conn.cursor()
 
         # Insert the device data into the database
- 
+
         cursor.callproc('radius_netelastic.PROC_InsUpRadiusUser', (p_userName, p_ipv4, p_ipv6Prefix, p_ipv6))
         conn.commit()
 
@@ -156,6 +169,7 @@ def addDevice():
     return render_template('addDevice.html')
 
 @app.route("/removeDevice", methods=["POST"])
+# This is the function used to remove a device
 def remove_device():
     p_username = request.form.get('username')
     
@@ -183,6 +197,7 @@ def show_edit_device_page(callingstationid):
     current_device_data = get_device_data(callingstationid)
     return render_template('editDevice.html', callingstationid=callingstationid, current_device_data=current_device_data)
 
+# This is the function used to get the data of a device
 def get_device_data(callingstationid):
     # Placeholder dictionary to store device data
     device_data = {}
@@ -211,6 +226,7 @@ def get_device_data(callingstationid):
     return device_data
 
 @app.route('/updateDevice/<path:callingstationid>', methods=['POST'])
+# This is the function used to edit/update a device
 def update_device(callingstationid):
     # Get updated data from the form
     username = request.form.get('username')
