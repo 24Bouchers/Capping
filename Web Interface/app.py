@@ -198,7 +198,7 @@ def main():
                         labels[x] = currentTimeEST[0] + ':' + currentTimeEST[1] + ' am'
                     # checks if time should be in am or pm
                     if currentTimeEST[0] == '12':
-                        labels[x] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' pm'
+                        labels[x+1] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' pm'
                     elif int(currentTimeEST[0])*60 > 720:
                         labels[x+1] = str(int(currentTimeEST[0])-12) + ':' + str(minIntervalTimeEST) + ' pm'
                     else:
