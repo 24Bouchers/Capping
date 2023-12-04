@@ -14,8 +14,10 @@
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
-            <a class="navbar-brand ps-3" href="index.html">Archtop Fiber</a>
-            <!-- Sidebar Toggle-->
+            <a class="navbar-brand ps-3" href="editDevice.html">
+                <img src="{{ url_for('static', filename='img/archtop_logo.png') }}" alt="Archtop Fiber Logo" width="210" height="45">
+            </a>        
+                <!-- Sidebar Toggle-->
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
             <!-- Navbar Search-->
             <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
@@ -43,26 +45,26 @@
                     <div class="sb-sidenav-menu">
                         <div class="nav">
                             <!-- <div class="sb-sidenav-menu-heading">Core</div> -->
-                            <a class="nav-link" href="index.html">
+                            <a class="nav-link" href="{{ url_for('main') }}">
 								<div class="sb-nav-link-icon">
 									<i class="fas fa-home" style="color: #ffffff;"></i>
 								</div> Dashboard
 							</a>
-							<a class="nav-link" href="devices.html">
+							<a class="nav-link" href="{{ url_for('devices') }}">
 								<div class="sb-nav-link-icon">
 									<i class="fas fa-server" style="color: #ffffff;"></i>
 								</div> Devices
 							</a>
-							<a class="nav-link" href="logs.html">
+							<a class="nav-link" href="{{ url_for('logs') }}">
 								<div class="sb-nav-link-icon">
 									<i class="fas fa-list" style="color: #ffffff;"></i>
 								</div> Logs
 							</a>
-							<a class="nav-link" href="users.html">
+							<!-- <a class="nav-link" href="users.hml">
 								<div class="sb-nav-link-icon">
 									<i class="fas fa-users" style="color: #ffffff;"></i>
 								</div> Users
-							</a>
+							</a> -->
                             <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
                                     <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
@@ -91,38 +93,46 @@
                             </div>
                         </div>
                     </div>
+                    <!--
                     <div class="sb-sidenav-footer">
                         <div class="small">Logged in as:</div>
                         Admin
-                    </div>
+                    </div> -->            
                 </nav>
             </div>
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">Welcome, Admin</h1>
-                        <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Add Devices</li>
-                        </ol>           
-                          </div>
-                          <div class="row mb-3">
-                            <body>
-                                <form action="/updateDevice/{{ callingstationid }}" method="post">
-                                    <input type="hidden" name="callingstationid" value="{{ callingstationid }}">
-                                    
-                                    <label for="username">Username:</label>
-                                    <input type="text" id="username" name="username" value="{{ current_device_data.username }}" required><br><br>
-                                    
-                                    <label for="framedipaddress">IPv4 Address:</label>
-                                    <input type="text" id="framedipaddress" name="framedipaddress" value="{{ current_device_data.framedipaddress }}"><br><br>
-                                    
-                                    <label for="framedipv6address">IPv6 Address:</label>
-                                    <input type="text" id="framedipv6address" name="framedipv6address" value="{{ current_device_data.framedipv6address }}"><br><br>
-                                    
-                                    <input type="submit" value="Update Device">
-                                </form>
-                            </body>
-                    </div>                    
+                        <h1 class="mt-4">Editting Device: {{ username }}</h1>
+                        <form action="/updateDevice/{{ username }}" method="post" class="mt-4">
+                            <input type="hidden" name="username" value="{{ username }}">
+
+                            <div class="row mb-3">
+                                <label for="ipv4_address" class="col-sm-1 col-form-label text-lg-end">IPv4 Address:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="ipv4_address" name="ipv4_address" class="form-control" value="{{ current_device_data['Framed-IP-Address'] }}">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="ipv6_prefix" class="col-sm-1 col-form-label text-lg-end">IPv6 Prefix:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="ipv6_prefix" name="ipv6_prefix" class="form-control" value="{{ current_device_data['Framed-IPv6-Prefix'] }}">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="ipv6_address" class="col-sm-1 col-form-label text-lg-end">IPv6 Address:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="ipv6_address" name="ipv6_address" class="form-control" value="{{ current_device_data['Framed-IPv6-Address'] }}">
+                                </div>
+                            </div>
+
+                            <div class="text-end my-3 col-sm-9">
+                                <input type="submit" value="Update Device" class="btn btn-primary">
+                            </div>
+                        </form>
+                    </div>      
                 </main>            
                 <footer class="py-4 bg-dark mt-auto">
                     <div class="container-fluid px-4">
