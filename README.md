@@ -1,6 +1,6 @@
 # RadiusUI.py
 
-Appi.py Api is a collabertative capping (Capstone) projects from five students at Marist College for GTel.
+Appi.py Api is a collaborative capping (Capstone) project from five students at Marist College for GTel.
 
 Steven Boucher <br>
 Easton Eberwein<br>
@@ -22,12 +22,16 @@ Christian Bauer
 
 ## Introduction
 
-The purpose of this Api is to allow Gtel Employee's to insert static ip address through their website and verify through
-their free radius servers. This webpage also displays relevant data about their servers, connectivity, MAC-addresses and Ip Addresses.  
+The purpose of this API is to allow GTel employees to insert static IP addresses through their website and verify through
+their free radius servers. This webpage also displays relevant data about their servers, connectivity, MAC addresses, and IP Addresses.  
+
+## Authentication
+
+Explain how to authenticate when using the API. Include details about API keys, tokens, or any other necessary authentication methods.
 
 ## Endpoints
 
-The Api currently connects to a web server (http://10.10.9.40:5000) and a MariaDb server (10.10.9.43) both hosted by Marist College.
+The API currently connects to a web server (http://10.10.9.40:5000) and a MariaDB server (10.10.9.43) both hosted by Marist College.
 Ultimately, These servers will be on Gtel/ArchtopFiber Servers.
 
 Archtop Fiber/GTel Capping Project Fall 2023
@@ -65,14 +69,14 @@ There is a search bar that allows the user to search for a given device based on
 ## Logs
 The logs page displays whenever a change transpired to the devices page. The Logs table displays when an update happened, the MAC addresses/Users, and what happened. 
 
-Eventually, we want to log who makes the changes by making users login to the site with credentials. 
+Eventually, we want to log who makes the changes by making users log in to the site with credentials. 
 
 ## Users
 This part of the site is still in progress and is a stretch goal. When implemented, this will show basic information about the currently signed-in user. The Logs page will have an additional column to show who makes what update.
 
-## Frontend Framework
+## Front-end Framework
 
-The site uses the Bootstrap framework for its frontend design. Bootstrap is a popular open-source toolkit for developing with HTML, CSS, and JS. It provides ready-made components and responsive design features that make web development more accessible and efficient.
+The site uses the Bootstrap framework for its front-end design. Bootstrap is a popular open-source toolkit for developing with HTML, CSS, and JS. It provides ready-made components and responsive design features that make web development more accessible and efficient.
 
 ## Using Bootstrap
 
