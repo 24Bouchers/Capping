@@ -3,10 +3,10 @@
 Appi.py Api is a collabertative capping (Capstone) projects from five students at Marist College for GTel.
 
 Steven Boucher <br>
-Easton <br>
-Nick <br>
-Liam <br>
-Christian
+Easton Eberwein<br>
+Nick Vasquez<br>
+Liam Haggerty <br>
+Christian Bauer 
 
 ## Table of Contents
 
@@ -67,9 +67,8 @@ The logs page displays whenever a change transpired to the devices page. The Log
 
 Eventually, we want to log who makes the changes by making users login to the site with credentials. 
 
-
 ## Users
-This part of the site is still in progress and is a stretch goal. When implemented, this Will show basic information about the currently signed-in user. The Logs page will have an additional column to show who makes what update.
+This part of the site is still in progress and is a stretch goal. When implemented, this will show basic information about the currently signed-in user. The Logs page will have an additional column to show who makes what update.
 
 ## Frontend Framework
 
