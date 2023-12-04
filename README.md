@@ -1,6 +1,6 @@
 # RadiusUI.py
 
-Appi.py API is a collaborative capping (Capstone) project from five students at Marist College for GTel.
+RadiusUI.py API is a collaborative capping (Capstone) project from five students at Marist College for GTel.
 
 Steven Boucher
 Easton Eberwein
@@ -22,7 +22,7 @@ Christian Bauer
 
 ## Introduction
 
-The purpose of this API is to allow GTel employees to insert static IP addresses through their website and verify through
+The purpose of RadiusUI is to allow GTel employees to insert static IP addresses through their website and verify through
 their FreeRADIUS servers. This webpage also displays relevant data about their servers, connectivity, MAC addresses, and IP Addresses.  
 
 ## Authentication
