@@ -8,7 +8,7 @@ This simply servers as an archive of the table structure and set up used
 when this API was initally created.
 '''
 
-# mysql -u root -p 
+# mysql -u radius_UI -p GKwaxhBnkvNZSHHcZukn
 #: Login for consol
 from flask import Flask
 import pymysql
@@ -23,12 +23,12 @@ app = Flask(__name__)
 # This could be easy access for credentials of who can manipulate the DB
 
 #Toggle to run locally or on the vm
-LOCAL = False
+LOCAL = True
 
 if(LOCAL):
-	conn = pymysql.connect(host='localhost', user='root', password='ArchFiber23', db='radius_netelastic')
+	conn = pymysql.connect(host='localhost', user='root', password='ArchFiber23', db='')
 else: 
-    conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='radius_netelastic')
+	conn = pymysql.connect(host='10.10.9.43', user='root', password='', db='')
     
 cur = conn.cursor()
 
@@ -36,45 +36,42 @@ cur = conn.cursor()
 # CREATE/SETUP DATABASE #
 #########################
 
-#Drop Database for testing purposes 
+#Drop The DB and Create a New OOne
 cur.execute("DROP DATABASE IF EXISTS radius_netelastic")
-cur.execute("CREATE DATABASE radius_netelastic; ")
+cur.execute("CREATE DATABASE radius_netelastic;")
 cur.execute("USE radius_netelastic;")
+cur.execute("DROP USER IF EXISTS 'radius_UI'@'%';")
+# Commit the changes
+conn.commit()
+
 
 #Declaratives
 
-# This statement saves the current value of the CHARACTER_SET_CLIENT session variable into a user-defined variable for later restoration.
-cur.execute("/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;")
-# Similar to the previous statement, this one saves the value of the CHARACTER_SET_RESULTS session variable.
-cur.execute("/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;")
-# This statement saves the value of the COLLATION_CONNECTION session variable.
-cur.execute("/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;")
-#This sets the character set and collation for the current connection to use UTF-8 (specifically, utf8mb4),
-# which is often used to support a wide range of characters, including emoji.
+# Define the session variables to be saved
+session_variables = [
+    "CHARACTER_SET_CLIENT", "CHARACTER_SET_RESULTS", "COLLATION_CONNECTION",
+    "TIME_ZONE", "UNIQUE_CHECKS", "FOREIGN_KEY_CHECKS", "SQL_MODE", "SQL_NOTES"
+]
+
+# Iterate over the session variables and execute the corresponding SQL statements
+for variable in session_variables:
+    cur.execute(f"/*!40101 SET @OLD_{variable}=@@{variable} */;")
+
+# Additional statements
 cur.execute("/*!40101 SET NAMES utf8mb4 */;")
-# This saves the current time zone setting into a user-defined variable.
-cur.execute("/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;")
-# This sets the time zone for the current connection to UTC (Universal Time) by setting the TIME_ZONE session variable to +00:00.
-cur.execute("/*!40103 SET TIME_ZONE='+00:00' */;")
-#This statement saves the current value of the UNIQUE_CHECKS system variable into a user-defined variable,
-# then sets UNIQUE_CHECKS to 0, effectively disabling unique constraint checks temporarily.
+cur.execute("/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE, TIME_ZONE='+00:00' */;")
 cur.execute("/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;")
-# Similar to the previous statement, it saves the current value of the FOREIGN_KEY_CHECKS system variable ,
-# disables foreign key constraint checks temporarily by setting FOREIGN_KEY_CHECKS to 0.
 cur.execute("/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;")
-# This statement saves the current value of the SQL_MODE system variable into a user-defined variable,
-# sets the SQL_MODE to 'NO_AUTO_VALUE_ON_ZERO',
-# which disables automatic generation of values for columns with the AUTO_INCREMENT attribute.
 cur.execute("/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;")
-# This statement saves the current value of the SQL_NOTES system variable and sets it to 0, which suppresses generation of information notes from the server.
 cur.execute("/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;")
 
 # Preserving the value of character_set_client in the variable @saved_cs_client
 # in a way that is compatible with MySQL 4.01.01 and later.
-cur.execute("/*!40101 SET @saved_cs_client     = @@character_set_client */;")
+cur.execute("/*!40101 SET @saved_cs_client = @@character_set_client */;")
 
 # Sets the MySQL session variable character_set_client to use the UTF-8 character set.
 cur.execute("/*!40101 SET character_set_client = utf8 */;")
+
 
 #################
 # CREATE TABLES #
@@ -174,10 +171,120 @@ cur.execute('''CREATE TABLE `logs` (
     time TIMESTAMP
 )''')
 
+conn.commit()
+
+##################
+# CRUD FUNCTIONS # 
+##################
+#Add or Update Radcheck and Radreply based on username IPV4,IPv6Prefix
+cur.execute('''CREATE DEFINER=`root`@`localhost` PROCEDURE `radius_netelastic`.`PROC_InsUpRadiusUser`(
+    p_userName VARCHAR(64),
+    p_ipv4 VARCHAR(15),
+    p_ipv6Prefix VARCHAR(45),
+    p_ipv6 VARCHAR(45)
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+
+        GET DIAGNOSTICS CONDITION 1 @p1 = MYSQL_ERRNO, @p2 = MESSAGE_TEXT;
+
+        SIGNAL SQLSTATE '45000' SET MYSQL_ERRNO = @p1, MESSAGE_TEXT = @p2;
+    END;
+
+    START TRANSACTION;
+
+    /*
+     * Insert the user if it does not exist
+     */
+    INSERT INTO radius_netelastic.radcheck (username, `attribute`, op, value)
+    SELECT p_userName, 'Cleartext-Password', ':=', p_userName
+    WHERE NOT EXISTS (
+        SELECT *
+        FROM radius_netelastic.radcheck
+        WHERE username = p_userName
+    );
+
+    /* Update the ipv4 if it exists */
+    UPDATE radius_netelastic.radreply
+    SET value = p_ipv4
+    WHERE `attribute` = 'Framed-IP-Address' AND username = p_userName;
+
+    /* Update the prefix ipv6 if it exists */
+    UPDATE radius_netelastic.radreply
+    SET value = p_ipv6Prefix
+    WHERE `attribute` = 'Framed-IPv6-Prefix' AND username = p_userName;
+
+    /* Update the ipv6 if it exists */
+    UPDATE radius_netelastic.radreply
+    SET value = p_ipv6
+    WHERE `attribute` = 'Framed-IPv6-Address' AND username = p_userName;
+
+    /* Add the ipv4 if it does not exist */
+    INSERT INTO radius_netelastic.radreply (username, `attribute`, op, value)
+    SELECT p_userName, 'Framed-IP-Address', '=', p_ipv4
+    WHERE NOT EXISTS (
+        SELECT *
+        FROM radius_netelastic.radreply
+        WHERE username = p_userName AND `attribute` = 'Framed-IP-Address'
+    );
+
+    /* Add the ipv6 prefix if it does not exist */
+    INSERT INTO radius_netelastic.radreply (username, `attribute`, op, value)
+    SELECT p_userName, 'Framed-IPv6-Prefix', '=', p_ipv6Prefix
+    WHERE NOT EXISTS (
+        SELECT *
+        FROM radius_netelastic.radreply
+        WHERE username = p_userName AND `attribute` = 'Framed-IPv6-Prefix'
+    );
+
+    /* Add the ipv6 if it does not exist */
+    INSERT INTO radius_netelastic.radreply (username, `attribute`, op, value)
+    SELECT p_userName, 'Framed-IPv6-Address', '=', p_ipv6
+    WHERE NOT EXISTS (
+        SELECT *
+        FROM radius_netelastic.radreply
+        WHERE username = p_userName AND `attribute` = 'Framed-IPv6-Address'
+    );
+
+    /* SELECT *
+    FROM radius_netelastic.radreply
+    WHERE username = p_userName; */
+
+    COMMIT;
+END;
+''')
+
+#Delete MAC from Radcheck and Radreply
+cur.execute('''CREATE PROCEDURE radius_netelastic.PROC_DeleteRadiusUser(p_userName VARCHAR(64))
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        GET DIAGNOSTICS CONDITION 1 @p1 = MYSQL_ERRNO, @p2 = MESSAGE_TEXT;
+
+        SIGNAL SQLSTATE '45000' SET MYSQL_ERRNO = @p1, MESSAGE_TEXT = @p2;
+    END;
+
+    START TRANSACTION;
+    DELETE FROM radius_netelastic.radcheck WHERE username = p_userName;
+    DELETE FROM radius_netelastic.radreply WHERE username = p_userName;
+    COMMIT;
+END;
+''')
+
+#Drop The User and Create a New One with permission to use the Crud Functions
+cur.execute("CREATE USER 'radius_UI'@'%' IDENTIFIED BY 'GKwaxhBnkvNZSHHcZukn';")
+cur.execute("GRANT DELETE, INSERT, SELECT, UPDATE ON radius_netelastic.* TO 'radius_UI'@'%';")
+cur.execute("GRANT EXECUTE ON PROCEDURE radius_netelastic.PROC_InsUpRadiusUser TO 'radius_UI'@'%';")
+cur.execute("GRANT EXECUTE ON PROCEDURE radius_netelastic.PROC_DeleteRadiusUser TO 'radius_UI'@'%';")
+cur.execute("FLUSH PRIVILEGES;")
+conn.commit()
+
 ########################
 # INSERT CONSTANT DATA #
 ########################
-
 
 query_1 ='''
 INSERT INTO radius_netelastic.radacct (acctsessionid,acctuniqueid,username,realm,nasipaddress,nasportid,nasporttype,acctstarttime,acctupdatetime,acctstoptime,acctinterval,acctsessiontime,acctauthentic,connectinfo_start,connectinfo_stop,acctinputoctets,acctoutputoctets,calledstationid,callingstationid,acctterminatecause,servicetype,framedprotocol,framedipaddress,framedipv6address,framedipv6prefix,framedinterfaceid,delegatedipv6prefix,class,netelasticacctipv6inputoctets,netelasticacctipv6outputoctets,netelasticacctipv6outputpackets,netelasticdomainname,netelasticnatstartport,netelasticnatendport,netelasticusermac,netelasticacctipv6inputpackets,netelasticnatpublicaddress,netelasticframedipv6address) VALUES
@@ -192,6 +299,7 @@ INSERT INTO radius_netelastic.radacct (acctsessionid,acctuniqueid,username,realm
 	 ('16987800473285100cc6618ed5250','a9ce292ada71bbc871acd0c87802e5fc','cc-66-18-ed-52-50','','10.255.0.103','slot=3D3D0=3D3Bsubslot=3D3D0=3D3Bport=3D3D1=3D3Bvlanid=3D3D1005=3D3Bvlanid2=3D3D305','Ethernet','2023-10-31 19:20:47','2023-11-01 18:00:47','2023-11-01 18:07:12',600,81985,'RADIUS','','',2405287746,2983424108,'','cc:66:18:ed:52:50','Admin-Reset','Login-User','','100.64.128.3','','','','',NULL,0,0,0,'',NULL,NULL,'',0,'',NULL),
 	 ('16987800540884490cc6618ef5500','20e676b19d8acf8dc518382745672dbc','cc-66-18-ef-55-00','','10.255.0.103','slot=3D3D0=3D3Bsubslot=3D3D0=3D3Bport=3D3D1=3D3Bvlanid=3D3D1004=3D3Bvlanid2=3D3D304','Ethernet','2023-10-31 19:20:54','2023-11-01 18:00:54','2023-11-01 18:07:12',600,81978,'RADIUS','','',2309806815,2889343651,'','cc:66:18:ef:55:00','Admin-Reset','Login-User','','100.64.128.15','','','','',NULL,0,0,0,'',NULL,NULL,'',0,'',NULL);
 '''
+
 query_2 = '''
 INSERT INTO radius_netelastic.radacct (acctsessionid,acctuniqueid,username,realm,nasipaddress,nasportid,nasporttype,acctstarttime,acctupdatetime,acctstoptime,acctinterval,acctsessiontime,acctauthentic,connectinfo_start,connectinfo_stop,acctinputoctets,acctoutputoctets,calledstationid,callingstationid,acctterminatecause,servicetype,framedprotocol,framedipaddress,framedipv6address,framedipv6prefix,framedinterfaceid,delegatedipv6prefix,class,netelasticacctipv6inputoctets,netelasticacctipv6outputoctets,netelasticacctipv6outputpackets,netelasticdomainname,netelasticnatstartport,netelasticnatendport,netelasticusermac,netelasticacctipv6inputpackets,netelasticnatpublicaddress,netelasticframedipv6address) VALUES
 	 ('1698780056558576078c57d1be6e4','c18188df4ec998f24b793bdfb0d7b83b','78-c5-7d-1b-e6-e4','','10.255.0.103','slot=3D3D0=3D3Bsubslot=3D3D0=3D3Bport=3D3D1=3D3Bvlanid=3D3D1005=3D3Bvlanid2=3D3D305','Ethernet','2023-10-31 19:20:56','2023-11-01 18:00:56','2023-11-01 18:07:12',600,81976,'RADIUS','','',21374226859,26534784712,'','78:c5:7d:1b:e6:e4','Admin-Reset','Login-User','','100.64.128.4','','','','',NULL,0,0,0,'',NULL,NULL,'',0,'',NULL),
@@ -383,7 +491,7 @@ conn.commit()
  
 cur.execute('''INSERT INTO radius_netelastic.radcheck (username,`attribute`,op,value) VALUES
 	 ('aa-bb-cc-dd-ee-ff','Cleartext-Password',':=',' aa-bb-cc-dd-ee-ff'),
-	 ('cc-66-18-ec-69-d0','Cleartext-Password','=','cc-66-18-ec-69-d0'),
+	 ('cc-66-18-ec-69-d0','Cleartext-Password',':=','cc-66-18-ec-69-d0'),
 	 ('ben','Cleartext-Password',':=','ben'),
 	 ('tim','Cleartext-Password',':=','tim'),
 	 ('CC-66-18-E7-3f-00','Cleartext-Password',':=','CC-66-18-E7-3f-00');''')
@@ -418,108 +526,6 @@ cur.execute(''' INSERT INTO radius_netelastic.logs(username, reason, time)
             	VALUES ('Appy.py', 'Added', NOW())''')
 conn.commit()
 
-##################
-# CRUD FUNCTIONS # 
-##################
-#Add or Update Radcheck and Radreply based on username IPV4,IPv6Prefix
-cur.execute('''CREATE DEFINER=`root`@`localhost` PROCEDURE `radius_netelastic`.`PROC_InsUpRadiusUser`(
-    p_userName VARCHAR(64),
-    p_ipv4 VARCHAR(15),
-    p_ipv6Prefix VARCHAR(45),
-    p_ipv6 VARCHAR(45)
-)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-
-        GET DIAGNOSTICS CONDITION 1 @p1 = MYSQL_ERRNO, @p2 = MESSAGE_TEXT;
-
-        SIGNAL SQLSTATE '45000' SET MYSQL_ERRNO = @p1, MESSAGE_TEXT = @p2;
-    END;
-
-    START TRANSACTION;
-
-    /*
-     * Insert the user if it does not exist
-     */
-    INSERT INTO radius_netelastic.radcheck (username, `attribute`, op, value)
-    SELECT p_userName, 'Cleartext-Password', ':=', p_userName
-    WHERE NOT EXISTS (
-        SELECT *
-        FROM radius_netelastic.radcheck
-        WHERE username = p_userName
-    );
-
-    /* Update the ipv4 if it exists */
-    UPDATE radius_netelastic.radreply
-    SET value = p_ipv4
-    WHERE `attribute` = 'Framed-IP-Address' AND username = p_userName;
-
-    /* Update the prefix ipv6 if it exists */
-    UPDATE radius_netelastic.radreply
-    SET value = p_ipv6Prefix
-    WHERE `attribute` = 'Framed-IPv6-Prefix' AND username = p_userName;
-
-    /* Update the ipv6 if it exists */
-    UPDATE radius_netelastic.radreply
-    SET value = p_ipv6
-    WHERE `attribute` = 'Framed-IPv6-Address' AND username = p_userName;
-
-    /* Add the ipv4 if it does not exist */
-    INSERT INTO radius_netelastic.radreply (username, `attribute`, op, value)
-    SELECT p_userName, 'Framed-IP-Address', '=', p_ipv4
-    WHERE NOT EXISTS (
-        SELECT *
-        FROM radius_netelastic.radreply
-        WHERE username = p_userName AND `attribute` = 'Framed-IP-Address'
-    );
-
-    /* Add the ipv6 prefix if it does not exist */
-    INSERT INTO radius_netelastic.radreply (username, `attribute`, op, value)
-    SELECT p_userName, 'Framed-IPv6-Prefix', '=', p_ipv6Prefix
-    WHERE NOT EXISTS (
-        SELECT *
-        FROM radius_netelastic.radreply
-        WHERE username = p_userName AND `attribute` = 'Framed-IPv6-Prefix'
-    );
-
-    /* Add the ipv6 if it does not exist */
-    INSERT INTO radius_netelastic.radreply (username, `attribute`, op, value)
-    SELECT p_userName, 'Framed-IPv6-Address', '=', p_ipv6
-    WHERE NOT EXISTS (
-        SELECT *
-        FROM radius_netelastic.radreply
-        WHERE username = p_userName AND `attribute` = 'Framed-IPv6-Address'
-    );
-
-    /* SELECT *
-    FROM radius_netelastic.radreply
-    WHERE username = p_userName; */
-
-    COMMIT;
-END;
-''')
-
-#Delete MAC from Radcheck and Radreply
-cur.execute('''CREATE PROCEDURE radius_netelastic.PROC_DeleteRadiusUser(p_userName VARCHAR(64))
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        GET DIAGNOSTICS CONDITION 1 @p1 = MYSQL_ERRNO, @p2 = MESSAGE_TEXT;
-
-        SIGNAL SQLSTATE '45000' SET MYSQL_ERRNO = @p1, MESSAGE_TEXT = @p2;
-    END;
-
-    START TRANSACTION;
-    DELETE FROM radius_netelastic.radcheck WHERE username = p_userName;
-    DELETE FROM radius_netelastic.radreply WHERE username = p_userName;
-    COMMIT;
-END;
-''')
-
-conn.commit()
 
 ###########
 # LOCK UP #
