@@ -1,12 +1,13 @@
 # RadiusUI.py
 
 Appi.py Api is a collaborative capping (Capstone) project from five students at Marist College for GTel.
+Appi.py Api is a collaborative capping (Capstone) project from five students at Marist College for GTel.
 
-Steven Boucher <br>
-Easton Eberwein<br>
-Nick Vasquez<br>
-Liam Haggerty <br>
-Christian Bauer 
+Steven Boucher
+Easton Eberwein
+Nick Vasquez
+Liam Haggerty
+Christian Bauer
 
 ## Table of Contents
 
@@ -23,7 +24,7 @@ Christian Bauer
 ## Introduction
 
 The purpose of this API is to allow GTel employees to insert static IP addresses through their website and verify through
-their free radius servers. This webpage also displays relevant data about their servers, connectivity, MAC addresses, and IP Addresses.  
+their FreeRADIUS servers. This webpage also displays relevant data about their servers, connectivity, MAC addresses, and IP Addresses.  
 
 ## Authentication
 
@@ -31,6 +32,7 @@ Explain how to authenticate when using the API. Include details about API keys, 
 
 ## Endpoints
 
+The API currently connects to a web server (http://10.10.9.40:5000) and a MariaDB server (10.10.9.43) both hosted by Marist College.
 The API currently connects to a web server (http://10.10.9.40:5000) and a MariaDB server (10.10.9.43) both hosted by Marist College.
 Ultimately, These servers will be on Gtel/ArchtopFiber Servers.
 
@@ -40,10 +42,7 @@ This document will explain how to navigate the site that our group has created. 
 
 ## Tables 
 
-Four tables keep the API functional. Three are Gtel-created tables with the logs table created by the Marist students listed above. Pictured in the Table_Flow.png is an ERD/Flowchart describing how the tables are used/appear. Linked is the lucid chart diagram. 
-
-https://lucid.app/lucidchart/98f36848-a34a-496a-aea1-8b74693481a4/edit?viewport_loc=-435%2C13%2C2602%2C1311%2CzxEJecSUvRbf&invitationId=inv_0f03a49c-5bfb-4f13-b19e-6fabd795f66e
-
+Four tables keep the API functional. Three are Gtel-created tables with the logs table created by the Marist students listed above. Pictured in the Table_Flow.png is an ERD/Flowchart describing how the tables are used/appear. [Linked is the Lucid Chart Diagram](https://lucid.app/lucidchart/98f36848-a34a-496a-aea1-8b74693481a4/edit?viewport_loc=-435%2C13%2C2602%2C1311%2CzxEJecSUvRbf&invitationId=inv_0f03a49c-5bfb-4f13-b19e-6fabd795f66e)
 
 ## Dashboard Page
 The dashboard is the home page for our API, which has various pieces of information displayed. The total number of devices, how many devices are currently online, how many static IP accounts exist, and how many IP addresses are unreachable. 
@@ -71,11 +70,14 @@ The logs page displays whenever a change transpired to the devices page. The Log
 
 Eventually, we want to log who makes the changes by making users log in to the site with credentials. 
 
+
 ## Users
 This part of the site is still in progress and is a stretch goal. When implemented, this will show basic information about the currently signed-in user. The Logs page will have an additional column to show who makes what update.
 
 ## Front-end Framework
+## Front-end Framework
 
+The site uses the Bootstrap framework for its front-end design. Bootstrap is a popular open-source toolkit for developing with HTML, CSS, and JS. It provides ready-made components and responsive design features that make web development more accessible and efficient.
 The site uses the Bootstrap framework for its front-end design. Bootstrap is a popular open-source toolkit for developing with HTML, CSS, and JS. It provides ready-made components and responsive design features that make web development more accessible and efficient.
 
 ## Using Bootstrap
@@ -91,4 +93,3 @@ Here are some key aspects of our site’s design that leverage Bootstrap:
 3. Customization: While we rely on Bootstrap for the majority of the styling, custom CSS has also been written to further tailor the look and feel to match our specific design requirements.
 
 4. Consistency: Bootstrap's comprehensive component library ensures a consistent and modern user interface, enhancing usability and aesthetics.
-
