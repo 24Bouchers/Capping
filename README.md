@@ -1,6 +1,7 @@
 # RadiusUI.py
 
 Appi.py Api is a collaborative capping (Capstone) project from five students at Marist College for GTel.
+Appi.py Api is a collaborative capping (Capstone) project from five students at Marist College for GTel.
 
 Steven Boucher, Easton Eberwein, Nick Vasquez, Liam Haggerty, and Christian Bauer
 
@@ -27,6 +28,7 @@ Explain how to authenticate when using the API. Include details about API keys, 
 
 ## Endpoints
 
+The API currently connects to a web server (http://10.10.9.40:5000) and a MariaDB server (10.10.9.43) both hosted by Marist College.
 The API currently connects to a web server (http://10.10.9.40:5000) and a MariaDB server (10.10.9.43) both hosted by Marist College.
 Ultimately, These servers will be on Gtel/ArchtopFiber Servers.
 
@@ -66,10 +68,12 @@ Eventually, we want to log who makes the changes by making users log in to the s
 
 
 ## Users
-This part of the site is still in progress and is a stretch goal. When implemented, this Will show basic information about the currently signed-in user. The Logs page will have an additional column to show who makes what update.
+This part of the site is still in progress and is a stretch goal. When implemented, this will show basic information about the currently signed-in user. The Logs page will have an additional column to show who makes what update.
 
 ## Front-end Framework
+## Front-end Framework
 
+The site uses the Bootstrap framework for its front-end design. Bootstrap is a popular open-source toolkit for developing with HTML, CSS, and JS. It provides ready-made components and responsive design features that make web development more accessible and efficient.
 The site uses the Bootstrap framework for its front-end design. Bootstrap is a popular open-source toolkit for developing with HTML, CSS, and JS. It provides ready-made components and responsive design features that make web development more accessible and efficient.
 
 ## Using Bootstrap
