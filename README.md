@@ -1,7 +1,6 @@
 # RadiusUI.py
 
-Appi.py Api is a collaborative capping (Capstone) project from five students at Marist College for GTel.
-Appi.py Api is a collaborative capping (Capstone) project from five students at Marist College for GTel.
+Appi.py API is a collaborative capping (Capstone) project from five students at Marist College for GTel.
 
 Steven Boucher
 Easton Eberwein
@@ -39,12 +38,12 @@ Ultimately, These servers will be on Gtel/ArchtopFiber Servers.
 Archtop Fiber/GTel Capping Project Fall 2023
 This document will explain how to navigate the site that our group has created. There are four pages for the user to navigate on our site, each with different functionality.
 
-
 ## Tables 
 
 Four tables keep the API functional. Three are GTel-created tables with the logs table created by the Marist students listed above. Pictured in the Table_Flow.png is an ERD/Flowchart describing how the tables are used/appear. [Linked is the Lucid Chart Diagram](https://lucid.app/lucidchart/98f36848-a34a-496a-aea1-8b74693481a4/edit?viewport_loc=-435%2C13%2C2602%2C1311%2CzxEJecSUvRbf&invitationId=inv_0f03a49c-5bfb-4f13-b19e-6fabd795f66e)
 
 ## Dashboard Page
+
 The dashboard is the home page for our API, which has various pieces of information displayed. The total number of devices, how many devices are currently online, how many static IP accounts exist, and how many IP addresses are unreachable. 
 
 A dynamic graph displays the total number of requests for IP addresses and updates every 15 minutes, showing the last 6 hours of data. This graph will show crucial information about GTel servers, such as spikes in requests due to power outages. 
@@ -69,8 +68,8 @@ The logs page displays whenever a change transpired to the Devices page. The Log
 
 Eventually, we want to log who makes the changes by making users log in to the site with credentials. 
 
-
 ## Users
+
 This part of the site is still in progress and is a stretch goal. When implemented, this will show basic information about the currently signed-in user. The Logs page will have an additional column to show who makes what update.
 
 ## Front-end Framework
