@@ -1,11 +1,11 @@
-# Appy.py
+# RadiusUI.py
 
 Appi.py Api is a collabertative capping (Capstone) projects from five students at Marist College for GTel.
 
-Steven Boucher
-Easton   
-Nick 
-Liam
+Steven Boucher <br>
+Easton <br>
+Nick <br>
+Liam <br>
 Christian
 
 ## Table of Contents
@@ -17,6 +17,8 @@ Christian
 - [Devices](#devices-page)
 - [Logs](#logs-page)
 - [User](#users)
+- [Frontend Framework](#frontend-framework)
+- [Using Bootstrap](#using-bootstrap)
 
 ## Introduction
 
@@ -68,4 +70,22 @@ Eventually, we want to log who makes the changes by making users login to the si
 
 ## Users
 This part of the site is still in progress and is a stretch goal. When implemented, this Will show basic information about the currently signed-in user. The Logs page will have an additional column to show who makes what update.
+
+## Frontend Framework
+
+The site uses the Bootstrap framework for its frontend design. Bootstrap is a popular open-source toolkit for developing with HTML, CSS, and JS. It provides ready-made components and responsive design features that make web development more accessible and efficient.
+
+## Using Bootstrap
+
+Bootstrap’s grid system, components, and utilities are extensively used throughout the site to create a responsive and visually appealing interface. This choice of framework enables rapid prototyping and a consistent look and feel across different pages.
+
+Here are some key aspects of our site’s design that leverage Bootstrap:
+
+1. Responsive Layout: Utilizing Bootstrap's grid system, the site is fully responsive and adjusts seamlessly across different screen sizes and devices.
+
+2. Components: Various Bootstrap components like navigation bars, forms, buttons, and cards are used to maintain uniformity in design.
+
+3. Customization: While we rely on Bootstrap for the majority of the styling, custom CSS has also been written to further tailor the look and feel to match our specific design requirements.
+
+4. Consistency: Bootstrap's comprehensive component library ensures a consistent and modern user interface, enhancing usability and aesthetics.
 

@@ -27,20 +27,41 @@ window.addEventListener('DOMContentLoaded', event => {
 
 // retrieves the last part of the current URL (index.html, devices.html, ...)
 document.addEventListener("DOMContentLoaded", function() {
-    var currentPage = window.location.pathname.split('/').pop();
+    var currentPath = window.location.pathname;
     var links = document.querySelectorAll('.nav-link');
 
     links.forEach(function(link) {
-        // check if the current page is addDevice.html and the link's href is devices.html
-        // if on addDevice.html, still have "devices" highlighted in sidebar
-        if (currentPage === 'addDevice.html' && link.getAttribute('href') === 'devices.html') {
-            link.classList.add('active');
-        } else if (link.getAttribute('href') === currentPage) {
-            link.classList.add('active');
+        // Remove the leading slash from the link's href attribute
+        var linkPath = link.getAttribute('href').replace(/^\//, '');
+
+        // Check if the current path includes 'addDevice.html' or 'devices.html'
+        if (currentPath.includes('addDevice.html') || currentPath.includes('devices.html')) {
+            if (linkPath === 'devices.html') {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        // Check if the current path includes 'editDevice'
+        } else if (currentPath.includes('editDevice')) {
+            if (linkPath === 'devices.html') {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        // For all other pages
         } else {
-            link.classList.remove('active');
+            if (currentPath.endsWith(linkPath)) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
         }
     });
 });
+
+
+
+
+
 
 

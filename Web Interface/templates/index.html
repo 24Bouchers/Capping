@@ -10,14 +10,14 @@
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="../static/css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js" ></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4" ></script>
 
 </head>
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Navbar Brand-->
         <a class="navbar-brand ps-3" href="index.html">
-            <img src="{{ url_for('static', filename='img/archtop_logo.png') }}" alt="Archtop Fiber Logo" width="60" height="60">
+            <img src="{{ url_for('static', filename='img/archtop_logo.png') }}" alt="Archtop Fiber Logo" width="210" height="45">
         </a>
         <!-- Sidebar Toggle-->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
@@ -62,11 +62,11 @@
 									<i class="fas fa-list" style="color: #ffffff;"></i>
 								</div> Logs
 							</a>
-							<a class="nav-link" href="users.html" data-link="users">
+							<!-- <a class="nav-link" href="users.html" data-link="users">
 								<div class="sb-nav-link-icon">
 									<i class="fas fa-users" style="color: #ffffff;"></i>
 								</div> Users
-							</a>
+							</a> -->
 							<!-- <div class="sb-sidenav-menu-heading">Interface</div><a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts"><div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
                                 Layouts
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div></a><div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion"><nav class="sb-sidenav-menu-nested nav"><a class="nav-link" href="layout-static.html">Static Navigation</a><a class="nav-link" href="layout-sidenav-light.html">Light Sidenav</a></nav></div><a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages"><div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
@@ -100,10 +100,11 @@
 							</div>
                     </div>
                 </div>
+                <!--
                 <div class="sb-sidenav-footer">
                     <div class="small">Logged in as:</div>
                     Admin
-                </div>
+                </div> -->        
             </nav>
         </div>
         <div id="layoutSidenav_content">
@@ -118,7 +119,7 @@
                                         <div class="card-body">
                                             <!--uses Font Awesome icons-->
                                             <span class="info-header"><i class="fa-solid fa-server" style="color: #ffffff; margin-right: 5;" ></i></i>Total Devices</span> 
-                                            <span class="info-data">10,053</span> 
+                                            <span class="info-data">{{total_devices_count}}</span> 
                                         </div>
                                         <!-- <div class="card-footer d-flex align-items-center justify-content-between">
                                             <a class="small text-white stretched-link" href="devices.html">View Details</a>
@@ -130,7 +131,7 @@
                                     <div class="card bg-success text-white mb-4">
                                         <div class="card-body">
                                             <span class="info-header"><i class="fa-solid fa-server" style="color: #43c81e; margin-right: 5;"></i>Online Devices</span> 
-                                            <span class="info-data">7,094</span> 
+                                            <span class="info-data">{{reachable_device_count}}</span> 
                                         </div>
                                         <!-- <div class="card-footer d-flex align-items-center justify-content-between">
                                             <a class="small text-white stretched-link" href="devices.html">View Details</a>
@@ -142,7 +143,7 @@
                                     <div class="card bg-warning text-white mb-4">
                                         <div class="card-body">
                                             <span class="info-header"><i class="fa-regular fa-circle-user" style="color: #ffffff; margin-right: 5;"></i>Static IP Accounts</span> 
-                                            <span class="info-data">8,873</span>
+                                            <span class="info-data">{{static_devices_count}}</span>
                                         </div>
                                         <!-- <div class="card-footer d-flex align-items-center justify-content-between">
                                             <a class="small text-white stretched-link" href="devices.html">View Details</a>
@@ -154,7 +155,7 @@
                                     <div class="card bg-danger text-white mb-4">
                                         <div class="card-body">
                                             <span class="info-header"><i class="fa-solid fa-circle-xmark" style="color: #d21414; margin-right: 5;"></i>IPs Unreachable</span> 
-                                            <span class="info-data">30</span> 
+                                            <span class="info-data">{{unreachable_device_count}}</span> 
                                         </div>
                                         <!-- <div class="card-footer d-flex align-items-center justify-content-between">
                                             <a class="small text-white stretched-link" href="devices.html">View Details</a>
@@ -185,11 +186,36 @@
 
                                                         data: {{ values | tojson }},
                                                         fill: false,
+                                                        pointBackgroundColor: "#29b8ff",
+                                                        pointBorderColor: "#29b8ff",
+                                                        pointHoverBackgroundColor: "#29b8ff",
+                                                        pointHoverBorderColor: "#29b8ff",
                                                         lineTention: 0.5
                                                     }
                                                 ]
                                             },
                                             options: {
+                                                legend: {
+                                                    labels: {
+                                                        fontColor: "white"
+                                                    }
+                                                },
+                                                scales: {
+                                                    yAxes: [{
+                                                        ticks: {
+                                                            fontColor: "white",
+                                                            beginAtZero: true
+                                                        }
+                                                    }],
+                                                    xAxes: [{
+                                                        ticks: {
+                                                            fontColor: "white",
+                                                            maxRotation: 35,
+                                                            minRotation: 35,
+                                                            beginAtZero: true
+                                                        }
+                                                    }]
+                                                },
                                                 response: false
                                             }
                                         });
@@ -211,41 +237,63 @@
                             </div>
                         </div>
                         <!-- Right column for system status -->
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card mb-4">
-                                <div class="card-header text-center">
-                                    <h5 class="card-title">
-                                        <i class="fas fa-database fa-2x align-middle me-2"></i><span class="align-middle">System Status</span>
-                                    </h5>
-                                </div>
-                                <div class="card-body">
-                                    <!-- Green check mark for system status-->
-                                    <div class="text-center">
-                                        <i class="fa-regular fa-circle-check fa-8x" style="color: #43c81e;"></i>
-                                        <!-- Red Circle X for when server is down: <i class="fa-regular fa-circle-xmark fa-8x" style="color: #d21414;"></i> -->
-                                        <br>
-                                        <span class="mx-2">All Good!</span>
-                                    </div>
-                                    <!-- Divider -->
-                                    <hr class="my-4">
-                                    <!-- Icons and text for servers -->
-                                    <div class="text-center">
-                                        <div style="display: inline-block;">
-                                            <i class="fa-solid fa-lock fa-2x" style="color: #43c81e;"></i>
-                                            <!-- Red icon: <i class="fa-solid fa-lock fa-2x" style="color: #d21414;"></i> -->
-                                            <br>
-                                            <span class="mx-2">freeradius</span>
-                                        </div>
-                                        <div style="display: inline-block; margin-left: 20px;">
-                                            <i class="fas fa-database fa-2x" style="color: #43c81e;"></i>
-                                            <!-- Red icon: <i class="fas fa-database fa-2x" style="color: #d21414;"></i> --> 
-                                            <br>
-                                            <span class="mx-2">sql_server</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+<div class="col-xl-3 col-md-6">
+    <div class="card mb-4">
+        <div class="card-header text-center">
+            <h5 class="card-title">
+                <i class="fas fa-database fa-2x align-middle me-2"></i><span class="align-middle">System Status</span>
+            </h5>
+        </div>
+        <div class="card-body">
+            <!-- Check the status and change the icon and text accordingly -->
+            <div class="text-center">
+                {% if serverOneConnection == 'online' and serverTwoConnection == 'online' %}
+                    <!-- Green check mark for system status when both are online -->
+                    <i class="fa-regular fa-circle-check fa-8x" style="color: #43c81e;"></i>
+                    <br>
+                    <span class="mx-2">All Good!</span>
+                {% elif serverOneConnection == 'online' or serverTwoConnection == 'online' %}
+                    <!-- Yellow symbol when one server is up but the other is down -->
+                    <i class="fa-solid fa-circle-exclamation fa-8x" style="color: #ffd700;"></i>
+                    <br>
+                    <span class="mx-2">One Server Down</span>
+                {% else %}
+                    <!-- Red Circle X for when both are down -->
+                    <i class="fa-regular fa-circle-xmark fa-8x" style="color: #d21414;"></i>
+                    <br>
+                    <span class="mx-2">Servers Down</span>
+                {% endif %}
+            </div>
+            <!-- Divider -->
+            <hr class="my-4">
+            <!-- Icons and text for servers -->
+            <div class="text-center">
+                <div style="display: inline-block;">
+                    <!-- Check the status and change the icon color accordingly -->
+                    {% if serverOneConnection == 'online' %}
+                    <i class="fas fa-database fa-2x" style="color: #43c81e;"></i>
+                    {% else %}
+                        <!-- Red icon when freeradius is down -->
+                        <i class="fas fa-database fa-2x" style="color: #d21414;"></i>
+                    {% endif %}
+                    <br>
+                    <span class="mx-2">Server One</span>
+                </div>
+                <div style="display: inline-block; margin-left: 20px;">
+                    <!-- Check the status and change the icon color accordingly -->
+                    {% if serverTwoConnection == 'online' %}
+                        <i class="fas fa-database fa-2x" style="color: #43c81e;"></i>
+                    {% else %}
+                        <!-- Red icon when sql_server is down -->
+                        <i class="fas fa-database fa-2x" style="color: #d21414;"></i>
+                    {% endif %}
+                    <br>
+                    <span class="mx-2">Server Two</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
                     </div>
                 </div>
             </main>
