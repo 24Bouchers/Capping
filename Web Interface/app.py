@@ -6,12 +6,12 @@ from pytz import timezone
 app = Flask(__name__)
 app.secret_key = 'ArchFiber23'
 
-SERVER_ONE_HOST = '10.10.9.4'
+SERVER_ONE_HOST = '10.10.9.43'
 SERVER_ONE_USER = 'radius_UI'
 SERVER_ONE_PASSWORD = 'GKwaxhBnkvNZSHHcZukn'
 SERVER_ONE_DB = 'radius_netelastic'
 
-SERVER_TWO_HOST = '10.10.9.4'
+SERVER_TWO_HOST = '10.10.9.43'
 SERVER_TWO_USER = 'radius_UI'
 SERVER_TWO_PASSWORD = 'GKwaxhBnkvNZSHHcZukn'
 SERVER_TWO_DB = 'radius_netelastic'
@@ -160,18 +160,18 @@ def main():
                     # first finds out how many 15 minute intervals passed
                     diff = int(currentTimeMin/15) - int(totalTimeMin/15)
                     if diff <= len(intervals)-offset and diff > -1:
-                        intervals[diff+offset] += 1
+                        intervals[diff+offset+1] += 1
                 # sees if there was a 6 hour diffrence max between times and thta date matches either today or yesterday
                 elif (1440 - totalTimeMin) + currentTimeMin <= hoursInMin and (splitDateTime[0] == todayDate or splitDateTime[0] == yesterdayDate):
                     if splitDateTime[0] == yesterdayDate:
                         # 1440 is the amount of minutes in a day
                         diff = int(currentTimeMin/15) + int((1440 - totalTimeMin)/15)
                         if diff <= len(intervals) and diff > -1:
-                            intervals[diff+offset] += 1
+                            intervals[diff+offset+1] += 1
                     else:
                         diff = int(currentTimeMin/15) - int(totalTimeMin/15)
                         if diff <= len(intervals) and diff > -1:
-                            intervals[diff+offset] += 1
+                            intervals[diff+offset+1] += 1
                 # once the date is not today or yesterday and the time has more then a 7 hour gap
                 # code will break out of loop to save resorces and time
                 elif (splitDateTime[0] == todayDate or splitDateTime[0] == yesterdayDate) and (currentTimeMin - totalTimeMin) > (hoursInMin+60):
