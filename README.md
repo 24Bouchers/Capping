@@ -3,7 +3,11 @@
 Appi.py Api is a collaborative capping (Capstone) project from five students at Marist College for GTel.
 Appi.py Api is a collaborative capping (Capstone) project from five students at Marist College for GTel.
 
-Steven Boucher, Easton Eberwein, Nick Vasquez, Liam Haggerty, and Christian Bauer
+Steven Boucher
+Easton Eberwein
+Nick Vasquez
+Liam Haggerty
+Christian Bauer
 
 ## Table of Contents
 
