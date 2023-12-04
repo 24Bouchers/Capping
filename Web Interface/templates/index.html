@@ -21,25 +21,25 @@
         </a>
         <!-- Sidebar Toggle-->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
-        <!-- Navbar Search-->
-        <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-            <div class="input-group">
-                <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" />
-                <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
-            </div>
-        </form>
-        <!-- Navbar-->
-        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="#!">Settings</a></li>
-                    <li><a class="dropdown-item" href="#!">Activity Log</a></li>
-                    <li><hr class="dropdown-divider" /></li>
-                    <li><a class="dropdown-item" href="#!">Logout</a></li>
-                </ul>
-            </li>
-        </ul>
+                <!-- Navbar Search-->
+                    <!--form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+                        <div class="input-group">
+                            <!--input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" /-->
+                            <!--button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
+                        </div>
+                    </form>
+                <!-- Navbar>
+            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#!">Settings</a></li>
+                        <li><a class="dropdown-item" href="#!">Activity Log</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item" href="login.html">Logout</a></li>
+                    </ul>
+                </li>
+            </ul-->
     </nav>
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
@@ -237,41 +237,63 @@
                             </div>
                         </div>
                         <!-- Right column for system status -->
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card mb-4">
-                                <div class="card-header text-center">
-                                    <h5 class="card-title">
-                                        <i class="fas fa-database fa-2x align-middle me-2"></i><span class="align-middle">System Status</span>
-                                    </h5>
-                                </div>
-                                <div class="card-body">
-                                    <!-- Green check mark for system status-->
-                                    <div class="text-center">
-                                        <i class="fa-regular fa-circle-check fa-8x" style="color: #43c81e;"></i>
-                                        <!-- Red Circle X for when server is down: <i class="fa-regular fa-circle-xmark fa-8x" style="color: #d21414;"></i> -->
-                                        <br>
-                                        <span class="mx-2">All Good!</span>
-                                    </div>
-                                    <!-- Divider -->
-                                    <hr class="my-4">
-                                    <!-- Icons and text for servers -->
-                                    <div class="text-center">
-                                        <div style="display: inline-block;">
-                                            <i class="fa-solid fa-lock fa-2x" style="color: #43c81e;"></i>
-                                            <!-- Red icon: <i class="fa-solid fa-lock fa-2x" style="color: #d21414;"></i> -->
-                                            <br>
-                                            <span class="mx-2">freeradius</span>
-                                        </div>
-                                        <div style="display: inline-block; margin-left: 20px;">
-                                            <i class="fas fa-database fa-2x" style="color: #43c81e;"></i>
-                                            <!-- Red icon: <i class="fas fa-database fa-2x" style="color: #d21414;"></i> --> 
-                                            <br>
-                                            <span class="mx-2">sql_server</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+<div class="col-xl-3 col-md-6">
+    <div class="card mb-4">
+        <div class="card-header text-center">
+            <h5 class="card-title">
+                <i class="fas fa-database fa-2x align-middle me-2"></i><span class="align-middle">System Status</span>
+            </h5>
+        </div>
+        <div class="card-body">
+            <!-- Check the status and change the icon and text accordingly -->
+            <div class="text-center">
+                {% if serverOneConnection == 'online' and serverTwoConnection == 'online' %}
+                    <!-- Green check mark for system status when both are online -->
+                    <i class="fa-regular fa-circle-check fa-8x" style="color: #43c81e;"></i>
+                    <br>
+                    <span class="mx-2">All Good!</span>
+                {% elif serverOneConnection == 'online' or serverTwoConnection == 'online' %}
+                    <!-- Yellow symbol when one server is up but the other is down -->
+                    <i class="fa-solid fa-circle-exclamation fa-8x" style="color: #ffd700;"></i>
+                    <br>
+                    <span class="mx-2">One Server Down</span>
+                {% else %}
+                    <!-- Red Circle X for when both are down -->
+                    <i class="fa-regular fa-circle-xmark fa-8x" style="color: #d21414;"></i>
+                    <br>
+                    <span class="mx-2">Servers Down</span>
+                {% endif %}
+            </div>
+            <!-- Divider -->
+            <hr class="my-4">
+            <!-- Icons and text for servers -->
+            <div class="text-center">
+                <div style="display: inline-block;">
+                    <!-- Check the status and change the icon color accordingly -->
+                    {% if serverOneConnection == 'online' %}
+                    <i class="fas fa-database fa-2x" style="color: #43c81e;"></i>
+                    {% else %}
+                        <!-- Red icon when freeradius is down -->
+                        <i class="fas fa-database fa-2x" style="color: #d21414;"></i>
+                    {% endif %}
+                    <br>
+                    <span class="mx-2">Server One</span>
+                </div>
+                <div style="display: inline-block; margin-left: 20px;">
+                    <!-- Check the status and change the icon color accordingly -->
+                    {% if serverTwoConnection == 'online' %}
+                        <i class="fas fa-database fa-2x" style="color: #43c81e;"></i>
+                    {% else %}
+                        <!-- Red icon when sql_server is down -->
+                        <i class="fas fa-database fa-2x" style="color: #d21414;"></i>
+                    {% endif %}
+                    <br>
+                    <span class="mx-2">Server Two</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
                     </div>
                 </div>
             </main>
@@ -280,9 +302,9 @@
                     <div class="d-flex align-items-center justify-content-between small">
                         <div class="text-muted">Copyright &copy; Archtop Fiber</div>
                         <div>
-                            <a href="#">Privacy Policy</a>
+                            <a href="https://gtel.net">Gtel</a>
                             &middot;
-                            <a href="#">Terms &amp; Conditions</a>
+                            <a href="https://archtopfiber.com">Archtop Fiber</a>                            
                         </div>
                     </div>
                 </div>
