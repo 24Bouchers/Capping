@@ -2,10 +2,10 @@
 
 RadiusUI.py API is a collaborative capping (Capstone) project from five students at Marist College for GTel.
 
-Steven Boucher
-Easton Eberwein
-Nick Vasquez
-Liam Haggerty
+Steven Boucher <br>
+Easton Eberwein <br>
+Nick Vasquez <br>
+Liam Haggerty <br>
 Christian Bauer
 
 ## Table of Contents
@@ -93,10 +93,10 @@ Here are some key aspects of our site’s design that leverage Bootstrap:
 
 ## Contact
 
-Steven.Boucher1@marist.edu
-Easton.Eberwein1@marist.edu
-Liam.Haggerty1@marist.edu
-Nicklas.Vasquez1@marist.edu
-Christian.Bauer1@marist.edu
+Steven.Boucher1@marist.edu <br>
+Easton.Eberwein1@marist.edu <br>
+Liam.Haggerty1@marist.edu <br>
+Nicklas.Vasquez1@marist.edu <br>
+Christian.Bauer1@marist.edu <br>
 
 [Project Link](https://github.com/24Bouchers/Capping)
