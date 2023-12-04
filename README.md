@@ -1,12 +1,12 @@
 # Appy.py
 
-Appi.py Api is a collabertative capping (Capstone) projects from five students at Marist College For GTel.
+Appi.py Api is a collaborative capping (Capstone) projects from five students at Marist College For GTel.
 
 Steven Boucher
-Easton   
-Nick 
-Liam
-Christian
+Easton Eberwein
+Nick Vasquez
+Liam Haggerty
+Christian Bauer
 
 ## Table of Contents
 
@@ -22,8 +22,8 @@ Christian
 
 ## Introduction
 
-The purpose of this Api is to allow Gtel Employee's to insert static ip address through their website and verify through
-their free radius servers. This webpage also displays relevant data about their servers, connectivity, MAC-addresses and Ip Addresses.  
+The purpose of this API is to allow Gtel Employees to insert static IP addresses through their website and verify through
+their free radius servers. This webpage also displays relevant data about their servers, connectivity, MAC addresses, and IP Addresses.  
 
 ## Authentication
 
@@ -31,7 +31,7 @@ Explain how to authenticate when using the API. Include details about API keys, 
 
 ## Endpoints
 
-The Api currently connects to a web server (http://10.10.9.40:5000) and a MariaDb server (10.10.9.43) both hosted by Marist College.
+The API currently connects to a web server (http://10.10.9.40:5000) and a MariaDB server (10.10.9.43) both hosted by Marist College.
 Ultimately, These servers will be on Gtel/ArchtopFiber Servers.
 
 ### Endpoint 1
