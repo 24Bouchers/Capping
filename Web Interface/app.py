@@ -161,51 +161,24 @@ def main():
                         offset = 1
                     # check if at least 6 hours have passed since the start of the day and dates match
                     elif currentTimeMin >= hoursInMin and splitDateTime[0] == todayDate:
-<<<<<<< Updated upstream
-                        # first find out how many 15-minute intervals passed
-                        diff = int(currentTimeMin / 15) - int(totalTimeMin / 15)
-                        if diff <= len(intervals) - offset and diff > -1:
-                            intervals[diff + offset] += 1
-                    # see if there was a 6-hour difference max between times and that date matches either today or yesterday
-=======
                         # first finds out how many 15 minute intervals passed
                         diff = int(currentTimeMin/15) - int(totalTimeMin/15)
                         if diff <= len(intervals)-offset and diff > -1:
-                            intervals[diff+offset+1] += 1
+                            intervals[diff+offset] += 1
                     # sees if there was a 6 hour diffrence max between times and thta date matches either today or yesterday
->>>>>>> Stashed changes
                     elif (1440 - totalTimeMin) + currentTimeMin <= hoursInMin and (splitDateTime[0] == todayDate or splitDateTime[0] == yesterdayDate):
                         if splitDateTime[0] == yesterdayDate:
                             # 1440 is the amount of minutes in a day
                             diff = int(currentTimeMin / 15) + int((1440 - totalTimeMin) / 15)
                             if diff <= len(intervals) and diff > -1:
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-                                intervals[diff + offset] += 1
-=======
                                 intervals[diff+offset] += 1
->>>>>>> Stashed changes
-=======
-                                intervals[diff+offset+1] += 1
->>>>>>> Stashed changes
                         else:
                             diff = int(currentTimeMin / 15) - int(totalTimeMin / 15)
                             if diff <= len(intervals) and diff > -1:
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-                                intervals[diff + offset] += 1
-                    # once the date is not today or yesterday and the time has more than a 7-hour gap
-                    # code will break out of loop to save resources and time
-                    elif (splitDateTime[0] == todayDate or splitDateTime[0] == yesterdayDate) and (currentTimeMin - totalTimeMin) > (hoursInMin + 60):
-=======
                                 intervals[diff+offset] += 1
-=======
-                                intervals[diff+offset+1] += 1
->>>>>>> Stashed changes
                     # once the date is not today or yesterday and the time has more then a 7 hour gap
                     # code will break out of loop to save resorces and time
                     elif (splitDateTime[0] == todayDate or splitDateTime[0] == yesterdayDate) and (currentTimeMin - totalTimeMin) > (hoursInMin+60):
->>>>>>> Stashed changes
                         break
 
             # the bottom labels of the line graph representing 15 minute increments
@@ -309,9 +282,6 @@ def main():
             total_devices_count=total_devices_count,
             serverOneConnection=serverOneConnection,
             serverTwoConnection=serverTwoConnection
-<<<<<<< Updated upstream
-        )
-=======
             )
     
 # takes in the labels list, the currentTimeEST, whatever the minute needs to me assigned, and the index the label is going into
@@ -323,8 +293,6 @@ def format_time(labels, timeEST, timeInterval, index):
         labels[index] = str(int(timeEST[0])-12) + ':' + timeInterval + ' pm'
     else:
         labels[index] = timeEST[0] + ':' + timeInterval + ' am' 
->>>>>>> Stashed changes
-
 
 # Add Devie
 @app.route('/addDevice.html', methods=['GET', 'POST'])
