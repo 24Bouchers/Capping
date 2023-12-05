@@ -67,7 +67,7 @@ def main():
             #######################
             ## Reachable Devices ##
             #######################
-
+            
             serverOnecursor.execute("SELECT COUNT(DISTINCT username) AS count_entries FROM radacct WHERE acctterminatecause = '';")
             result = serverOnecursor.fetchone()
 
@@ -163,18 +163,18 @@ def main():
                         # first finds out how many 15 minute intervals passed
                         diff = int(currentTimeMin/15) - int(totalTimeMin/15)
                         if diff <= len(intervals)-offset and diff > -1:
-                            intervals[diff+offset] += 1
+                            intervals[diff+offset+1] += 1
                     # sees if there was a 6 hour diffrence max between times and thta date matches either today or yesterday
                     elif (1440 - totalTimeMin) + currentTimeMin <= hoursInMin and (splitDateTime[0] == todayDate or splitDateTime[0] == yesterdayDate):
                         if splitDateTime[0] == yesterdayDate:
                             # 1440 is the amount of minutes in a day
                             diff = int(currentTimeMin/15) + int((1440 - totalTimeMin)/15)
                             if diff <= len(intervals) and diff > -1:
-                                intervals[diff+offset] += 1
+                                intervals[diff+offset+1] += 1
                         else:
                             diff = int(currentTimeMin/15) - int(totalTimeMin/15)
                             if diff <= len(intervals) and diff > -1:
-                                intervals[diff+offset] += 1
+                                intervals[diff+offset+1] += 1
                     # once the date is not today or yesterday and the time has more then a 7 hour gap
                     # code will break out of loop to save resorces and time
                     elif (splitDateTime[0] == todayDate or splitDateTime[0] == yesterdayDate) and (currentTimeMin - totalTimeMin) > (hoursInMin+60):
@@ -275,8 +275,16 @@ def add_device():
             ipv6Prefix = request.form.get('IPv6 Prefix', default=None)
             ipv6 = request.form.get('IPv6', default=None)
 
-            # Call the stored procedure to add the device entry based on the MAC address
+            # Check if the username already exists
             with pymysql.connect(host=SERVER_TWO_HOST, user=SERVER_TWO_USER, password=SERVER_TWO_PASSWORD, db=SERVER_TWO_DB) as serverTwoConn, serverTwoConn.cursor(pymysql.cursors.DictCursor) as serverTwocursor:
+                serverTwocursor.execute('SELECT username FROM radius_netelastic.users WHERE username = %s', (username,))
+                existing_user = serverTwocursor.fetchone()
+
+                if existing_user:
+                    flash(f'Error: Username {username} already exists!', 'error')
+                    return redirect('/addDevice.html')
+
+                # Call the stored procedure to add the device entry based on the MAC address
                 serverTwocursor.callproc('radius_netelastic.PROC_InsUpRadiusUser', (username, ipv4, ipv6Prefix, ipv6))
                 serverTwocursor.execute('INSERT INTO radius_netelastic.logs(username, reason, time) VALUES (%s, %s, NOW())', (username, 'Added'))
                 serverTwoConn.commit()
@@ -351,10 +359,6 @@ def show_edit_device_page(username):
         error_message = f"Error while fetching device data: {e}"
         print(error_message)
         return render_template('404.html', error_message=error_message)
-
-
-from flask import Flask, request, redirect, flash
-import pymysql
 
 @app.route('/updateDevice/<path:username>', methods=['POST'])
 def update_device(username):
@@ -464,6 +468,11 @@ def logs():
         return render_template('404.html')
 
     return render_template('logs.html', rows=rows)
+
+# 404 error handler
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('404.html'), 404
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5555)
