@@ -275,7 +275,7 @@ END;
 ''')
 
 #Drop The User and Create a New One with permission to use the Crud Functions
-cur.execute("CREATE USER 'radius_UI'@'%' IDENTIFIED BY 'GKwaxhBnkvNZSHHcZukn';")
+cur.execute("CREATE USER 'radius_ui'@'%' IDENTIFIED BY 'GKwaxhBnkvNZSHHcZukn';")
 cur.execute("GRANT DELETE, INSERT, SELECT, UPDATE ON radius_netelastic.* TO 'radius_UI'@'%';")
 cur.execute("GRANT EXECUTE ON PROCEDURE radius_netelastic.PROC_InsUpRadiusUser TO 'radius_UI'@'%';")
 cur.execute("GRANT EXECUTE ON PROCEDURE radius_netelastic.PROC_DeleteRadiusUser TO 'radius_UI'@'%';")
