@@ -163,7 +163,7 @@ def main():
                     elif currentTimeMin >= hoursInMin and splitDateTime[0] == todayDate:
                         # first finds out how many 15 minute intervals passed
                         diff = int(currentTimeMin/15) - int(totalTimeMin/15)
-                        if diff <= len(intervals)-offset and diff > -1:
+                        if diff <= len(intervals)-offset-1 and diff > -1:
                             intervals[diff+offset] += 1
                     # sees if there was a 6 hour diffrence max between times and thta date matches either today or yesterday
                     elif (1440 - totalTimeMin) + currentTimeMin <= hoursInMin and (splitDateTime[0] == todayDate or splitDateTime[0] == yesterdayDate):
