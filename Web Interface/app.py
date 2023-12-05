@@ -1,7 +1,8 @@
-from flask import Flask, app, flash, redirect, render_template, request
-import pymysql
-from datetime import datetime, timedelta, date, timezone
+from flask import Flask, render_template, request, flash, redirect, url_for
 from pytz import timezone
+from datetime import datetime, timedelta, date
+import pymysql
+
 
 app = Flask(__name__)
 app.secret_key = 'ArchFiber23'
@@ -264,7 +265,7 @@ def format_time(labels, timeEST, timeInterval, index):
     else:
         labels[index] = timeEST[0] + ':' + timeInterval + ' am' 
 
-# Add Devie
+# Add Device
 @app.route('/addDevice.html', methods=['GET', 'POST'])
 def add_device():
     if request.method == 'POST':
@@ -276,23 +277,22 @@ def add_device():
 
             # Check if the username already exists
             with pymysql.connect(host=SERVER_TWO_HOST, user=SERVER_TWO_USER, password=SERVER_TWO_PASSWORD, db=SERVER_TWO_DB) as serverTwoConn, serverTwoConn.cursor(pymysql.cursors.DictCursor) as serverTwocursor:
-                serverTwocursor.execute('SELECT username FROM radius_netelastic.users WHERE username = %s', (username,))
+                serverTwocursor.execute('SELECT username FROM radius_netelastic.radreply WHERE username = %s', (username,))
                 existing_user = serverTwocursor.fetchone()
 
                 if existing_user:
-                    flash(f'Error: Username {username} already exists!', 'error')
-                    return redirect('/addDevice.html')
+                    flash(f'Error: Username {username} already exists!', 'danger')
+                    return redirect(url_for('add_device'))
 
                 # Call the stored procedure to add the device entry based on the MAC address
                 serverTwocursor.callproc('radius_netelastic.PROC_InsUpRadiusUser', (username, ipv4, ipv6Prefix, ipv6))
                 serverTwocursor.execute('INSERT INTO radius_netelastic.logs(username, reason, time) VALUES (%s, %s, NOW())', (username, 'Added'))
                 serverTwoConn.commit()
-
-            flash('Device added successfully!', 'success')
+                
             return redirect('/devices.html')
 
         except pymysql.Error as e:
-            flash(f'Database error: {e}')
+            flash(f'Database error: {e}', 'danger')
             return redirect('/addDevice.html')
 
     return render_template('addDevice.html')
@@ -358,6 +358,10 @@ def show_edit_device_page(username):
         error_message = f"Error while fetching device data: {e}"
         print(error_message)
         return render_template('404.html', error_message=error_message)
+
+
+from flask import Flask, request, redirect, flash
+import pymysql
 
 @app.route('/updateDevice/<path:username>', methods=['POST'])
 def update_device(username):
@@ -467,11 +471,6 @@ def logs():
         return render_template('404.html')
 
     return render_template('logs.html', rows=rows)
-
-# 404 error handler
-@app.errorhandler(404)
-def not_found_error(error):
-    return render_template('404.html'), 404
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5555)
