@@ -371,10 +371,6 @@ def show_edit_device_page(username):
         print(error_message)
         return render_template('404.html', error_message=error_message)
 
-
-from flask import Flask, request, redirect, flash
-import pymysql
-
 @app.route('/updateDevice/<path:username>', methods=['POST'])
 def update_device(username):
     try:
@@ -483,6 +479,11 @@ def logs():
         return render_template('404.html')
 
     return render_template('logs.html', rows=rows)
+
+# 404 error handler
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('404.html'), 404
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5555)
