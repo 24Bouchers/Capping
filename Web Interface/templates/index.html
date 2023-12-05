@@ -185,12 +185,14 @@
                                                         label: "Starts in 15 Minute Intervals",
 
                                                         data: {{ values | tojson }},
-                                                        fill: false,
-                                                        pointBackgroundColor: "#29b8ff",
-                                                        pointBorderColor: "#29b8ff",
-                                                        pointHoverBackgroundColor: "#29b8ff",
-                                                        pointHoverBorderColor: "#29b8ff",
-                                                        lineTention: 0.5
+                                                        fill: true,
+                                                        backgroundColor: "#7ae8f670",
+                                                        pointBackgroundColor: "#7ae8f6",
+                                                        pointBorderColor: "#7ae8f6",
+                                                        pointHoverBackgroundColor: "#7ae8f6",
+                                                        pointHoverBorderColor: "#7ae8f6",
+                                                        lineTention: 0.4,
+                                                        borderColor: "#7ae8f6",
                                                     }
                                                 ]
                                             },
@@ -205,6 +207,9 @@
                                                         ticks: {
                                                             fontColor: "white",
                                                             beginAtZero: true
+                                                        },
+                                                        gridLines: {
+                                                            color: "#f15b4070"
                                                         }
                                                     }],
                                                     xAxes: [{
@@ -213,6 +218,9 @@
                                                             maxRotation: 35,
                                                             minRotation: 35,
                                                             beginAtZero: true
+                                                        },
+                                                        gridLines: {
+                                                            color: "#f15b4070"
                                                         }
                                                     }]
                                                 },
