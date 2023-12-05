@@ -83,11 +83,17 @@
             <!-- Error Message -->
             {% with messages = get_flashed_messages() %}
             {% if messages %}
-            <div id="error-alert"
-                class="alert alert-danger alert-dismissible fade show position-fixed top-50 start-50 translate-middle w-50"
-                role="alert">
-                {{ messages[0] }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 offset-lg-1">
+                        <div id="error-alert"
+                            class="alert alert-danger alert-dismissible fade show mt-3 w-100" role="alert">
+                            {{ messages[0] }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
             </div>
             {% endif %}
             {% endwith %}
