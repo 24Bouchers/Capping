@@ -185,25 +185,12 @@ def main():
             labels = [''] * 25
             firstgo = True 
             offset = 0
-            print("Whyyyyyy")
             for x in range(24):
                 # if the current time is not a even 15 minunet interval the it will be added as the first place on the graph display
                 # it then addes the the closest 15 minute interval that has passed as the second place in the display  
                 if x == 0 and not sameTime:
-                    # checks if time should be in am or pm
-                    if currentTimeEST[0] == '12':
-                        labels[x] = currentTimeEST[0] + ':' + currentTimeEST[1] + ' pm'
-                    elif int(currentTimeEST[0])*60 > 720:
-                        labels[x] = str(int(currentTimeEST[0])-12) + ':' + currentTimeEST[1] + ' pm'
-                    else:
-                        labels[x] = currentTimeEST[0] + ':' + currentTimeEST[1] + ' am'
-                    # checks if time should be in am or pm
-                    if currentTimeEST[0] == '12':
-                        labels[x+1] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' pm'
-                    elif int(currentTimeEST[0])*60 > 720:
-                        labels[x+1] = str(int(currentTimeEST[0])-12) + ':' + str(minIntervalTimeEST) + ' pm'
-                    else:
-                        labels[x+1] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' am'
+                    format_time(labels, currentTimeEST, currentTimeEST[1], x)
+                    format_time(labels, currentTimeEST, str(minIntervalTimeEST), x+1)
                     # adds an offset since two separate labels get added above
                     # only adds if current minute not withen first 15 minuts of an hour since code will auto fix time asignment only for the first 15 minutes 
                     if int(currentTimeEST[1]) > 15:
@@ -216,32 +203,14 @@ def main():
                             minIntervalTimeEST -= 15
                         else:
                             firstgo = False
-                        # checks if time should be in am or pm
-                        if currentTimeEST[0] == '12':
-                            labels[x+offset] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' pm'
-                        elif int(currentTimeEST[0])*60 > 720:
-                            labels[x+offset] = str(int(currentTimeEST[0])-12) + ':' + str(minIntervalTimeEST) + ' pm'
-                        else:
-                            labels[x+offset] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' am' 
+                        format_time(labels, currentTimeEST, str(minIntervalTimeEST), x+offset)
                     # will be true if the first entry (or x == 0), is on the hour and only then
                     elif firstgo  and str(currentTimeEST[1]) != '00':
-                        # checks if time should be in am or pm
-                        if currentTimeEST[0] == '12':
-                            labels[x+offset] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' pm'
-                        elif int(currentTimeEST[0])*60 > 720:
-                            labels[x+offset] = str(int(currentTimeEST[0])-12) + ':' + str(minIntervalTimeEST) + ' pm'
-                        else:
-                            labels[x+offset] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' am'
+                        format_time(labels, currentTimeEST, str(minIntervalTimeEST), x+offset)
                         firstgo = False
                     # adjusts the hour value
                     else: 
-                        # checks if time should be in am or pm
-                        if currentTimeEST[0] == '12':
-                            labels[x+offset] = currentTimeEST[0] + ':00 pm'
-                        elif int(currentTimeEST[0])*60 > 720:
-                            labels[x+offset] = str(int(currentTimeEST[0])-12) + ':00 pm'
-                        else:
-                            labels[x+offset] = currentTimeEST[0] + ':00 am'  
+                        format_time(labels, currentTimeEST, '00', x+offset)  
                         # reset the minute interval back to one hour
                         minIntervalTimeEST = 60
                         currentTimeEST[0] = str(int( currentTimeEST[0])-1)
@@ -284,6 +253,17 @@ def main():
             serverOneConnection=serverOneConnection,
             serverTwoConnection=serverTwoConnection
             )
+    
+# takes in the labels list, the currentTimeEST, whatever the minute needs to me assigned, and the index the label is going into
+# determins if it needs a am or pm ending and will adjust the hour number since going from 24 to 12 hour format
+def format_time(labels, timeEST, timeInterval, index):
+    if timeEST[0] == '12':
+        labels[index] = timeEST[0] + ':' + timeInterval + ' pm'
+    elif int(timeEST[0])*60 > 720:
+        labels[index] = str(int(timeEST[0])-12) + ':' + timeInterval + ' pm'
+    else:
+        labels[index] = timeEST[0] + ':' + timeInterval + ' am' 
+
 
 # Add Devie
 @app.route('/addDevice.html', methods=['GET', 'POST'])
