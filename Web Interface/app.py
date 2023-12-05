@@ -1,7 +1,7 @@
-from flask import Flask, app, flash, redirect, render_template, request
-import pymysql
-from datetime import datetime, timedelta, date, timezone
+from flask import Flask, render_template, request, flash, redirect, url_for
 from pytz import timezone
+from datetime import datetime, timedelta, date
+import pymysql
 
 
 app = Flask(__name__)
@@ -310,20 +310,22 @@ def add_device():
                 existing_user = serverTwocursor.fetchone()
 
                 if existing_user:
-                    flash(f'Error: Username {username} already exists!')
-                    return redirect('/addDevice.html')
+                    flash(f'Error: Username {username} already exists!', 'danger')
+                    return redirect(url_for('add_device'))
 
                 # Call the stored procedure to add the device entry based on the MAC address
                 serverTwocursor.callproc('radius_netelastic.PROC_InsUpRadiusUser', (username, ipv4, ipv6Prefix, ipv6))
                 serverTwocursor.execute('INSERT INTO radius_netelastic.logs(username, reason, time) VALUES (%s, %s, NOW())', (username, 'Added'))
                 serverTwoConn.commit()
+                
             return redirect('/devices.html')
 
         except pymysql.Error as e:
-            flash(f'Database error: {e}')
+            flash(f'Database error: {e}', 'danger')
             return redirect('/addDevice.html')
 
     return render_template('addDevice.html')
+
 # Remove device
 @app.route("/removeDevice", methods=["POST"])
 def remove_device():
