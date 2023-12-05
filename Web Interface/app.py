@@ -222,7 +222,7 @@ def main():
             # 12 am times appear as 0 for 24 hour format, adjusts to 12 hour format for labels
             for x in range(24):
                 time = labels[x].split(':')
-                if time[0] == '0':
+                if time[0] == '00':
                     labels[x] = '12:' + time[1]
 
             # reverse the lists so they appear from right to left on webpage 
