@@ -294,8 +294,16 @@ def add_device():
             ipv6Prefix = request.form.get('IPv6 Prefix', default=None)
             ipv6 = request.form.get('IPv6', default=None)
 
-            # Call the stored procedure to add the device entry based on the MAC address
+            # Check if the username already exists
             with pymysql.connect(host=SERVER_TWO_HOST, user=SERVER_TWO_USER, password=SERVER_TWO_PASSWORD, db=SERVER_TWO_DB) as serverTwoConn, serverTwoConn.cursor(pymysql.cursors.DictCursor) as serverTwocursor:
+                serverTwocursor.execute('SELECT username FROM radius_netelastic.users WHERE username = %s', (username,))
+                existing_user = serverTwocursor.fetchone()
+
+                if existing_user:
+                    flash(f'Error: Username {username} already exists!', 'error')
+                    return redirect('/addDevice.html')
+
+                # Call the stored procedure to add the device entry based on the MAC address
                 serverTwocursor.callproc('radius_netelastic.PROC_InsUpRadiusUser', (username, ipv4, ipv6Prefix, ipv6))
                 serverTwocursor.execute('INSERT INTO radius_netelastic.logs(username, reason, time) VALUES (%s, %s, NOW())', (username, 'Added'))
                 serverTwoConn.commit()
