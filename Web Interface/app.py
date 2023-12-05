@@ -1,7 +1,8 @@
-from flask import Flask, app, flash, redirect, render_template, request
-import pymysql
-from datetime import datetime, timedelta, date, timezone
+from flask import Flask, render_template, request, flash, redirect, url_for
 from pytz import timezone
+from datetime import datetime, timedelta, date
+import pymysql
+
 
 app = Flask(__name__)
 app.secret_key = 'ArchFiber23'
@@ -67,7 +68,7 @@ def main():
             #######################
             ## Reachable Devices ##
             #######################
-            
+
             serverOnecursor.execute("SELECT COUNT(DISTINCT username) AS count_entries FROM radacct WHERE acctterminatecause = '';")
             result = serverOnecursor.fetchone()
 
@@ -124,41 +125,41 @@ def main():
             todayDate = date.today()
             currentTimeUTC = datetime.now(timezone('UTC')).strftime("%H:%M")
             currentTimeEST = datetime.now(timezone('EST')).strftime("%H:%M")
-            yesterdayDate = str(todayDate - timedelta(days = 1))
+            yesterdayDate = str(todayDate - timedelta(days=1))
             todayDate = str(todayDate)
             # convert current time into minutes
             currentTimeSplit = str(currentTimeUTC).split(':')
             currentTimeEST = str(currentTimeEST).split(':')
             # counts down to the nearest 15 minute interval
-            close15MinInterval =int(currentTimeSplit[1])
+            close15MinInterval = int(currentTimeSplit[1])
             minIntervalTimeEST = int(currentTimeEST[1])
             sameTime = True
             while close15MinInterval % 15 != 0:
                 close15MinInterval -= 1
                 minIntervalTimeEST -= 1 
                 sameTime = False
-            currentTimeMin = close15MinInterval + (int(currentTimeSplit[0])*60)
+            currentTimeMin = close15MinInterval + (int(currentTimeSplit[0]) * 60)
 
             # list that will store the 15 minute interval numbers
             # going to be every 15 min for 6 hours
             global intervals
             intervals = [0] * 24
-            hoursInMin = 360 # 360 represents 6 hours
+            hoursInMin = 360  # 360 represents 6 hours
             offset = 0
             # loop through the list of times given from acctstarttime
             for x in stime:
                 # convert the acctstarttime into minutes
-                splitDateTime = str(x.get('acctstarttime')).split() # separates date and time into 2 separate list elements
+                splitDateTime = str(x.get('acctstarttime')).split()  # separates date and time into 2 separate list elements
                 if splitDateTime and splitDateTime[0] != 'None':
                     splitTime = str(splitDateTime[1]).split(':')
-                    totalTimeMin = int(splitTime[1]) + (int(splitTime[0])*60)
-                    # since the time were comparing against is the closest 15 minute interval that has already passed
-                    # if a time appears that has todays date and is passed the time were checking from
+                    totalTimeMin = int(splitTime[1]) + (int(splitTime[0]) * 60)
+                    # since the time we're comparing against is the closest 15-minute interval that has already passed
+                    # if a time appears that has today's date and is passed the time we're checking from
                     # it gets added to the most recent column of the graph
-                    if totalTimeMin > currentTimeMin and splitDateTime[0] == todayDate and (totalTimeMin-currentTimeMin) <= 15 :
+                    if totalTimeMin > currentTimeMin and splitDateTime[0] == todayDate and (totalTimeMin - currentTimeMin) <= 15:
                         intervals[0] += 1 
                         offset = 1
-                    # check if at least 6 hours have passed since start of day and dates match
+                    # check if at least 6 hours have passed since the start of the day and dates match
                     elif currentTimeMin >= hoursInMin and splitDateTime[0] == todayDate:
                         # first finds out how many 15 minute intervals passed
                         diff = int(currentTimeMin/15) - int(totalTimeMin/15)
@@ -168,11 +169,11 @@ def main():
                     elif (1440 - totalTimeMin) + currentTimeMin <= hoursInMin and (splitDateTime[0] == todayDate or splitDateTime[0] == yesterdayDate):
                         if splitDateTime[0] == yesterdayDate:
                             # 1440 is the amount of minutes in a day
-                            diff = int(currentTimeMin/15) + int((1440 - totalTimeMin)/15)
+                            diff = int(currentTimeMin / 15) + int((1440 - totalTimeMin) / 15)
                             if diff <= len(intervals) and diff > -1:
                                 intervals[diff+offset] += 1
                         else:
-                            diff = int(currentTimeMin/15) - int(totalTimeMin/15)
+                            diff = int(currentTimeMin / 15) - int(totalTimeMin / 15)
                             if diff <= len(intervals) and diff > -1:
                                 intervals[diff+offset] += 1
                     # once the date is not today or yesterday and the time has more then a 7 hour gap
@@ -186,62 +187,91 @@ def main():
             firstgo = True 
             offset = 0
             for x in range(24):
-                # if the current time is not a even 15 minunet interval the it will be added as the first place on the graph display
-                # it then addes the the closest 15 minute interval that has passed as the second place in the display  
+                # if the current time is not an even 15-minute interval the it will be added as the first place on the graph display
+                # it then adds the closest 15-minute interval that has passed as the second place in the display  
                 if x == 0 and not sameTime:
-                    format_time(labels, currentTimeEST, currentTimeEST[1], x)
-                    format_time(labels, currentTimeEST, str(minIntervalTimeEST), x+1)
+                    # checks if time should be in am or pm
+                    if currentTimeEST[0] == '12':
+                        labels[x] = currentTimeEST[0] + ':' + currentTimeEST[1] + ' pm'
+                    elif int(currentTimeEST[0]) * 60 > 720:
+                        labels[x] = str(int(currentTimeEST[0]) - 12) + ':' + currentTimeEST[1] + ' pm'
+                    else:
+                        labels[x] = currentTimeEST[0] + ':' + currentTimeEST[1] + ' am'
+                    # checks if time should be in am or pm
+                    if currentTimeEST[0] == '12':
+                        labels[x] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' pm'
+                    elif int(currentTimeEST[0]) * 60 > 720:
+                        labels[x + 1] = str(int(currentTimeEST[0]) - 12) + ':' + str(minIntervalTimeEST) + ' pm'
+                    else:
+                        labels[x + 1] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' am'
                     # adds an offset since two separate labels get added above
-                    # only adds if current minute not withen first 15 minuts of an hour since code will auto fix time asignment only for the first 15 minutes 
+                    # only adds if current minute not within the first 15 minutes of an hour since code will auto fix time assignment only for the first 15 minutes 
                     if int(currentTimeEST[1]) > 15:
                         offset = 1
                     firstgo = False
                 else:
-                    # subtracts 15 minutes form previous time
+                    # subtracts 15 minutes from the previous time
                     if int(minIntervalTimeEST) - 15 > 0:
                         if not firstgo:
                             minIntervalTimeEST -= 15
                         else:
                             firstgo = False
-                        format_time(labels, currentTimeEST, str(minIntervalTimeEST), x+offset)
+                        # checks if time should be in am or pm
+                        if currentTimeEST[0] == '12':
+                            labels[x + offset] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' pm'
+                        elif int(currentTimeEST[0]) * 60 > 720:
+                            labels[x + offset] = str(int(currentTimeEST[0]) - 12) + ':' + str(minIntervalTimeEST) + ' pm'
+                        else:
+                            labels[x + offset] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' am' 
                     # will be true if the first entry (or x == 0), is on the hour and only then
-                    elif firstgo  and str(currentTimeEST[1]) != '00':
-                        format_time(labels, currentTimeEST, str(minIntervalTimeEST), x+offset)
+                    elif firstgo:
+                        # checks if time should be in am or pm
+                        if currentTimeEST[0] == '12':
+                            labels[x + offset] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' pm'
+                        elif int(currentTimeEST[0]) * 60 > 720:
+                            labels[x + offset] = str(int(currentTimeEST[0]) - 12) + ':' + str(minIntervalTimeEST) + ' pm'
+                        else:
+                            labels[x + offset] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' am'
                         firstgo = False
                     # adjusts the hour value
                     else: 
-                        format_time(labels, currentTimeEST, '00', x+offset)  
+                        # checks if time should be in am or pm
+                        if currentTimeEST[0] == '12':
+                            labels[x + offset] = currentTimeEST[0] + ':00 pm'
+                        elif int(currentTimeEST[0]) * 60 > 720:
+                            labels[x + offset] = str(int(currentTimeEST[0]) - 12) + ':00 pm'
+                        else:
+                            labels[x + offset] = currentTimeEST[0] + ':00 am'  
                         # reset the minute interval back to one hour
                         minIntervalTimeEST = 60
-                        currentTimeEST[0] = str(int( currentTimeEST[0])-1)
-                        # reset the hours so it can calculate yesterday time if needed
-                        if int(currentTimeEST[0])  < 0:
+                        currentTimeEST[0] = str(int(currentTimeEST[0]) - 1)
+                        # reset the hours so it can calculate yesterday's time if needed
+                        if int(currentTimeEST[0]) < 0:
                             currentTimeEST[0] = '23'
                         firstgo = False
 
-            # 12 am times appear as 0 for 24 hour format, adjusts to 12 hour format for labels
+            # 12 am times appear as 0 for 24-hour format, adjusts to 12-hour format for labels
             for x in range(24):
                 time = labels[x].split(':')
                 if time[0] == '00' or time[0] == '0':
                     labels[x] = '12:' + time[1]
 
-            # reverse the lists so they appear from right to left on webpage 
+            # reverse the lists so they appear from right to left on the webpage 
             del labels[-1]
             intervals.reverse()
             labels.reverse()
 
-
     except pymysql.Error as e:
-            # Handle the exception (e.g., print an error message)
-            print(f"Error connecting to the database: {e}")
-            # Set default values
-            reachable_device_count = 0
-            unreachable_device_count = 0
-            total_devices_count = 0
-            labels = ''
-            intervals = 0
-            # Set the connection status for imgs
-            serverOneConnection = 'offline'
+        # Handle the exception (e.g., print an error message)
+        print(f"Error connecting to the database: {e}")
+        # Set default values
+        reachable_device_count = 0
+        unreachable_device_count = 0
+        total_devices_count = 0
+        labels = [''] * 25  # Set some default labels
+        intervals = [0] * 25
+        # Set the connection status for imgs
+        serverOneConnection = 'offline'
     finally:
         return render_template('index.html',
             labels=labels,
@@ -264,7 +294,7 @@ def format_time(labels, timeEST, timeInterval, index):
     else:
         labels[index] = timeEST[0] + ':' + timeInterval + ' am' 
 
-# Add Devie
+# Add Device
 @app.route('/addDevice.html', methods=['GET', 'POST'])
 def add_device():
     if request.method == 'POST':
@@ -276,23 +306,22 @@ def add_device():
 
             # Check if the username already exists
             with pymysql.connect(host=SERVER_TWO_HOST, user=SERVER_TWO_USER, password=SERVER_TWO_PASSWORD, db=SERVER_TWO_DB) as serverTwoConn, serverTwoConn.cursor(pymysql.cursors.DictCursor) as serverTwocursor:
-                serverTwocursor.execute('SELECT username FROM radius_netelastic.users WHERE username = %s', (username,))
+                serverTwocursor.execute('SELECT username FROM radius_netelastic.radreply WHERE username = %s', (username,))
                 existing_user = serverTwocursor.fetchone()
 
                 if existing_user:
-                    flash(f'Error: Username {username} already exists!', 'error')
-                    return redirect('/addDevice.html')
+                    flash(f'Error: Username {username} already exists!', 'danger')
+                    return redirect(url_for('add_device'))
 
                 # Call the stored procedure to add the device entry based on the MAC address
                 serverTwocursor.callproc('radius_netelastic.PROC_InsUpRadiusUser', (username, ipv4, ipv6Prefix, ipv6))
                 serverTwocursor.execute('INSERT INTO radius_netelastic.logs(username, reason, time) VALUES (%s, %s, NOW())', (username, 'Added'))
                 serverTwoConn.commit()
-
-            flash('Device added successfully!', 'success')
+                
             return redirect('/devices.html')
 
         except pymysql.Error as e:
-            flash(f'Database error: {e}')
+            flash(f'Database error: {e}', 'danger')
             return redirect('/addDevice.html')
 
     return render_template('addDevice.html')
@@ -358,6 +387,10 @@ def show_edit_device_page(username):
         error_message = f"Error while fetching device data: {e}"
         print(error_message)
         return render_template('404.html', error_message=error_message)
+
+
+from flask import Flask, request, redirect, flash
+import pymysql
 
 @app.route('/updateDevice/<path:username>', methods=['POST'])
 def update_device(username):
@@ -467,11 +500,6 @@ def logs():
         return render_template('404.html')
 
     return render_template('logs.html', rows=rows)
-
-# 404 error handler
-@app.errorhandler(404)
-def not_found_error(error):
-    return render_template('404.html'), 404
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5555)
