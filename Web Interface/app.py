@@ -317,8 +317,6 @@ def add_device():
                 serverTwocursor.callproc('radius_netelastic.PROC_InsUpRadiusUser', (username, ipv4, ipv6Prefix, ipv6))
                 serverTwocursor.execute('INSERT INTO radius_netelastic.logs(username, reason, time) VALUES (%s, %s, NOW())', (username, 'Added'))
                 serverTwoConn.commit()
-
-            flash('Device added successfully!', 'success')
             return redirect('/devices.html')
 
         except pymysql.Error as e:
