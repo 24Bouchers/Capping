@@ -264,7 +264,6 @@ def format_time(labels, timeEST, timeInterval, index):
     else:
         labels[index] = timeEST[0] + ':' + timeInterval + ' am' 
 
-
 # Add Devie
 @app.route('/addDevice.html', methods=['GET', 'POST'])
 def add_device():
