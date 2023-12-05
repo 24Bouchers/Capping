@@ -3,17 +3,10 @@
 RadiusUI.py API is a collaborative capping (Capstone) project from five students at Marist College for GTel.
 
 Steven Boucher <br>
-<<<<<<< HEAD
-Easton <br>
-Nick <br>
-Liam <br>
-Christian
-=======
 Easton Eberwein <br>
 Nick Vasquez <br>
 Liam Haggerty <br>
 Christian Bauer
->>>>>>> origin/main
 
 ## Table of Contents
 
@@ -77,15 +70,6 @@ Eventually, we want to log who makes the changes by making users log in to the s
 
 ## Users
 
-<<<<<<< HEAD
-## Frontend Framework
-
-The site uses the Bootstrap framework for its frontend design. Bootstrap is a popular open-source toolkit for developing with HTML, CSS, and JS. It provides ready-made components and responsive design features that make web development more accessible and efficient.
-
-## Using Bootstrap
-
-Bootstrap’s grid system, components, and utilities are extensively used throughout the site to create a responsive and visually appealing interface. This choice of framework enables rapid prototyping and a consistent look and feel across different pages.
-=======
 This part of the site is still in progress and is a stretch goal. When implemented, this will show basic information about the currently signed-in user. The Logs page will have an additional column to show who makes what update.
 
 ## Front-end Framework
@@ -96,7 +80,6 @@ The site uses the Bootstrap framework for its front-end design. Bootstrap is a p
 ## Using Bootstrap
 
 Bootstrap’s grid system, components, and utilities are used extensively throughout the site to create a responsive and visually appealing interface. This choice of framework enables rapid prototyping and a consistent look and feel across different pages.
->>>>>>> origin/main
 
 Here are some key aspects of our site’s design that leverage Bootstrap:
 
@@ -108,8 +91,6 @@ Here are some key aspects of our site’s design that leverage Bootstrap:
 
 4. Consistency: Bootstrap's comprehensive component library ensures a consistent and modern user interface, enhancing usability and aesthetics.
 
-<<<<<<< HEAD
-=======
 ## Contact
 
 Steven.Boucher1@marist.edu <br>
@@ -119,4 +100,3 @@ Nicklas.Vasquez1@marist.edu <br>
 Christian.Bauer1@marist.edu <br>
 
 [Project Link](https://github.com/24Bouchers/Capping)
->>>>>>> origin/main
