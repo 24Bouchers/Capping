@@ -67,7 +67,7 @@ def main():
             #######################
             ## Reachable Devices ##
             #######################
-            
+
             serverOnecursor.execute("SELECT COUNT(DISTINCT username) AS count_entries FROM radacct WHERE acctterminatecause = '';")
             result = serverOnecursor.fetchone()
 
@@ -163,18 +163,18 @@ def main():
                         # first finds out how many 15 minute intervals passed
                         diff = int(currentTimeMin/15) - int(totalTimeMin/15)
                         if diff <= len(intervals)-offset and diff > -1:
-                            intervals[diff+offset+1] += 1
+                            intervals[diff+offset] += 1
                     # sees if there was a 6 hour diffrence max between times and thta date matches either today or yesterday
                     elif (1440 - totalTimeMin) + currentTimeMin <= hoursInMin and (splitDateTime[0] == todayDate or splitDateTime[0] == yesterdayDate):
                         if splitDateTime[0] == yesterdayDate:
                             # 1440 is the amount of minutes in a day
                             diff = int(currentTimeMin/15) + int((1440 - totalTimeMin)/15)
                             if diff <= len(intervals) and diff > -1:
-                                intervals[diff+offset+1] += 1
+                                intervals[diff+offset] += 1
                         else:
                             diff = int(currentTimeMin/15) - int(totalTimeMin/15)
                             if diff <= len(intervals) and diff > -1:
-                                intervals[diff+offset+1] += 1
+                                intervals[diff+offset] += 1
                     # once the date is not today or yesterday and the time has more then a 7 hour gap
                     # code will break out of loop to save resorces and time
                     elif (splitDateTime[0] == todayDate or splitDateTime[0] == yesterdayDate) and (currentTimeMin - totalTimeMin) > (hoursInMin+60):
@@ -185,6 +185,7 @@ def main():
             labels = [''] * 25
             firstgo = True 
             offset = 0
+            print("Whyyyyyy")
             for x in range(24):
                 # if the current time is not a even 15 minunet interval the it will be added as the first place on the graph display
                 # it then addes the the closest 15 minute interval that has passed as the second place in the display  
@@ -223,7 +224,7 @@ def main():
                         else:
                             labels[x+offset] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' am' 
                     # will be true if the first entry (or x == 0), is on the hour and only then
-                    elif firstgo:
+                    elif firstgo  and str(currentTimeEST[1]) != '00':
                         # checks if time should be in am or pm
                         if currentTimeEST[0] == '12':
                             labels[x+offset] = currentTimeEST[0] + ':' + str(minIntervalTimeEST) + ' pm'
