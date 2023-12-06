@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, flash, redirect, url_for
 from pytz import timezone
 from datetime import datetime, timedelta, date
 import pymysql
+import math
 
 
 app = Flask(__name__)
@@ -145,12 +146,16 @@ def main():
             global intervals
             intervals = [0] * 24
             hoursInMin = 360 # 360 represents 6 hours
+            # offset is to adjust the intervals if the first time appering on the graph isn't a 15 minute interval 
             offset = 0
+            if not sameTime:
+                offset = 1
             # loop through the list of times given from acctstarttime
             for x in stime:
-                # convert the acctstarttime into minutes
-                splitDateTime = str(x.get('acctstarttime')).split() # separates date and time into 2 separate list elements
+                # separates date and time into 2 separate list elements
+                splitDateTime = str(x.get('acctstarttime')).split() 
                 if splitDateTime and splitDateTime[0] != 'None':
+                    # convert the acctstarttime into minutes
                     splitTime = str(splitDateTime[1]).split(':')
                     totalTimeMin = int(splitTime[1]) + (int(splitTime[0])*60)
                     # since the time were comparing against is the closest 15 minute interval that has already passed
@@ -158,23 +163,22 @@ def main():
                     # it gets added to the most recent column of the graph
                     if totalTimeMin > currentTimeMin and splitDateTime[0] == todayDate and (totalTimeMin-currentTimeMin) <= 15 :
                         intervals[0] += 1 
-                        offset = 1
                     # check if at least 6 hours have passed since start of day and dates match
                     elif currentTimeMin >= hoursInMin and splitDateTime[0] == todayDate:
                         # first finds out how many 15 minute intervals passed
-                        diff = int(currentTimeMin/15) - int(totalTimeMin/15)
-                        if diff < len(intervals) and diff > -1:
+                        diff = math.ceil(currentTimeMin/15) - math.ceil(totalTimeMin/15)
+                        if diff < len(intervals)-offset and diff > -1:
                             intervals[diff+offset] += 1
                     # sees if there was a 6 hour diffrence max between times and thta date matches either today or yesterday
                     elif (1440 - totalTimeMin) + currentTimeMin <= hoursInMin and (splitDateTime[0] == todayDate or splitDateTime[0] == yesterdayDate):
                         if splitDateTime[0] == yesterdayDate:
                             # 1440 is the amount of minutes in a day
-                            diff = int(currentTimeMin/15) + int((1440 - totalTimeMin)/15)
-                            if diff < len(intervals) and diff > -1:
+                            diff = math.ceil(currentTimeMin/15) + math.ceil((1440 - totalTimeMin)/15)
+                            if diff < len(intervals)-offset and diff > -1:
                                 intervals[diff+offset] += 1
                         else:
-                            diff = int(currentTimeMin/15) - int(totalTimeMin/15)
-                            if diff < len(intervals) and diff > -1:
+                            diff = math.ceil(currentTimeMin/15) - math.ceil(totalTimeMin/15)
+                            if diff < len(intervals)-offset and diff > -1:
                                 intervals[diff+offset] += 1
                     # once the date is not today or yesterday and the time has more then a 7 hour gap
                     # code will break out of loop to save resorces and time
@@ -257,13 +261,14 @@ def main():
     
 # takes in the labels list, the currentTimeEST, whatever the minute needs to me assigned, and the index the label is going into
 # determins if it needs a am or pm ending and will adjust the hour number since going from 24 to 12 hour format
+# converts to int then string again to remove any proceeding zeros (01 becomes 1)
 def format_time(labels, timeEST, timeInterval, index):
     if timeEST[0] == '12':
         labels[index] = timeEST[0] + ':' + timeInterval + ' pm'
     elif int(timeEST[0])*60 > 720:
         labels[index] = str(int(timeEST[0])-12) + ':' + timeInterval + ' pm'
     else:
-        labels[index] = timeEST[0] + ':' + timeInterval + ' am' 
+        labels[index] = str(int(timeEST[0])) + ':' + timeInterval + ' am' 
 
 # Add Device
 @app.route('/addDevice.html', methods=['GET', 'POST'])
