@@ -1,6 +1,5 @@
 # RadiusUI.py
-
-RadiusUI.py API is a collaborative capping (Capstone) project from five students at Marist College for GTel.
+Archtop Fiber/GTel Marist Capping Project Fall 2023
 
 Steven Boucher <br>
 Easton Eberwein <br>
@@ -17,21 +16,21 @@ Christian Bauer
 - [Devices](#devices-page)
 - [Logs](#logs-page)
 - [User](#users)
+- [Bugs](#Bugs)
 - [Frontend Framework](#frontend-framework)
 - [Using Bootstrap](#using-bootstrap)
 
 ## Introduction
 
-Archtop Fiber/GTel Capping Project Fall 2023
-This document will explain how to navigate the site that our group has created. There are four pages for the user to navigate on our site, each with different functionality.  
+This document will explain how to navigate the site that our group has created. There are three pages for the user to navigate on our site, each with different functionality. Dashboard (index.html), Devices (devices.html), and Logs (logs.html) 
 
-The purpose of RadiusUI is to allow GTel employees to insert static IP addresses through their website and verify through
+RadiusUI is an API designed to allow GTel employees to insert static IP addresses through their website and verify through
 their FreeRADIUS servers. This webpage also displays relevant data about their servers, connectivity, MAC addresses, and IP Addresses.
 
 ## Endpoints
-The API currently connects to a web server and two MariaDB servers, both hosted by Gtel.
 
-The API was Tested on a web server (http://10.10.9.40:5000) and a MariaDB server (10.10.9.43) both hosted by Marist College.
+The API currently connects to a web server and two MariaDB servers hosted by Gtel.
+The API was tested on a web server (http://10.10.9.40:5000) and a MariaDB server (10.10.9.43) hosted by Marist College.
 
 ## Tables 
 
@@ -59,17 +58,21 @@ The third and final function is the Remove Device function. This function allows
 There is a search bar that allows the user to search for a given device based on username/MAC, IPv4, or IPv6 addresses.
 
 ## Logs
-The logs page displays whenever a change transpired to the Devices page. The Logs table displays when an update happened, the MAC addresses/Users, and what happened. 
 
-Eventually, we want to log who makes the changes by making users log in to the site with credentials. 
+The logs page displays whenever a change transpired to the Devices page. The Logs table displays when an update happened, the MAC addresses/Users, and what happened. 
 
 ## Users
 
-This part of the site is still in progress and is a stretch goal. When implemented, this will show basic information about the currently signed-in user. The Logs page will have an additional column to show who makes what update.
+This part of the site is still in progress and is a stretch goal. We have left a users.html and login.html for future groups and commented out the navigation code in the other HTML files.
+
+When implemented, this will show basic information about the currently signed-in use. The Logs page will have an additional column to show who makes what update.
+
+## Bugs
+
+The only currently known bug is if the user searches for a device or log that does not exist, the user will have to refresh the page to clear the search.
 
 ## Front-end Framework
 
-The site uses the Bootstrap framework for its front-end design. Bootstrap is a popular open-source toolkit for developing with HTML, CSS, and JS. It provides ready-made components and responsive design features that make web development more accessible and efficient.
 The site uses the Bootstrap framework for its front-end design. Bootstrap is a popular open-source toolkit for developing with HTML, CSS, and JS. It provides ready-made components and responsive design features that make web development more accessible and efficient.
 
 ## Using Bootstrap
@@ -82,7 +85,7 @@ Here are some key aspects of our site’s design that leverage Bootstrap:
 
 2. Components: Various Bootstrap components like navigation bars, forms, buttons, and cards are used to maintain uniformity in design.
 
-3. Customization: While we rely on Bootstrap for the majority of the styling, custom CSS has also been written to further tailor the look and feel to match our specific design requirements.
+3. Customization: While we rely on Bootstrap for the majority of the styling, custom CSS has been written to further tailor the look and feel to match our specific design requirements.
 
 4. Consistency: Bootstrap's comprehensive component library ensures a consistent and modern user interface, enhancing usability and aesthetics.
 
@@ -94,4 +97,5 @@ Liam.Haggerty1@marist.edu <br>
 Nicklas.Vasquez1@marist.edu <br>
 Christian.Bauer1@marist.edu <br>
 
-[Project Link](https://github.com/24Bouchers/Capping)
+[Project Link](https://github.com/24Bouchers/Capping)# RadiusUI.py
+[link](https://github.com/24Bouchers/Capping)
