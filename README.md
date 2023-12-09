@@ -41,7 +41,7 @@ Four tables keep the API functional. Three are GTel-created tables with the logs
 
 The dashboard is the home page for our API, which has various pieces of information displayed. The total number of devices, how many devices are currently online, how many static IP accounts exist, and how many IP addresses are unreachable. 
 
-A dynamic graph displays the total number of requests for IP addresses and updates every 15 minutes, showing the last 6 hours of data. This graph will show crucial information about GTel servers, such as spikes in requests due to power outages. 
+A dynamic graph displays the total number of requests for IP addresses and updates every 15 minutes, showing the last 6 hours of data. This graph will show crucial information about GTel servers, such as spikes in requests due to power outages. If the graph lines are too sharp or too curvy, there is a lineTension vaiable on line 200 in index.html that can be ajusted. 0 represents no curve and 1 represents deep curves.
 
 On the right-hand side is a System Status, a quick check to ensure that FreeRadius and the SQL server are working appropriately.
 
