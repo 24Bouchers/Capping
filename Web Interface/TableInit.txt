@@ -23,7 +23,7 @@ app = Flask(__name__)
 # This could be easy access for credentials of who can manipulate the DB
 
 #Toggle to run locally or on the vm
-LOCAL = False
+LOCAL = True
 
 if(LOCAL):
 	conn = pymysql.connect(host='localhost', user='root', password='ArchFiber23', db='')
@@ -275,7 +275,7 @@ END;
 ''')
 
 #Drop The User and Create a New One with permission to use the Crud Functions
-cur.execute("CREATE USER 'radius_ui'@'%' IDENTIFIED BY 'REDACTED_PASSWORD';")
+cur.execute("CREATE USER 'radius_ui'@'%' IDENTIFIED BY 'ExamplePassword';")
 cur.execute("GRANT DELETE, INSERT, SELECT, UPDATE ON radius_netelastic.* TO 'radius_ui'@'%';")
 cur.execute("GRANT EXECUTE ON PROCEDURE radius_netelastic.PROC_InsUpRadiusUser TO 'radius_ui'@'%';")
 cur.execute("GRANT EXECUTE ON PROCEDURE radius_netelastic.PROC_DeleteRadiusUser TO 'radius_ui'@'%';")
