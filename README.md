@@ -22,21 +22,16 @@ Christian Bauer
 
 ## Introduction
 
+Archtop Fiber/GTel Capping Project Fall 2023
+This document will explain how to navigate the site that our group has created. There are four pages for the user to navigate on our site, each with different functionality.  
+
 The purpose of RadiusUI is to allow GTel employees to insert static IP addresses through their website and verify through
-their FreeRADIUS servers. This webpage also displays relevant data about their servers, connectivity, MAC addresses, and IP Addresses.  
-
-## Authentication
-
-Explain how to authenticate when using the API. Include details about API keys, tokens, or any other necessary authentication methods.
+their FreeRADIUS servers. This webpage also displays relevant data about their servers, connectivity, MAC addresses, and IP Addresses.
 
 ## Endpoints
+The API currently connects to a web server and two MariaDB servers, both hosted by Gtel.
 
-The API currently connects to a web server (http://10.10.9.40:5000) and a MariaDB server (10.10.9.43) both hosted by Marist College.
-The API currently connects to a web server (http://10.10.9.40:5000) and a MariaDB server (10.10.9.43) both hosted by Marist College.
-Ultimately, These servers will be on Gtel/ArchtopFiber Servers.
-
-Archtop Fiber/GTel Capping Project Fall 2023
-This document will explain how to navigate the site that our group has created. There are four pages for the user to navigate on our site, each with different functionality.
+The API was Tested on a web server (http://10.10.9.40:5000) and a MariaDB server (10.10.9.43) both hosted by Marist College.
 
 ## Tables 
 
