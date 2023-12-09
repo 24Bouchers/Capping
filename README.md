@@ -97,5 +97,4 @@ Liam.Haggerty1@marist.edu <br>
 Nicklas.Vasquez1@marist.edu <br>
 Christian.Bauer1@marist.edu <br>
 
-[Project Link](https://github.com/24Bouchers/Capping)# RadiusUI.py
-[link](https://github.com/24Bouchers/Capping)
+[Project Link](https://github.com/24Bouchers/Capping)#
