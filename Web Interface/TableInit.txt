@@ -8,8 +8,6 @@ This simply servers as an archive of the table structure and set up used
 when this API was initally created.
 '''
 
-# mysql -u radius_UI -p REDACTED_PASSWORD
-#: Login for consol
 from flask import Flask
 import pymysql
 
@@ -23,7 +21,7 @@ app = Flask(__name__)
 # This could be easy access for credentials of who can manipulate the DB
 
 #Toggle to run locally or on the vm
-LOCAL = True
+LOCAL = False
 
 if(LOCAL):
 	conn = pymysql.connect(host='localhost', user='root', password='ArchFiber23', db='')
