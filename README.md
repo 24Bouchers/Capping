@@ -29,12 +29,14 @@ their FreeRADIUS servers. This webpage also displays relevant data about their s
 
 ## Endpoints
 
-The API currently connects to a web server and two MariaDB servers hosted by Gtel.
+The API currently connects to a web server and two MariaDB servers hosted by Gtel.<br>
 The API was tested on a web server (http://10.10.9.40:5000) and a MariaDB server (10.10.9.43) hosted by Marist College.
 
 ## Tables 
 
-Four tables keep the API functional. Three are GTel-created tables with the logs table created by the Marist students listed above. Pictured in the Table_Flow.png is an ERD/Flowchart describing how the tables are used/appear. [Linked is the Lucid Chart Diagram](https://lucid.app/lucidchart/98f36848-a34a-496a-aea1-8b74693481a4/edit?viewport_loc=-435%2C13%2C2602%2C1311%2CzxEJecSUvRbf&invitationId=inv_0f03a49c-5bfb-4f13-b19e-6fabd795f66e)
+Four tables keep the API functional. Three are GTel-created tables with the logs table created by the Marist students listed above. Pictured in the Table_Flow.png is an ERD/Flowchart describing how the tables are used/appear. <br>
+
+ [Linked is the Lucid Chart Diagram](https://lucid.app/lucidchart/98f36848-a34a-496a-aea1-8b74693481a4/edit?viewport_loc=-435%2C13%2C2602%2C1311%2CzxEJecSUvRbf&invitationId=inv_0f03a49c-5bfb-4f13-b19e-6fabd795f66e)
 
 ## Dashboard Page
 
