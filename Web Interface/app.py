@@ -10,12 +10,12 @@ app.secret_key = 'ArchFiber23'
 
 SERVER_ONE_HOST = '10.10.9.43'
 SERVER_ONE_USER = 'radius_ui'
-SERVER_ONE_PASSWORD = 'REDACTED_PASSWORD'
+SERVER_ONE_PASSWORD = 'ExamplePassword'
 SERVER_ONE_DB = 'radius_netelastic'
 
 SERVER_TWO_HOST = '10.10.9.43'
 SERVER_TWO_USER = 'radius_ui'
-SERVER_TWO_PASSWORD = 'REDACTED_PASSWORD'
+SERVER_TWO_PASSWORD = 'ExamplePassword'
 SERVER_TWO_DB = 'radius_netelastic'
 
 #####################
