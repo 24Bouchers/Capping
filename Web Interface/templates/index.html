@@ -4,8 +4,14 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
+    <meta name="description" content="A Website Created as a Marist Capping Project to allow Gtel user to manage Static IP addresses" />
+    <meta name="author" content="
+    Christian Bauer,
+    Steven Boucher,
+    Liam Haggerty,
+    Easton Eberwein,
+    Nick Vasquez"
+    />
     <title>Dashboard - Archtop Fiber</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="../static/css/styles.css" rel="stylesheet" />
@@ -21,14 +27,14 @@
         </a>
         <!-- Sidebar Toggle-->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
-                <!-- Navbar Search-->
-                    <!--form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-                        <div class="input-group">
-                            <!--input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" /-->
-                            <!--button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
-                        </div>
-                    </form>
-                <!-- Navbar>
+            <!-- Navbar Search
+            <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+                <div class="input-group">
+                    <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" />
+                    <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </form> -->
+            <!-- Navbar
             <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
@@ -39,7 +45,7 @@
                         <li><a class="dropdown-item" href="login.html">Logout</a></li>
                     </ul>
                 </li>
-            </ul-->
+            </ul>-->
     </nav>
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
@@ -185,12 +191,14 @@
                                                         label: "Starts in 15 Minute Intervals",
 
                                                         data: {{ values | tojson }},
-                                                        fill: false,
-                                                        pointBackgroundColor: "#29b8ff",
-                                                        pointBorderColor: "#29b8ff",
-                                                        pointHoverBackgroundColor: "#29b8ff",
-                                                        pointHoverBorderColor: "#29b8ff",
-                                                        lineTention: 0.5
+                                                        fill: true,
+                                                        backgroundColor: "#f15b4070",
+                                                        pointBackgroundColor: "#f15b40",
+                                                        pointBorderColor: "#f15b40",
+                                                        pointHoverBackgroundColor: "#f15b40",
+                                                        pointHoverBorderColor: "#f15b40",
+                                                        lineTension: .1,
+                                                        borderColor: "#f15b40",
                                                     }
                                                 ]
                                             },
@@ -205,6 +213,9 @@
                                                         ticks: {
                                                             fontColor: "white",
                                                             beginAtZero: true
+                                                        },
+                                                        gridLines: {
+                                                            color: "#FFFFFF80"
                                                         }
                                                     }],
                                                     xAxes: [{
@@ -213,6 +224,9 @@
                                                             maxRotation: 35,
                                                             minRotation: 35,
                                                             beginAtZero: true
+                                                        },
+                                                        gridLines: {
+                                                            color: "#FFFFFF80"
                                                         }
                                                     }]
                                                 },
@@ -304,7 +318,9 @@
                         <div>
                             <a href="https://gtel.net">Gtel</a>
                             &middot;
-                            <a href="https://archtopfiber.com">Archtop Fiber</a>                            
+                            <a href="https://archtopfiber.com">Archtop Fiber</a>
+                            &middot; 
+                            <a href="https://github.com/24Bouchers/Capping">Github</a>                          
                         </div>
                     </div>
                 </div>

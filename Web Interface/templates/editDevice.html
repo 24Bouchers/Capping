@@ -4,8 +4,14 @@
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
+        <meta name="description" content="A Website Created as a Marist Capping Project to allow Gtel user to manage Static IP addresses" />
+        <meta name="author" content="
+        Christian Bauer,
+        Steven Boucher,
+        Liam Haggerty,
+        Easton Eberwein,
+        Nick Vasquez"
+        />
         <title>Devices - Archtop Fiber</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="../static/css/styles.css" rel="stylesheet" />
@@ -14,19 +20,19 @@
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
-            <a class="navbar-brand ps-3" href="editDevice.html">
+            <a class="navbar-brand ps-3" href="{{ url_for('main') }}">
                 <img src="{{ url_for('static', filename='img/archtop_logo.png') }}" alt="Archtop Fiber Logo" width="210" height="45">
             </a>        
-                <!-- Sidebar Toggle-->
+            <!-- Sidebar Toggle-->
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
-                <!-- Navbar Search-->
-                    <!--form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-                        <div class="input-group">
-                            <!--input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" /-->
-                            <!--button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
-                        </div>
-                    </form>
-                <!-- Navbar>
+            <!-- Navbar Search
+            <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+                <div class="input-group">
+                    <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" />
+                    <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </form> -->
+            <!-- Navbar
             <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
@@ -37,7 +43,7 @@
                         <li><a class="dropdown-item" href="login.html">Logout</a></li>
                     </ul>
                 </li>
-            </ul-->
+            </ul>-->
         </nav>
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
@@ -103,12 +109,12 @@
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">Editting Device: {{ username }}</h1>
+                        <h1 class="mt-4">Editing Device: {{ username }}</h1>
                         <form action="/updateDevice/{{ username }}" method="post" class="mt-4">
                             <input type="hidden" name="username" value="{{ username }}">
 
                             <div class="row mb-3">
-                                <label for="ipv4_address" class="col-sm-1 col-form-label text-lg-end">IPv4 Address:</label>
+                                <label for="ipv4_address" class="col-sm-1 col-form-label text-lg-end">IPv4:</label>
                                 <div class="col-sm-8">
                                     <input type="text" id="ipv4_address" name="ipv4_address" class="form-control" value="{{ current_device_data['Framed-IP-Address'] }}">
                                 </div>
@@ -122,7 +128,7 @@
                             </div>
 
                             <div class="row mb-3">
-                                <label for="ipv6_address" class="col-sm-1 col-form-label text-lg-end">IPv6 Address:</label>
+                                <label for="ipv6_address" class="col-sm-1 col-form-label text-lg-end">IPv6:</label>
                                 <div class="col-sm-8">
                                     <input type="text" id="ipv6_address" name="ipv6_address" class="form-control" value="{{ current_device_data['Framed-IPv6-Address'] }}">
                                 </div>
@@ -141,7 +147,9 @@
                             <div>
                             <a href="https://gtel.net">Gtel</a>
                             &middot;
-                            <a href="https://archtopfiber.com">Archtop Fiber</a>      
+                            <a href="https://archtopfiber.com">Archtop Fiber</a>
+                            &middot; 
+                            <a href="https://github.com/24Bouchers/Capping">Github</a>      
                             </div>
                         </div>
                     </div>
